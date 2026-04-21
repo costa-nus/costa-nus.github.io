@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Source zips (design handoffs — unpack, don't commit)
+*.zip
+
+# Local-only Claude Code settings (keep shared config under .claude/)
+.claude

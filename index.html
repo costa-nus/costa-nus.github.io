@@ -1,14 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Costa NUS Lab</title>
-  </head>
-  <body>
-    <main>
-      <h1>costa-nus.github.io</h1>
-      <p>Welcome to the Costa NUS Lab website.</p>
-    </main>
-  </body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoSTA@NUS Lab — Cognitive Science &amp; Trustworthy AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f5f1ea; -webkit-font-smoothing: antialiased; }
+  body { scroll-behavior: smooth; }
+  a { color: inherit; }
+  ::selection { background: #EF7C00; color: #f5f1ea; }
+  button { cursor: pointer; font: inherit; }
+
+  /* Tweaks panel */
+  .tweaks { position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    background: #fff; border: 1px solid #00000018; border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,45,92,0.18); padding: 16px 18px;
+    font-family: 'Inter Tight', sans-serif; width: 260px; display: none; }
+  .tweaks.on { display: block; }
+  .tweaks .title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace; color: #003D7C; opacity: 0.6; margin-bottom: 12px; }
+  .tweaks .row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; font-size: 12.5px; color: #003D7C; }
+  .tweaks button.pill { border: 1px solid #003D7C33; background: transparent; color: #003D7C;
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+  .tweaks button.pill.on { background: #003D7C; color: #f5f1ea; border-color: #003D7C; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Tweaks panel -->
+<div id="tweaks" class="tweaks">
+  <div class="title">Tweaks</div>
+  <div class="row">
+    <span>Accent</span>
+    <span id="tw-accent-buttons"></span>
+  </div>
+  <div class="row">
+    <span>Hero headline</span>
+    <span id="tw-headline-buttons"></span>
+  </div>
+</div>
+
+<script>
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "accent": "orange",
+    "headlineStyle": "serif-coastline"
+  }/*EDITMODE-END*/;
+
+  const ACCENTS = {
+    orange: '#EF7C00',
+    coast:  '#c65a3a',
+    teal:   '#1e5f6b',
+  };
+
+  window.__tweaks = { ...TWEAK_DEFAULTS };
+  function applyAccent() {
+    document.documentElement.style.setProperty('--accent', ACCENTS[window.__tweaks.accent] || ACCENTS.orange);
+  }
+  applyAccent();
+
+  function renderTweaks() {
+    const accWrap = document.getElementById('tw-accent-buttons');
+    const hWrap = document.getElementById('tw-headline-buttons');
+    accWrap.innerHTML = ''; hWrap.innerHTML = '';
+    Object.keys(ACCENTS).forEach(k => {
+      const b = document.createElement('button');
+      b.className = 'pill' + (window.__tweaks.accent === k ? ' on' : '');
+      b.textContent = k;
+      b.onclick = () => {
+        window.__tweaks.accent = k;
+        window.parent.postMessage({type: '__edit_mode_set_keys', edits: { accent: k }}, '*');
+        applyAccent();
+        window.__rerender && window.__rerender();
+        renderTweaks();
+      };
+      accWrap.appendChild(b);
+    });
+    [['serif-coastline', 'serif'], ['sans-punchy', 'sans']].forEach(([k, label]) => {
+      const b = document.createElement('button');
+      b.className = 'pill' + (window.__tweaks.headlineStyle === k ? ' on' : '');
+      b.textContent = label;
+      b.onclick = () => {
+        window.__tweaks.headlineStyle = k;
+        window.parent.postMessage({type: '__edit_mode_set_keys', edits: { headlineStyle: k }}, '*');
+        window.__rerender && window.__rerender();
+        renderTweaks();
+      };
+      hWrap.appendChild(b);
+    });
+  }
+
+  // Edit-mode protocol — listener first, then announce
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode') {
+      document.getElementById('tweaks').classList.add('on');
+      renderTweaks();
+    } else if (d.type === '__deactivate_edit_mode') {
+      document.getElementById('tweaks').classList.remove('on');
+    }
+  });
+  window.parent.postMessage({type: '__edit_mode_available'}, '*');
+</script>
+
+<script type="text/babel" src="site/sections.jsx"></script>
+<script type="text/babel">
+  function App() {
+    const [, force] = React.useReducer(x => x + 1, 0);
+    window.__rerender = force;
+    return (
+      <>
+        <Nav />
+        <Hero />
+        <PIIntro />
+        <ResearchPillars />
+        <Publications />
+        <People />
+        <News />
+        <Join />
+        <Footer />
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
 </html>
