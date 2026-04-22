@@ -364,7 +364,7 @@ function Hero() {
           Lab
           <span className="costa-dot-accent" />
         </h1>
-
+{/* 
         <div style={{
           fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
           fontSize: 'clamp(18px, 2.4vw, 26px)', lineHeight: 1.4,
@@ -374,7 +374,7 @@ function Hero() {
           A frontier where human minds meet machine intelligence — navigating the uncharted
           waters of trustworthy AI, guided by cognitive science and a commitment to safe,
           ethical innovation.
-        </div>
+        </div> */}
 
         {/* Meta row */}
         <div style={{
@@ -452,7 +452,7 @@ function PIIntro() {
               Junyuan "Jason" Hong
             </a>
             <div style={{ fontFamily: F.display, fontSize: 14, color: C.ink, opacity: 0.7, marginTop: 4 }}>
-              Incoming Assistant Professor, NUS ECE
+              Assistant Professor, NUS ECE
             </div>
           </div>
         </div>
@@ -464,9 +464,9 @@ function PIIntro() {
             fontSize: 'clamp(22px, 3vw, 30px)',
             lineHeight: 1.35, color: C.ink, marginTop: 16, textWrap: 'pretty', letterSpacing: '-0.01em',
           }}>
-            “My research vision is to <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>harmonize, understand, and deploy</u>
-            {' '}Responsible AI — optimizing systems that balance real-world constraints in
-            efficiency, privacy, and ethical norms, with meaningful impact in healthcare.”
+            “My research vision is to explore the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
+            {' '}— navigating the uncharted waters of trustworthy AI, guided by cognitive
+            science and a commitment to safe, ethical innovation.”
           </div>
 
           <div style={{
@@ -526,6 +526,8 @@ function PIIntro() {
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
+  const press = window.PRESS_COVERAGE || [];
+  const projects = window.WHAT_WE_BUILD || [];
   const isMobile = useIsMobile();
 
   return (
@@ -544,8 +546,189 @@ function ResearchPillars() {
         }}>
           {pillars.map((p, i) => <PillarCard key={p.id} p={p} i={i} />)}
         </div>
+
+        {press.length > 0 && <PressCoverage items={press} />}
+        {projects.length > 0 && <WhatWeBuild items={projects} />}
       </div>
     </section>
+  );
+}
+
+// ————————————————————————————————————————————————————————————
+// 04b — In the Press (visual covers)
+// ————————————————————————————————————————————————————————————
+//
+// Reads window.PRESS_COVERAGE (data/press.js). Renders a row of cover cards
+// with the article image on top; when an image is missing or fails to load,
+// falls back to a typographic placeholder tinted with the accent color so
+// cards stay visually consistent regardless of asset availability.
+
+function PressCoverage({ items }) {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ marginTop: isMobile ? 56 : 88 }}>
+      <div style={{
+        display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+        gap: 16, marginBottom: isMobile ? 20 : 28, flexWrap: 'wrap',
+      }}>
+        <div>
+          <MonoLabel>In the press</MonoLabel>
+          <div style={{
+            fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
+            color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
+          }}>
+            Our research on LLM Brain Rot, featured by major outlets.
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile
+          ? '1fr'
+          : `repeat(auto-fit, minmax(220px, 1fr))`,
+        gap: isMobile ? 16 : 20,
+      }}>
+        {items.map((m, i) => <PressCard key={i} m={m} />)}
+      </div>
+    </div>
+  );
+}
+
+function PressCard({ m }) {
+  const [imgOk, setImgOk] = React.useState(Boolean(m.image));
+  return (
+    <a
+      href={m.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'flex', flexDirection: 'column',
+        background: '#fff', border: `1px solid ${C.ink}14`,
+        textDecoration: 'none', color: 'inherit',
+        transition: 'transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.borderColor = `${C.accent}55`;
+        e.currentTarget.style.boxShadow = `0 8px 24px ${C.ink}12`;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = `${C.ink}14`;
+        e.currentTarget.style.boxShadow = 'none';
+      }}
+    >
+      {/* cover */}
+      <div style={{
+        position: 'relative', aspectRatio: '3 / 2', overflow: 'hidden',
+        background: C.paperWarm, borderBottom: `1px solid ${C.ink}10`,
+      }}>
+        {imgOk ? (
+          <img
+            src={m.image}
+            alt={`${m.outlet} — ${m.headline}`}
+            onError={() => setImgOk(false)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        ) : (
+          <PressPlaceholder outlet={m.outlet} />
+        )}
+      </div>
+
+      {/* caption */}
+      <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12,
+        }}>
+          <div style={{
+            fontFamily: F.display, fontWeight: 700, fontSize: 13,
+            letterSpacing: '-0.01em', color: C.ink,
+          }}>{m.outlet}</div>
+          <div style={{
+            fontFamily: F.mono, fontSize: 9.5, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: C.ink, opacity: 0.5,
+          }}>{m.date}</div>
+        </div>
+        <div style={{
+          fontFamily: F.editorial, fontSize: 15.5, lineHeight: 1.35,
+          color: C.ink, opacity: 0.88, textWrap: 'pretty', letterSpacing: '-0.005em',
+        }}>{m.headline}</div>
+      </div>
+    </a>
+  );
+}
+
+// ————————————————————————————————————————————————————————————
+// 04c — What we're building (active projects)
+// ————————————————————————————————————————————————————————————
+//
+// Reads window.WHAT_WE_BUILD (data/building.js). Reuses PressCard by mapping
+// project fields onto the card's { outlet, headline, date, href, image } shape,
+// so the visual treatment (cover + caption row) stays identical to the press
+// row above. Only the subheader lede differs.
+
+function WhatWeBuild({ items }) {
+  const isMobile = useIsMobile();
+  const cards = items.map(p => ({
+    outlet: p.name,
+    headline: p.tagline,
+    date: p.status,
+    href: p.href,
+    image: p.image,
+  }));
+  return (
+    <div style={{ marginTop: isMobile ? 48 : 72 }}>
+      <div style={{
+        display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+        gap: 16, marginBottom: isMobile ? 20 : 28, flexWrap: 'wrap',
+      }}>
+        <div>
+          <MonoLabel>What we're building</MonoLabel>
+          <div style={{
+            fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
+            color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
+          }}>
+            Tools, workshops, and competitions — building the product and the community out of lab.
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile
+          ? '1fr'
+          : `repeat(auto-fit, minmax(220px, 1fr))`,
+        gap: isMobile ? 16 : 20,
+      }}>
+        {cards.map((m, i) => <PressCard key={i} m={m} />)}
+      </div>
+    </div>
+  );
+}
+
+// Typographic fallback shown when an outlet cover image is unavailable.
+// Mirrors the hero's paper-on-ink palette so the row still feels cohesive.
+function PressPlaceholder({ outlet }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      background: `linear-gradient(135deg, ${C.paperWarm} 0%, ${C.sand} 100%)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden',
+    }}>
+      {/* faint wave motif in the corner echoes the site's coastline theme */}
+      <svg viewBox="0 0 200 120" preserveAspectRatio="none"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.25 }}>
+        <path d="M 0 80 Q 50 70 100 80 T 200 80" fill="none" stroke={C.ink} strokeWidth="1.5" />
+        <path d="M 0 96 Q 50 86 100 96 T 200 96" fill="none" stroke={C.accent} strokeWidth="1.5" />
+      </svg>
+      <div style={{
+        fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 500,
+        fontSize: 'clamp(22px, 3vw, 32px)', color: C.ink, letterSpacing: '-0.02em',
+        textAlign: 'center', padding: '0 16px', position: 'relative',
+      }}>{outlet}</div>
+    </div>
   );
 }
 
