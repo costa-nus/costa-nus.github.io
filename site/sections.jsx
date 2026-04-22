@@ -1156,6 +1156,11 @@ function PersonCard({ p }) {
                style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${fg}33` }}>
               {p.name}
             </a>
+          ) : kind === 'open' ? (
+            <a href="/openings/"
+               style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${fg}33` }}>
+              {p.name}
+            </a>
           ) : p.name}
         </div>
         <div style={{ fontFamily: F.display, fontSize: 12.5, opacity: 0.75, marginTop: 4 }}>
@@ -1383,14 +1388,12 @@ function Footer({ basePath = '' }) {
           ['Lab', [['Research', h('#research')], ['Publications', h('#publications')], ['People', h('#people')], ['News', h('#news')]]],
           ['Connect', [
             ['Join →', h('#join')],
-            ['Openings doc', 'https://docs.google.com/document/d/1L06GRLxORd_O5Jr2-e2KKZxAw2BA2qB9GfVFV_nVDHo/edit?usp=sharing'],
+            ['Openings', '/openings/'],
             ['Interest form', 'https://forms.gle/4LufZpRmkTfyj5uq9'],
           ]],
           ['External', [
             ['NUS ECE', 'https://cde.nus.edu.sg/ece/'],
             ['PI\'s site', 'https://jyhong.gitlab.io/'],
-            ['Media: Nature News', 'https://www.nature.com/articles/d41586-025-03542-2'],
-            ['Media: WIRED', 'https://www.wired.com/story/ai-models-social-media-cognitive-decline-study/'],
           ]],
         ].map(([h, links]) => (
           <div key={h}>
