@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Publications — CoSTA@NUS Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f5f1ea; -webkit-font-smoothing: antialiased; }
+  body { scroll-behavior: smooth; }
+  a { color: inherit; }
+  ::selection { background: #EF7C00; color: #f5f1ea; }
+  button { cursor: pointer; font: inherit; }
+
+  /* Author info tooltip — CSS-only, opens on hover/focus of the ⓘ icon. */
+  .author-info {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; margin-left: 4px;
+    border-radius: 50%;
+    color: rgba(245, 241, 234, 0.55);
+    cursor: help;
+    font-family: 'Inter Tight', sans-serif; font-size: 11px; font-weight: 700;
+    line-height: 1;
+    border: 1px solid rgba(245, 241, 234, 0.35);
+    vertical-align: baseline;
+  }
+  .author-info:hover, .author-info:focus-visible {
+    color: #EF7C00; border-color: #EF7C00; outline: none;
+  }
+  .author-info[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%; transform: translateX(-50%);
+    background: #003D7C; color: #f5f1ea;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.06em;
+    padding: 6px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.12s ease-out;
+    z-index: 5;
+  }
+  .author-info:hover::after, .author-info:focus-visible::after { opacity: 1; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="../site/sections.jsx"></script>
+<script type="text/babel">
+  // Standalone publications archive. Reuses PUBS_FULL from sections.jsx and
+  // renders in the PI-site visual style: venue badge + title on one line,
+  // authors (with tooltip info icons) on the next, and link capsules below.
+  // Tag vocabulary matches the archive's actual distribution.
+  const TAGS = ['All', 'Selected', 'LLM', 'Trust', 'Privacy', 'Safety', 'FL', 'Healthcare', 'Reasoning', 'Fairness', 'Robotics'];
+
+  function authorsQuery(p) {
+    return p.authors ? p.authors.map(a => a.name).join(' ') : '';
+  }
+
+  function Badge({ children }) {
+    // Sand fill on the deep-blue section reads as a warm, editorial tag — keeps the
+    // page's orange accents (★, hover) uncontested.
+    return (
+      <span style={{
+        display: 'inline-block',
+        background: C.sand, color: C.ink,
+        fontFamily: F.display, fontWeight: 700, fontSize: 13,
+        letterSpacing: '0.005em',
+        padding: '3px 10px', borderRadius: 4,
+        marginRight: 12, verticalAlign: '2px',
+        whiteSpace: 'nowrap',
+      }}>{children}</span>
+    );
+  }
+
+  function AuthorInfo({ tip }) {
+    return (
+      <span
+        className="author-info"
+        data-tip={tip}
+        tabIndex="0"
+        role="img"
+        aria-label={`Info: ${tip}`}
+      >i</span>
+    );
+  }
+
+  function AuthorList({ authors }) {
+    // Same paper-on-opacity recipe the hero lede uses for its title contrast —
+    // authors read as clearly secondary to the paper-bright title. Bold
+    // distinguishes the PI without lifting their name off the muted field.
+    return (
+      <span style={{
+        fontFamily: F.display, fontSize: 15.5, lineHeight: 1.55,
+        color: C.paper, opacity: 0.72,
+      }}>
+        {authors.map((a, i) => (
+          <React.Fragment key={i}>
+            <span style={{ fontWeight: a.highlighted ? 700 : 400 }}>{a.name}</span>
+            {a.note && <AuthorInfo tip={a.note} />}
+            {i < authors.length - 1 ? ', ' : '.'}
+          </React.Fragment>
+        ))}
+      </span>
+    );
+  }
+
+  function LinkCapsule({ link }) {
+    // Outlined in paper/35 at rest (so ★ and hover state are the only orange on the
+    // row); hover fills to accent for affordance.
+    return (
+      <a
+        href={link.href}
+        target={link.href.startsWith('http') ? '_blank' : undefined}
+        rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+        style={{
+          display: 'inline-flex', alignItems: 'center',
+          fontFamily: F.display, fontSize: 12.5, fontWeight: 500,
+          color: C.paper, opacity: 0.88, textDecoration: 'none',
+          padding: '5px 12px',
+          border: `1px solid ${C.paper}38`,
+          borderRadius: 999,
+          whiteSpace: 'nowrap',
+          background: 'transparent',
+          transition: 'background 0.12s ease-out, color 0.12s ease-out, border-color 0.12s ease-out, opacity 0.12s ease-out',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = C.accent;
+          e.currentTarget.style.color = C.paper;
+          e.currentTarget.style.borderColor = C.accent;
+          e.currentTarget.style.opacity = '1';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = C.paper;
+          e.currentTarget.style.borderColor = `${C.paper}38`;
+          e.currentTarget.style.opacity = '0.88';
+        }}
+      >{link.label}</a>
+    );
+  }
+
+  function PubEntry({ p }) {
+    return (
+      <article style={{
+        padding: '22px 0',
+        borderBottom: `1px solid ${C.paper}18`,
+      }}>
+        <div style={{ lineHeight: 1.5 }}>
+          <Badge>{p.venue}</Badge>
+          <a
+            href={p.detail ? `https://jyhong.gitlab.io${p.detail}` : '#'}
+            target={p.detail ? '_blank' : undefined}
+            rel={p.detail ? 'noopener noreferrer' : undefined}
+            style={{
+              fontFamily: F.editorial, fontWeight: 500, fontSize: 20,
+              lineHeight: 1.35, letterSpacing: '-0.005em',
+              color: C.paper, textDecoration: 'none',
+            }}
+          >
+            {p.selected && (
+              <span title="PI's selected pick" aria-label="PI's selected pick" style={{
+                color: C.accent, marginRight: 8, fontFamily: F.display, fontSize: 17,
+                verticalAlign: '1px',
+              }}>★</span>
+            )}
+            {p.title}
+          </a>
+        </div>
+
+        {p.authors && p.authors.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <AuthorList authors={p.authors} />
+          </div>
+        )}
+
+        {p.links && p.links.length > 0 && (
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: 8,
+            marginTop: 12,
+          }}>
+            {p.links.map((l, i) => <LinkCapsule key={i} link={l} />)}
+          </div>
+        )}
+      </article>
+    );
+  }
+
+  function PublicationsAll() {
+    const [filter, setFilter] = React.useState('All');
+    const [query, setQuery] = React.useState('');
+    const q = query.trim().toLowerCase();
+
+    const rows = PUBS_FULL
+      .filter(p => filter === 'All' ? true : filter === 'Selected' ? p.selected : (p.tags || []).includes(filter))
+      .filter(p => !q
+        || p.title.toLowerCase().includes(q)
+        || p.venue.toLowerCase().includes(q)
+        || authorsQuery(p).toLowerCase().includes(q));
+
+    // Group by year, newest-first.
+    const byYear = {};
+    rows.forEach(p => { (byYear[p.year] ||= []).push(p); });
+    const years = Object.keys(byYear).sort((a, b) => b.localeCompare(a));
+
+    return (
+      <section id="publications" style={{ background: C.secondary, padding: '72px 0 120px', color: C.paper, minHeight: '100vh' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 40px' }}>
+          <a href="/" style={{
+            fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: C.paper, opacity: 0.6, textDecoration: 'none', display: 'inline-block', marginBottom: 32,
+          }}>← Back to home</a>
+
+          <div style={{ maxWidth: 900, marginBottom: 48 }}>
+            <div style={{ fontFamily: F.mono, fontSize: 11, letterSpacing: '0.16em', color: C.paper, opacity: 0.6, textTransform: 'uppercase', fontWeight: 500 }}>
+              § Publications · Full archive
+            </div>
+            <div style={{
+              fontFamily: F.display, fontWeight: 700, fontSize: 56, letterSpacing: '-0.035em',
+              lineHeight: 1.02, color: C.paper, marginTop: 14, textWrap: 'balance',
+            }}>
+              Every tide we've tracked.
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 24 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, flex: '1 1 auto' }}>
+              {TAGS.map(t => (
+                <button
+                  key={t}
+                  onClick={() => setFilter(t)}
+                  style={{
+                    fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    padding: '8px 14px', border: `1px solid ${C.paper}33`,
+                    background: filter === t ? C.accent : 'transparent',
+                    color: C.paper,
+                    opacity: filter === t ? 1 : 0.85,
+                    cursor: 'pointer', fontWeight: 500,
+                  }}
+                >{t}</button>
+              ))}
+            </div>
+            <input
+              type="search"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search title, venue, or author…"
+              style={{
+                fontFamily: F.display, fontSize: 13, padding: '9px 14px',
+                background: 'transparent', border: `1px solid ${C.paper}33`, color: C.paper,
+                outline: 'none', minWidth: 260,
+              }}
+            />
+          </div>
+
+          <div style={{
+            fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: C.paper, opacity: 0.55, marginBottom: 8,
+          }}>
+            {rows.length} {rows.length === 1 ? 'result' : 'results'}
+          </div>
+
+          {years.length === 0 && (
+            <div style={{
+              fontFamily: F.editorial, fontStyle: 'italic', fontSize: 18, color: C.paper,
+              opacity: 0.7, padding: '32px 0', borderTop: `1px solid ${C.paper}22`,
+            }}>
+              No publications match the current filter.
+            </div>
+          )}
+
+          {years.map(year => (
+            <div key={year} style={{ marginTop: 40 }}>
+              <div style={{
+                fontFamily: F.display, fontWeight: 600, fontSize: 28, letterSpacing: '-0.02em',
+                color: C.paper, opacity: 0.9, paddingBottom: 12,
+                borderBottom: `1px solid ${C.paper}33`,
+              }}>
+                {year}
+              </div>
+              {byYear[year].map((p, i) => <PubEntry key={i} p={p} />)}
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  function App() {
+    return (
+      <>
+        <Nav basePath="/" />
+        <PublicationsAll />
+        <Footer basePath="/" />
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
