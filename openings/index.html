@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Openings — CoSTA@NUS Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f5f1ea; -webkit-font-smoothing: antialiased; }
+  body { scroll-behavior: smooth; }
+  a { color: inherit; }
+  ::selection { background: #EF7C00; color: #f5f1ea; }
+  button { cursor: pointer; font: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<script src="../data/publications.js"></script>
+<script src="../data/people.js"></script>
+<script src="../data/news.js"></script>
+<script src="../data/research.js"></script>
+<script type="text/babel" src="../site/sections.jsx"></script>
+<script type="text/babel">
+  // Standalone openings page. Content sourced from the lab's canonical
+  // "Openings at CoSTA@NUS Lab" document; rendered in the site's visual style.
+
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfAXIiRBbyh-GPMjiRHeZbyPghTxrDVV-ZEh8R0kcTUpIxlfA/viewform';
+  const APPLY_URL = 'https://cde.nus.edu.sg/graduate/graduate-programmes-by-research/';
+
+  const PILLARS = [
+    {
+      tag: '01',
+      title: 'Cognitive Science of AI',
+      body: 'We aim to understand the inner workings and vulnerabilities of AI systems through the lens of cognitive psychology and neuroscience.',
+    },
+    {
+      tag: '02',
+      title: 'AI for Cognitive Health',
+      body: 'We leverage AI to simulate cognitive symptoms, advance our understanding, and treatment of cognitive disorders.',
+    },
+    {
+      tag: '03',
+      title: 'AI Safety',
+      body: 'We are dedicated to developing fundamental computational methodologies for accountable and interpretable AI safety, including risk quantification and mitigation.',
+    },
+  ];
+
+  const OPENINGS = [
+    {
+      tag: 'Remote · Open',
+      title: 'Remote research internships',
+      body: 'Multiple remote internship slots for candidates interested in pursuing a PhD in our lab. Work closely with the PI on projects aligned with the three research pillars.',
+    },
+    {
+      tag: '2027 Spring · Funded',
+      title: 'Fully-funded PhD (Scholarship / RA)',
+      body: "One fully-funded PhD position for 2027 Spring — prioritized for individuals from underrepresented backgrounds — plus an RA position in 2027 Fall. For excellent students, the PI is happy to nominate/endorse applications to the President's Graduate Fellowship (PGF), AISG PhD Fellowship, and other agency scholarships (A*STAR, SINGA, etc.).",
+      cta: { label: 'NUS scholarships ↗', href: 'https://nusgs.nus.edu.sg/scholarships/' },
+    },
+  ];
+
+  const OFFERS = [
+    {
+      tag: 'Mentorship',
+      title: 'Hands-on, personalized',
+      body: (
+        <>
+          Cutting-edge research with close mentorship. Many prior{' '}
+          <a href="https://jyhong.gitlab.io/#teaching" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: 'none', borderBottom: `1px solid ${C.accent}66` }}>mentees</a>{' '}
+          have multiple publications at ML/NLP top venues and have placed in industry.
+        </>
+      ),
+    },
+    {
+      tag: 'Collaboration',
+      title: 'A worldwide network',
+      body: 'Opportunities to collaborate with leading researchers at top universities — NUS, UT Austin, Harvard, UMich, UIUC, MIT, Princeton, and more.',
+    },
+    {
+      tag: 'Compute',
+      title: 'University-scale resources',
+      body: (
+        <>
+          University{' '}
+          <a href="https://research.nus.edu.sg/research-facilities/project/central-high-performance-computing-facility/" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: 'none', borderBottom: `1px solid ${C.accent}66` }}>HPC cluster</a>{' '}
+          with 48× H100 and 102× A40 GPUs. Additional lab resources coming online in Fall 2026.
+        </>
+      ),
+    },
+  ];
+
+  const CRITERIA = [
+    'Excellent problem-solving (coding or math) and analytical skills.',
+    'Able to work independently, with strong communication for collaboration.',
+    'Qualification for scholarships (i.e. a solid academic record) is prioritized.',
+    '(Optional) Demonstrated research experience and insight into relevant papers.',
+  ];
+
+  // Small mono-styled capsule used for press mentions and other inline chips.
+  function Chip({ href, children }) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: 'inline-block',
+          fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.1em', textTransform: 'uppercase',
+          color: C.ink, textDecoration: 'none',
+          padding: '5px 10px',
+          border: `1px solid ${C.ink}33`,
+          borderRadius: 999,
+          marginRight: 8, marginBottom: 8,
+          transition: 'background 0.12s ease-out, color 0.12s ease-out, border-color 0.12s ease-out',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = C.accent;
+          e.currentTarget.style.color = C.paper;
+          e.currentTarget.style.borderColor = C.accent;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = C.ink;
+          e.currentTarget.style.borderColor = `${C.ink}33`;
+        }}
+      >{children}</a>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // Hero
+  // ——————————————————————————————————————————————————————————————
+  function OpeningsHero() {
+    const isMobile = useIsMobile();
+    return (
+      <section style={{ background: C.paper, padding: isMobile ? '56px 0 40px' : '96px 0 56px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <a href="/" style={{
+            fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: C.ink, opacity: 0.6, textDecoration: 'none', display: 'inline-block', marginBottom: isMobile ? 24 : 32,
+          }}>← Back to home</a>
+
+          <div style={{
+            fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(40px, 7vw, 76px)',
+            letterSpacing: '-0.04em', lineHeight: 1.02,
+            color: C.ink, marginTop: 16, maxWidth: 900, textWrap: 'balance',
+          }}>
+            Openings at <span style={{ color: C.accent }}>Co<span style={{ fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 500 }}>STA</span></span>
+            <span style={{ opacity: 0.5, fontWeight: 500 }}>@NUS</span> Lab.
+          </div>
+          <div style={{
+            fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
+            fontSize: 'clamp(18px, 2.2vw, 22px)', lineHeight: 1.45,
+            color: C.ink, opacity: 0.72, marginTop: 24, maxWidth: 780, textWrap: 'pretty',
+          }}>
+            A frontier lab at the cognitive coastline — where human minds meet machine intelligence, guided
+            by cognitive science and a commitment to safe, ethical innovation.
+          </div>
+
+          <div style={{
+            marginTop: isMobile ? 32 : 48,
+            border: `1px solid ${C.ink}1a`,
+            background: C.paperWarm,
+            padding: isMobile ? 14 : 20,
+          }}>
+            <img
+              src="images/image1.png"
+              alt="CoSTA@NUS Lab — cognitive coastline illustration"
+              style={{ display: 'block', width: '100%', height: 'auto' }}
+            />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // About lab — three pillars
+  // ——————————————————————————————————————————————————————————————
+  function AboutLab() {
+    const isMobile = useIsMobile();
+    return (
+      <section style={{ background: C.paper, padding: isMobile ? '40px 0 56px' : '72px 0 96px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <SectionHeader
+            kicker="§ About · CoSTA@NUS Lab"
+            title="Cognitive Science & Trustworthy AI."
+            lede="We navigate the uncharted waters of AI across three intertwined threads."
+          />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: isMobile ? 16 : 28,
+          }}>
+            {PILLARS.map(p => (
+              <div key={p.tag} style={{
+                border: `1px solid ${C.ink}18`, background: `${C.paperWarm}`, padding: 28,
+              }}>
+                <MonoLabel color={C.accent} opacity={1} size={10}>§ {p.tag}</MonoLabel>
+                <div style={{
+                  fontFamily: F.display, fontWeight: 700, fontSize: 22,
+                  letterSpacing: '-0.02em', marginTop: 14, lineHeight: 1.2, color: C.ink,
+                }}>
+                  {p.title}
+                </div>
+                <div style={{
+                  fontFamily: F.display, fontSize: 14.5, lineHeight: 1.55,
+                  color: C.ink, opacity: 0.78, marginTop: 12,
+                }}>
+                  {p.body}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // About PI — bio paragraph + press chips
+  // ——————————————————————————————————————————————————————————————
+  function AboutPI() {
+    const isMobile = useIsMobile();
+    const inkLink = { color: C.ink, textDecoration: 'none', borderBottom: `1px solid ${C.ink}55`, fontWeight: 500 };
+    return (
+      <section style={{ background: C.paperWarm, padding: isMobile ? '56px 0' : '96px 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <SectionHeader
+            kicker="§ PI · Principal Investigator"
+            title={<>Junyuan "Jason" Hong.</>}
+          />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr',
+            gap: isMobile ? 24 : 48,
+            alignItems: 'start',
+          }}>
+            <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
+              <img
+                src="/site/jason-hong.png"
+                alt="Junyuan Hong"
+                style={{
+                  width: isMobile ? 180 : 240, height: isMobile ? 180 : 240,
+                  objectFit: 'cover',
+                  border: `1px solid ${C.ink}22`,
+                }}
+              />
+            </div>
+
+            <div>
+              <div style={{
+                fontFamily: F.editorial, fontSize: isMobile ? 17 : 19, lineHeight: 1.6,
+                color: C.ink, textWrap: 'pretty',
+              }}>
+                <a href="https://jyhong.gitlab.io/" target="_blank" rel="noopener noreferrer" style={inkLink}>Junyuan "Jason" Hong</a>
+                {' '}is an incoming Assistant Professor at{' '}
+                <a href="https://cde.nus.edu.sg/ece/" target="_blank" rel="noopener noreferrer" style={inkLink}>the ECE department of the National University of Singapore</a>
+                , and currently works at{' '}
+                <a href="https://www.massgeneral.org/" target="_blank" rel="noopener noreferrer" style={inkLink}>Massachusetts General Hospital</a>
+                {' '}&amp;{' '}
+                <a href="https://hms.harvard.edu/" target="_blank" rel="noopener noreferrer" style={inkLink}>Harvard Medical School</a>
+                . Previously, he was a postdoctoral fellow advised by{' '}
+                <a href="https://vita-group.github.io/" target="_blank" rel="noopener noreferrer" style={inkLink}>Dr. Atlas Wang</a>
+                {' '}in the Institute for Foundations of Machine Learning ({' '}
+                <a href="https://www.ifml.institute/" target="_blank" rel="noopener noreferrer" style={inkLink}>IFML</a>
+                ). He has been recognized as one of the{' '}
+                <a href="https://mlcommons.org/2024/06/2024-mlc-rising-stars/" target="_blank" rel="noopener noreferrer" style={inkLink}>MLSys Rising Stars</a>
+                {' '}in 2024 and received a{' '}
+                <a href="https://llm-pbe.github.io/vldb2024_nomination_Qinbin.pdf" target="_blank" rel="noopener noreferrer" style={inkLink}>Best Paper Nomination at VLDB 2024</a>
+                .
+              </div>
+
+              <div style={{ marginTop: 28 }}>
+                <MonoLabel size={10}>Press · Selected coverage</MonoLabel>
+                <div style={{ marginTop: 12 }}>
+                  <Chip href="https://www.nature.com/articles/d41586-025-03542-2">Nature News</Chip>
+                  <Chip href="https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/">The White House</Chip>
+                  <Chip href="https://www.wired.com/story/ai-models-social-media-cognitive-decline-study/">WIRED</Chip>
+                  <Chip href="https://www.forbes.com/sites/lesliekatz/2025/10/23/junky-online-content-gives-ai-models-brain-rot-too/">Forbes</Chip>
+                  <Chip href="https://fortune.com/2025/10/22/ai-brain-rot-junk-social-media-viral-addicting-content-tech/">Fortune</Chip>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // Openings — the main event, deep-blue section
+  // ——————————————————————————————————————————————————————————————
+  function OpeningsList() {
+    const isMobile = useIsMobile();
+    return (
+      <section style={{ background: C.secondary, color: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <MonoLabel color={C.paper} opacity={0.7}>§ Openings · Now hiring</MonoLabel>
+          <div style={{
+            fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6vw, 56px)',
+            letterSpacing: '-0.035em', lineHeight: 1.04, color: C.paper,
+            marginTop: 14, maxWidth: 900, textWrap: 'balance',
+          }}>
+            Roles open at the <span style={{ fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400 }}>cognitive coastline.</span>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? 20 : 32,
+            marginTop: isMobile ? 40 : 64,
+          }}>
+            {OPENINGS.map(o => (
+              <div key={o.tag} style={{
+                border: `1px solid ${C.paper}2a`, background: `${C.paper}06`, padding: isMobile ? 24 : 32,
+                display: 'flex', flexDirection: 'column', gap: 14,
+              }}>
+                <MonoLabel color={C.accent} opacity={1} size={10}>{o.tag}</MonoLabel>
+                <div style={{
+                  fontFamily: F.display, fontWeight: 700, fontSize: 26, letterSpacing: '-0.02em',
+                  lineHeight: 1.15, color: C.paper,
+                }}>
+                  {o.title}
+                </div>
+                <div style={{ fontFamily: F.display, fontSize: 15, lineHeight: 1.6, color: C.paper, opacity: 0.82 }}>
+                  {o.body}
+                </div>
+                {o.cta && (
+                  <a
+                    href={o.cta.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      alignSelf: 'flex-start',
+                      fontFamily: F.mono, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
+                      color: C.paper, textDecoration: 'none',
+                      padding: '8px 14px',
+                      border: `1px solid ${C.paper}44`,
+                      marginTop: 4,
+                    }}
+                  >{o.cta.label}</a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // What we offer
+  // ——————————————————————————————————————————————————————————————
+  function WhatWeOffer() {
+    const isMobile = useIsMobile();
+    return (
+      <section style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <SectionHeader
+            kicker="§ What we offer"
+            title="Close mentorship, global collaborators, serious compute."
+          />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: isMobile ? 16 : 28,
+          }}>
+            {OFFERS.map(o => (
+              <div key={o.tag} style={{
+                padding: '28px 0',
+                borderTop: `1px solid ${C.ink}22`,
+              }}>
+                <MonoLabel size={10}>{o.tag}</MonoLabel>
+                <div style={{
+                  fontFamily: F.display, fontWeight: 700, fontSize: 22, letterSpacing: '-0.02em',
+                  color: C.ink, marginTop: 10, lineHeight: 1.2,
+                }}>
+                  {o.title}
+                </div>
+                <div style={{
+                  fontFamily: F.display, fontSize: 15, lineHeight: 1.6,
+                  color: C.ink, opacity: 0.78, marginTop: 12,
+                }}>
+                  {o.body}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            marginTop: isMobile ? 48 : 72,
+            padding: isMobile ? 24 : 32,
+            border: `1px solid ${C.ink}1a`,
+            background: C.paperWarm,
+          }}>
+            <MonoLabel size={10}>§ About · NUS ECE</MonoLabel>
+            <div style={{
+              fontFamily: F.editorial, fontSize: isMobile ? 17 : 19, lineHeight: 1.55,
+              color: C.ink, marginTop: 12, textWrap: 'pretty',
+            }}>
+              The Department of Electrical and Computer Engineering (<span style={{ fontStyle: 'italic' }}>QS2025 #4</span>) at
+              the National University of Singapore (<span style={{ fontStyle: 'italic' }}>QS2025 #8</span>), housed under the
+              dynamic College of Design and Engineering (CDE), offers a world-class environment at the
+              forefront of innovation in electronics, computing, robotics, IoT, and sustainable technologies.
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ——————————————————————————————————————————————————————————————
+  // Who we're looking for + How to apply
+  // ——————————————————————————————————————————————————————————————
+  function WhoAndHow() {
+    const isMobile = useIsMobile();
+    return (
+      <section style={{ background: C.ink, color: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? 48 : 64,
+          }}>
+            {/* Who */}
+            <div>
+              <MonoLabel color={C.paper} opacity={0.7}>§ Who we're looking for</MonoLabel>
+              <div style={{
+                fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(28px, 4.2vw, 40px)',
+                letterSpacing: '-0.03em', lineHeight: 1.08, color: C.paper, marginTop: 14, textWrap: 'balance',
+              }}>
+                A strong background in AI/ML, cognitive science (neuroscience or psychology), or related fields.
+              </div>
+              <ul style={{
+                listStyle: 'none', padding: 0, margin: '24px 0 0',
+                display: 'flex', flexDirection: 'column', gap: 14,
+              }}>
+                {CRITERIA.map((c, i) => (
+                  <li key={i} style={{
+                    display: 'flex', gap: 14,
+                    fontFamily: F.display, fontSize: 15.5, lineHeight: 1.55,
+                    color: C.paper, opacity: 0.85,
+                  }}>
+                    <span style={{
+                      fontFamily: F.mono, fontSize: 11, color: C.accent,
+                      flex: '0 0 auto', paddingTop: 4,
+                    }}>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* How */}
+            <div>
+              <MonoLabel color={C.paper} opacity={0.7}>§ How to apply</MonoLabel>
+              <div style={{
+                fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(28px, 4.2vw, 40px)',
+                letterSpacing: '-0.03em', lineHeight: 1.08, color: C.paper, marginTop: 14, textWrap: 'balance',
+              }}>
+                Two steps, in order.
+              </div>
+
+              <ol style={{
+                listStyle: 'none', padding: 0, margin: '24px 0 0',
+                display: 'flex', flexDirection: 'column', gap: 20,
+              }}>
+                <li>
+                  <div style={{ fontFamily: F.mono, fontSize: 11, color: C.accent, letterSpacing: '0.12em' }}>STEP 01</div>
+                  <div style={{
+                    fontFamily: F.display, fontWeight: 600, fontSize: 18, color: C.paper, marginTop: 6, lineHeight: 1.35,
+                  }}>
+                    Fill the Recruiting Form.
+                  </div>
+                  <div style={{
+                    fontFamily: F.display, fontSize: 14.5, lineHeight: 1.55, color: C.paper, opacity: 0.78, marginTop: 6,
+                  }}>
+                    TOEFL/IELTS and GRE are required for applications. If there's a good match,
+                    the PI will reach out by email to schedule an interview.
+                  </div>
+                </li>
+                <li>
+                  <div style={{ fontFamily: F.mono, fontSize: 11, color: C.accent, letterSpacing: '0.12em' }}>STEP 02</div>
+                  <div style={{
+                    fontFamily: F.display, fontWeight: 600, fontSize: 18, color: C.paper, marginTop: 6, lineHeight: 1.35,
+                  }}>
+                    Apply online once cleared.
+                  </div>
+                  <div style={{
+                    fontFamily: F.display, fontSize: 14.5, lineHeight: 1.55, color: C.paper, opacity: 0.78, marginTop: 6,
+                  }}>
+                    Reminder — apply for <strong>PhD</strong> (not EngD); set Source of Finance to NUS research
+                    scholarship (or your own); select <strong>Junyuan Hong</strong> as your proposed supervisor.
+                  </div>
+                </li>
+              </ol>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 32, alignItems: 'center' }}>
+                <a
+                  href={FORM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: F.display, fontWeight: 600, fontSize: 15, color: C.ink,
+                    background: C.accent, padding: '16px 24px', textDecoration: 'none',
+                    letterSpacing: '-0.01em', display: 'inline-flex', alignItems: 'center', gap: 8,
+                  }}
+                >
+                  Fill the Recruiting Form <span>→</span>
+                </a>
+                <a
+                  href={APPLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: F.display, fontWeight: 500, fontSize: 15, color: C.paper,
+                    padding: '16px 24px', textDecoration: 'none', border: `1px solid ${C.paper}3a`,
+                    letterSpacing: '-0.01em',
+                  }}
+                >Apply to NUS Graduate Programmes</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  function App() {
+    return (
+      <>
+        <Nav basePath="/" />
+        <OpeningsHero />
+        <AboutLab />
+        <AboutPI />
+        <OpeningsList />
+        <WhatWeOffer />
+        <WhoAndHow />
+        <Footer basePath="/" />
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

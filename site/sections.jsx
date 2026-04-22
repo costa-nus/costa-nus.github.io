@@ -1327,9 +1327,7 @@ function Join() {
             Fill the interest form <span>→</span>
           </a>
           <a
-            href="https://docs.google.com/document/d/1L06GRLxORd_O5Jr2-e2KKZxAw2BA2qB9GfVFV_nVDHo/edit?usp=sharing"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/openings/"
             style={{
               fontFamily: F.display, fontWeight: 500, fontSize: 15, color: C.paper,
               padding: '16px 24px', textDecoration: 'none', border: `1px solid ${C.paper}3a`,
