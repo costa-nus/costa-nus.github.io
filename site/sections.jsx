@@ -710,6 +710,20 @@ function Publications() {
   );
 }
 
+// Pick the best external link for a publication title: prefer a project
+// website, then the PDF/preprint, then fall back to the first link.
+function pickPubHref(p) {
+  const links = p.links || [];
+  if (!links.length) return null;
+  const score = (l) => {
+    const lab = (l.label || '').toLowerCase();
+    if (lab.includes('website')) return 0;
+    if (lab === 'pdf' || lab === 'preprint') return 1;
+    return 2;
+  };
+  return [...links].sort((a, b) => score(a) - score(b))[0].href;
+}
+
 function PubRow({ p, showYear = true }) {
   const isMobile = useIsMobile();
   // venue may be bare ("ICLR") or carry a parenthetical modifier ("ICLR (Spotlight)",
@@ -719,6 +733,13 @@ function PubRow({ p, showYear = true }) {
   const venueBase = venueMatch ? venueMatch[1] : p.venue;
   const typeLabel = venueMatch ? venueMatch[2] : (p.type || '');
   const highlight = /(Spotlight|Best Paper|Finalist|Oral)/i.test(typeLabel);
+  const href = pickPubHref(p);
+  const titleNode = href
+    ? <a href={href} target="_blank" rel="noopener"
+         style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.paper}33` }}>
+        {p.title}
+      </a>
+    : p.title;
 
   const tagChips = (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
@@ -762,7 +783,7 @@ function PubRow({ p, showYear = true }) {
               color: C.accent, marginRight: 6, fontFamily: F.display, fontSize: 15,
             }}>★</span>
           )}
-          {p.title}
+          {titleNode}
         </div>
         {p.tags && p.tags.length > 0 && (
           <div style={{ marginTop: 10 }}>{tagChips}</div>
@@ -802,7 +823,7 @@ function PubRow({ p, showYear = true }) {
             verticalAlign: '1px',
           }}>★</span>
         )}
-        {p.title}
+        {titleNode}
       </div>
       {tagChips}
     </div>
