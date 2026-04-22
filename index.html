@@ -110,6 +110,11 @@
   window.parent.postMessage({type: '__edit_mode_available'}, '*');
 </script>
 
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<script src="data/publications.js"></script>
+<script src="data/people.js"></script>
+<script src="data/news.js"></script>
+<script src="data/research.js"></script>
 <script type="text/babel" src="site/sections.jsx"></script>
 <script type="text/babel">
   function App() {

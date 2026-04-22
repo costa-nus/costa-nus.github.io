@@ -55,6 +55,11 @@
 <body>
 <div id="root"></div>
 
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<script src="../data/publications.js"></script>
+<script src="../data/people.js"></script>
+<script src="../data/news.js"></script>
+<script src="../data/research.js"></script>
 <script type="text/babel" src="../site/sections.jsx"></script>
 <script type="text/babel">
   // Standalone publications archive. Reuses PUBS_FULL from sections.jsx and

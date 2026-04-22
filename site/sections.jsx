@@ -372,9 +372,9 @@ function PIIntro() {
             fontFamily: F.display, fontSize: 15, lineHeight: 1.6, color: C.ink, opacity: 0.85,
           }}>
             <p style={{ margin: 0 }}>
-              Previously a postdoctoral fellow with Dr. Atlas Wang at the Institute for Foundations
-              of Machine Learning (IFML), UT Austin, affiliated with the UT AI Health Lab and the
-              Good Systems Challenge.
+              Previously a research fellow at Massachusetts General Hospital &amp; Harvard Medical
+              School, after two years at Institute for Foundations of Machine Learning (IFML) and
+              the University of Texas at Austin.
             </p>
             <p style={{ margin: 0 }}>
               Named an <b style={{ color: C.ink }}>MLSys Rising Star</b> (2024), <b>Top Area Chair</b> at
@@ -387,11 +387,26 @@ function PIIntro() {
           <div style={{ marginTop: 48 }}>
             <MonoLabel size={9}>Covered in</MonoLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginTop: 14, alignItems: 'center' }}>
-              {['Nature News', 'WIRED', 'Forbes', 'FORTUNE', 'The White House'].map(n => (
-                <div key={n} style={{
-                  fontFamily: F.editorial, fontStyle: 'italic', fontSize: 22, color: C.ink, opacity: 0.5,
-                  letterSpacing: '-0.01em',
-                }}>{n}</div>
+              {[
+                ['Nature News',    'https://www.nature.com/articles/d41586-025-03542-2'],
+                ['WIRED',          'https://www.wired.com/story/ai-models-social-media-cognitive-decline-study/'],
+                ['Forbes',         'https://www.forbes.com/sites/lesliekatz/2025/10/23/junky-online-content-gives-ai-models-brain-rot-too/'],
+                ['FORTUNE',        'https://fortune.com/2025/10/22/ai-brain-rot-junk-social-media-viral-addicting-content-tech/'],
+                ['The White House','https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/'],
+              ].map(([n, href]) => (
+                <a
+                  key={n}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: F.editorial, fontStyle: 'italic', fontSize: 22, color: C.ink, opacity: 0.5,
+                    letterSpacing: '-0.01em', textDecoration: 'none',
+                    transition: 'opacity 0.15s ease-out, color 0.15s ease-out',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.accent; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '0.5'; e.currentTarget.style.color = C.ink; }}
+                >{n}</a>
               ))}
             </div>
           </div>
@@ -406,41 +421,7 @@ function PIIntro() {
 // ————————————————————————————————————————————————————————————
 
 function ResearchPillars() {
-  const pillars = [
-    {
-      id: 'T1',
-      title: 'Cognitive Science of AI',
-      lede: 'We aim to understand the inner workings and vulnerabilities of AI systems through the lens of cognitive psychology and neuroscience.',
-      bullets: [
-        'Developing general automatic frameworks of reasoning and learning, e.g., LLM-driven Auto Differentiation [1].',
-        'Understanding the learning process and cognitive behaviors of AI via psychological or neuron intervention [2] [3].',
-      ],
-      refs: ['[1] DP-OPT · ICLR 24 Spotlight', '[2] SEAL · COLM 25', '[3] LLM Brain Rot · arXiv 25'],
-      figure: 'neurons',
-    },
-    {
-      id: 'T2',
-      title: 'AI for Cognitive Health',
-      lede: 'We leverage AI to advance our understanding and treatment of cognitive disorders and to simulate cognitive symptoms.',
-      bullets: [
-        'AI-driven dementia diagnosis and intervention for older adults [4].',
-        'Digital twin of dementia patients – AI-driven simulation of cognitive behaviors [4].',
-      ],
-      refs: ['[4] A-CONECT · ICLRW 24'],
-      figure: 'pulse',
-    },
-    {
-      id: 'T3',
-      title: 'AI Safety',
-      lede: 'We are dedicated to developing fundamental computational methodologies for accountable and interpretable AI safety, including risk quantification, and mitigation.',
-      bullets: [
-        'Privacy attack and defense in machine learning and multi-agent networks [5].',
-        'Constitutional AI agents in security-sensitive environments [6].',
-      ],
-      refs: ['[5] LLM-PBE · VLDB 24 Best Paper Finalist', '[6] GuardAgent · ICML 25'],
-      figure: 'shield',
-    },
-  ];
+  const pillars = window.RESEARCH_PILLARS;
 
   return (
     <section id="research" style={{ background: C.paper, padding: '120px 0' }}>
@@ -558,49 +539,7 @@ function PillarFigure({ kind }) {
 // `note` on an author surfaces as a tooltip (e.g. "Equal contribution").
 // Link labels preserve the PI site's capsule text verbatim ("PDF", "🌍 Website",
 // "🤗 Dataset", etc.).
-const PUBS_FULL = [
-  { year: "2025", venue: "ArXiv", title: "LLMs Can Get \"Brain Rot\"!", authors: [{ name: "Shuo Xing", note: "Equal contribution" }, { name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Yifan Wang" }, { name: "Runjin Chen" }, { name: "Zhenyu Zhang" }, { name: "Ananth Grama" }, { name: "Zhengzhong Tu" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2510.13928" }, { label: "🌍 Website", href: "https://llm-brain-rot.github.io/" }], tags: ["Trust","LLM"], selected: true, detail: "/publication/2025brain-rot/" },
-  { year: "2026", venue: "ICRA", title: "AD-VF: LLM-Automatic Differentiation Enables Fine-Tuning-Free Robot Planning from Formal Methods Feedback", authors: [{ name: "Yunhao Yang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Gabriel Jacob Perin" }, { name: "Zhiwen Fan" }, { name: "Li Yin" }, { name: "Zhangyang Wang" }, { name: "Ufuk Topcu" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2509.18384" }], tags: ["LLM","Robotics","Reasoning"], detail: "/publication/2025ad_vf/" },
-  { year: "2025", venue: "COLM", title: "LoX: Low-Rank Extrapolation Robustifies LLM Safety Against Fine-tuning", authors: [{ name: "Gabriel J. Perin" }, { name: "Runjin Chen" }, { name: "Xuxi Chen" }, { name: "Nina S. T. Hirata" }, { name: "Zhangyang Wang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2506.15606" }, { label: "Code", href: "https://github.com/VITA-Group/LoX" }], tags: ["LLM","Safety"], detail: "/publication/2025lox/" },
-  { year: "2025", venue: "COLM", title: "More is Less: The Pitfalls of Multi-Model Synthetic Preference Data in DPO Safety Alignment", authors: [{ name: "Yifan Wang" }, { name: "Runjin Chen" }, { name: "Bolian Li" }, { name: "David Cho" }, { name: "Yihe Deng" }, { name: "Ruqi Zhang" }, { name: "Tianlong Chen" }, { name: "Zhangyang Wang" }, { name: "Ananth Grama" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2504.02193" }], tags: ["LLM","Trust"], detail: "/publication/2025moreisless/" },
-  { year: "2025", venue: "ArXiv", title: "Scaling Textual Gradients via Sampling-Based Momentum", authors: [{ name: "Zixin Ding", note: "Equal contribution" }, { name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Zhan Shi" }, { name: "Jiachen T. Wang" }, { name: "Zinan Lin" }, { name: "Li Yin" }, { name: "Meng Liu" }, { name: "Zhangyang Wang" }, { name: "Yuxin Chen" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2506.00400" }], tags: ["LLM"], detail: "/publication/2025tg_momentum/" },
-  { year: "2025", venue: "ICML", title: "GuardAgent: Safeguard LLM Agents by a Guard Agent via Knowledge-Enabled Reasoning", authors: [{ name: "Zhen Xiang" }, { name: "Linzhi Zheng" }, { name: "Yanjie Li" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Qinbin Li" }, { name: "Han Xie" }, { name: "Jiawei Zhang" }, { name: "Zidi Xiong" }, { name: "Chulin Xie" }, { name: "Carl Yang" }, { name: "Dawn Song" }, { name: "Bo Li" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2406.09187" }, { label: "🏁 Competition", href: "https://www.llmagentsafetycomp24.com/" }], tags: ["LLM","Trust"], selected: true, detail: "/publication/2024guardagent/" },
-  { year: "2025", venue: "COLM", title: "SEAL: Steerable Reasoning Calibration of Large Language Models for Free", authors: [{ name: "Runjin Chen" }, { name: "Zhenyu Zhang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Souvik Kundu" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2504.07986" }, { label: "Code", href: "https://github.com/VITA-Group/SEAL" }], tags: ["LLM","Reasoning"], detail: "/publication/2025seal/" },
-  { year: "2025", venue: "EMNLP (Main)", title: "MedHallu: A Comprehensive Benchmark for Detecting Medical Hallucinations in Large Language Models", authors: [{ name: "Shrey Pandit" }, { name: "Jiawei Xu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Zhangyang Wang" }, { name: "Tianlong Chen" }, { name: "Kaidi Xu" }, { name: "Ying Ding" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2502.14302" }, { label: "Code", href: "https://github.com/MedHallu/MedHalu" }, { label: "🤗 Dataset", href: "https://huggingface.co/datasets/UTAustin-AIHealth/MedHallu" }, { label: "🌍 Website", href: "https://medhallu.github.io" }], tags: ["Trust","LLM","Healthcare","Safety"], selected: true, detail: "/publication/2025medhallu/" },
-  { year: "2025", venue: "NAACL (Main)", title: "Extracting and Understanding the Superficial Knowledge in Alignment", authors: [{ name: "Runjin Chen" }, { name: "Gabriel Jacob Perin" }, { name: "Xuxi Chen" }, { name: "Xilun Chen" }, { name: "Yan Han" }, { name: "Nina S. T. Hirata" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Bhavya Kailkhura" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2502.04602" }, { label: "Code", href: "https://github.com/VITA-Group/Superficial_Alignment" }], tags: ["LLM","Safety"], selected: true, detail: "/publication/2025_superficial/" },
-  { year: "2025", venue: "NAACL", title: "GuideLLM: Exploring LLM-Guided Conversation with Applications in Autobiography Interviewing", authors: [{ name: "Jinhao Duan", note: "Equal contribution" }, { name: "Xinyu Zhao", note: "Equal contribution" }, { name: "Zhuoxuan Zhang", note: "Equal contribution" }, { name: "Eunhye Grace Ko" }, { name: "Lily Boddy" }, { name: "Chenan Wang" }, { name: "Tianhao Li" }, { name: "Alexander Rasgon" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Min Kyung Lee" }, { name: "Chenxi Yuan" }, { name: "Qi Long" }, { name: "Ying Ding" }, { name: "Tianlong Chen" }, { name: "Kaidi Xu" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=G6h0ya2d2c" }], tags: ["Healthcare","LLM"], detail: "/publication/2024_remi/" },
-  { year: "2024", venue: "VLDB (Best Paper Finalist)", title: "LLM-PBE: Assessing Data Privacy in Large Language Models", authors: [{ name: "Qinbin Li", note: "Equal contribution" }, { name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Chulin Xie", note: "Equal contribution" }, { name: "Jeffrey Tan" }, { name: "Rachel Xin" }, { name: "Junyi Hou" }, { name: "Xavier Yin" }, { name: "Zhun Wang" }, { name: "Dan Hendrycks" }, { name: "Zhangyang Wang" }, { name: "Bo Li" }, { name: "Bingsheng He" }, { name: "Dawn Song" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2408.12787" }, { label: "Code", href: "https://github.com/QinbinLi/LLM-PBE" }, { label: "🌍 Website", href: "https://llm-pbe.github.io/" }, { label: "🏁 Competition", href: "https://llm-pc.github.io/" }, { label: "🏆 Best Paper Nomination", href: "https://llm-pbe.github.io/vldb2024_nomination_Qinbin.pdf" }, { label: "Finetune Code", href: "https://github.com/jyhong836/llm-dp-finetune" }], tags: ["Trust","LLM","Privacy"], selected: true, detail: "/publication/2024llm_pbe/" },
-  { year: "2024", venue: "ICML", title: "Decoding Compressed Trust: Scrutinizing the Trustworthiness of Efficient LLMs Under Compression", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Jinhao Duan", note: "Equal contribution" }, { name: "Chenhui Zhang", note: "Equal contribution" }, { name: "Zhangheng Li", note: "Equal contribution" }, { name: "Chulin Xie" }, { name: "Kelsey Lieberman" }, { name: "James Diffenderfer" }, { name: "Brian Bartoldson" }, { name: "Ajay Jaiswal" }, { name: "Kaidi Xu" }, { name: "Bhavya Kailkhura" }, { name: "Dan Hendrycks" }, { name: "Dawn Song" }, { name: "Zhangyang Wang" }, { name: "Bo Li" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2403.15447" }, { label: "🤗 Models", href: "https://huggingface.co/compressed-llm" }, { label: "🌍 Website", href: "https://decoding-comp-trust.github.io" }], tags: ["Trust","LLM"], selected: true, detail: "/publication/2024decoding-comp-trust/" },
-  { year: "2024", venue: "ICML", title: "Revisiting Zeroth-Order Optimization for Memory-Efficient LLM Fine-Tuning: A Benchmark", authors: [{ name: "Yihua Zhang", note: "Equal contribution" }, { name: "Pingzhi Li", note: "Equal contribution" }, { name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Jiaxiang Li", note: "Equal contribution" }, { name: "Yimeng Zhang" }, { name: "Wenqing Zheng" }, { name: "Pin-Yu Chen" }, { name: "Jason D. Lee" }, { name: "Wotao Yin" }, { name: "Mingyi Hong" }, { name: "Zhangyang Wang" }, { name: "Sijia Liu" }, { name: "Tianlong Chen" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2402.11592" }, { label: "Code", href: "https://github.com/ZO-Bench/ZO-LLM" }, { label: "👨‍🏫Tutorial", href: "https://sites.google.com/view/zo-tutorial-aaai-2024/" }], tags: ["LLM"], detail: "/publication/2024_zo_llm/" },
-  { year: "2024", venue: "ICLRW", title: "A-CONECT: Designing AI-based Conversational Chatbot for Early Dementia Intervention", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Wenqing Zheng", note: "Equal contribution" }, { name: "Han Meng" }, { name: "Siqi Liang" }, { name: "Anqing Chen" }, { name: "Hiroko H. Dodge" }, { name: "Jiayu Zhou" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=rACfuoNKBU" }, { label: "Website", href: "https://a-conect.github.io/project/" }, { label: "🤖Demo", href: "https://a-conect.github.io" }], tags: ["Healthcare","LLM"], selected: true, detail: "/publication/2024_a_conect/" },
-  { year: "2024", venue: "AISTATS", title: "On the Generalization Ability of Unsupervised Pretraining", authors: [{ name: "Yuyang Deng" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Jiayu Zhou" }, { name: "Mehrdad Mahdavi" }], links: [{ label: "PDF", href: "http://arxiv.org/abs/2403.06871" }], tags: [], detail: "/publication/2024unsupervised_pretrain/" },
-  { year: "2024", venue: "ICLR", title: "Safe and Robust Watermark Injection with a Single OoD Image", authors: [{ name: "Shuyang Yu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haobo Zhang" }, { name: "Haotao Wang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2309.01786" }, { label: "Code", href: "https://github.com/illidanlab/single_oodwatermark" }], tags: ["Trust"], selected: true, detail: "/publication/2023one_image_watermark/" },
-  { year: "2024", venue: "SaTML", title: "Shake to Leak: Fine-tuning Diffusion Models Can Amplify the Generative Privacy Risk", authors: [{ name: "Zhangheng Li" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Bo Li" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2403.09450" }, { label: "Code", href: "https://github.com/VITA-Group/Shake-to-Leak" }], tags: ["Privacy","LLM"], selected: true, detail: "/publication/2023finetune_privacy/" },
-  { year: "2024", venue: "ICLR (Spotlight)", title: "DP-OPT: Make Large Language Model Your Privacy-Preserving Prompt Engineer", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Jiachen T. Wang" }, { name: "Chenhui Zhang" }, { name: "Zhangheng Li" }, { name: "Bo Li" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2312.03724" }, { label: "Code", href: "https://github.com/VITA-Group/DP-OPT" }], tags: ["Privacy","LLM"], selected: true, detail: "/publication/2023dp_opt/" },
-  { year: "2023", venue: "NeurIPS-RegML", title: "Who Leaked the Model? Tracking IP Infringers in Accountable Federated Learning", authors: [{ name: "Shuyang Yu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Yi Zeng" }, { name: "Fei Wang" }, { name: "Ruoxi Jia" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2312.03205" }], tags: ["FL","Trust"], detail: "/publication/2023_fl_ip_track/" },
-  { year: "2023", venue: "NeurIPS", title: "Understanding Deep Gradient Leakage via Inversion Influence Functions", authors: [{ name: "Haobo Zhang", note: "Equal contribution" }, { name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Yuyang Deng" }, { name: "Mehrdad Mahdavi" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2309.13016" }, { label: "Code", href: "https://github.com/illidanlab/inversion-influence-function" }], tags: ["Privacy"], selected: true, detail: "/publication/2023neurips_i2f/" },
-  { year: "2023", venue: "KDDW", title: "A Privacy-Preserving Hybrid Federated Learning Framework for Financial Crime Detection", authors: [{ name: "Haobo Zhang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Fan Dong" }, { name: "Steve Drew" }, { name: "Liangjie Xue" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2302.03654" }, { label: "Code", href: "https://github.com/illidanlab/HyFL" }, { label: "🏆 PETs", href: "https://drivendata.co/blog/federated-learning-pets-prize-winners-phases-2-3" }, { label: "🏛️ White House", href: "https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/" }], tags: ["FL","Privacy"], selected: true, detail: "/publication/2023_hybrid_fl_fin/" },
-  { year: "2023", venue: "KDDW", title: "FedNoisy: A Federated Noisy Label Learning Benchmark", authors: [{ name: "Siqi Liang" }, { name: "Jintao Huang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Fan Dong" }, { name: "Dun Zeng" }, { name: "Jiayu Zhou" }, { name: "Zenglin Xu" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=cXMenagKy-7" }, { label: "Code", href: "https://github.com/smilelab-fl/fednoisy" }], tags: ["FL"], detail: "/publication/fednoisy2023/" },
-  { year: "2023", venue: "ICML", title: "Revisiting Data-Free Knowledge Distillation with Poisoned Teachers", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true, note: "Equal contribution" }, { name: "Yi Zeng", note: "Equal contribution" }, { name: "Shuyang Yu", note: "Equal contribution" }, { name: "Lingjuan Lyu" }, { name: "Ruoxi Jia" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2306.02368" }, { label: "Code", href: "https://github.com/illidanlab/ABD" }, { label: "Poster", href: "/publication/datafree_backdoor2023icml/poster.pdf" }], tags: ["FL","Trust"], selected: true, detail: "/publication/datafree_backdoor2023icml/" },
-  { year: "2023", venue: "TMLR", title: "How Robust is Your Fairness? Evaluating and Sustaining Fairness under Unseen Distribution Shifts", authors: [{ name: "Haotao Wang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Jiayu Zhou" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=11pGlecTz2" }], tags: ["Fairness","Trust"], detail: "/publication/fair-robust2023tmlr/" },
-  { year: "2023", venue: "ICLR", title: "MECTA: Memory-Economic Continual Test-Time Model Adaptation", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Lingjuan Lyu" }, { name: "Jiayu Zhou" }, { name: "Michael Spranger" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=N92hjSf5NNh" }, { label: "Code", href: "https://github.com/SonyAI/MECTA" }, { label: "Slides", href: "/files/mecta_CVT.pdf" }], tags: ["Trust"], detail: "/publication/mecta2023/" },
-  { year: "2023", venue: "ICLR (Spotlight)", title: "Turning the Curse of Heterogeneity in Federated Learning into a Blessing for Out-of-Distribution Detection", authors: [{ name: "Shuyang Yu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haotao Wang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=mMNimwRb7Gr" }, { label: "Code", href: "https://github.com/illidanlab/FOSTER" }], tags: ["FL","Trust"], detail: "/publication/foster2023/" },
-  { year: "2023", venue: "AAAI (Oral)", title: "Federated Robustness Propagation: Sharing Adversarial Robustness in Federated Learning", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haotao Wang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "Preprint", href: "https://arxiv.org/abs/2106.10196" }, { label: "Code", href: "https://github.com/illidanlab/FedRBN" }, { label: "Poster", href: "/publication/frp2023/poster.pdf" }], tags: ["FL","Trust"], detail: "/publication/frp2023/" },
-  { year: "2022", venue: "Preprint", title: "Precautionary Unfairness in Self-Supervised Contrastive Pre-training", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haotao Wang" }, { name: "Haobo Zhang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "Preprint", href: "https://openreview.net/pdf?id=l2FXO1RJ5Hs" }], tags: ["Trust"], detail: "/publication/faircl2022/" },
-  { year: "2022", venue: "NeurIPS", title: "Outsourcing Training without Uploading Data via Efficient Collaborative Open-Source Sampling", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Lingjuan Lyu" }, { name: "Jiayu Zhou" }, { name: "Michael Spranger" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/2210.12575" }, { label: "Poster", href: "/publication/ecos/priv_smp_poster.pdf" }, { label: "Slides", href: "/publication/ecos/priv_smp_5min.pdf" }], tags: ["Privacy"], selected: true, detail: "/publication/ecos/" },
-  { year: "2022", venue: "NeurIPS", title: "Trap and Replace: Defending Backdoor Attacks by Trapping Them into an Easy-to-Replace Subnetwork", authors: [{ name: "Haotao Wang" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Aston Zhang" }, { name: "Jiayu Zhou" }, { name: "Zhangyang Wang" }], links: [{ label: "PDF", href: "https://arxiv.org/pdf/2210.06428.pdf" }, { label: "Code", href: "https://github.com/VITA-Group/Trap-and-Replace-Backdoor-Defense" }], tags: ["Trust"], detail: "/publication/trap_backdoor/" },
-  { year: "2022", venue: "ICML", title: "Resilient and Communication Efficient Learning for Heterogeneous Federated Systems", authors: [{ name: "Zhuangdi Zhu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Steve Drew" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://proceedings.mlr.press/v162/zhu22e/zhu22e.pdf" }], tags: ["FL"], detail: "/publication/resilient_fl/" },
-  { year: "2022", venue: "FAccT", title: "Dynamic Privacy Budget Allocation Improves Data Efficiency of Differentially Private Gradient Descent", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "Preprint", href: "https://arxiv.org/abs/2101.07413" }, { label: "Slides", href: "/publication/ondynamic/dyn_dp.pdf" }], tags: ["Privacy"], selected: true, detail: "/publication/ondynamic/" },
-  { year: "2022", venue: "ICLR", title: "Efficient Split-Mix Federated Learning for On-Demand and In-Situ Customization", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haotao Wang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://openreview.net/pdf?id=_QLmakITKg" }, { label: "Code", href: "https://github.com/illidanlab/SplitMix" }, { label: "Slides", href: "/publication/split_mix/slides.pdf" }, { label: "Video", href: "https://www.youtube.com/watch?v=VA2XsCA6k9s" }], tags: ["FL"], detail: "/publication/split_mix/" },
-  { year: "2021", venue: "KDD", title: "Federated Adversarial Debiasing for Fair and Transferable Representations", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Zhuangdi Zhu" }, { name: "Shuyang Yu" }, { name: "Hiroko Dodge" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://dl.acm.org/doi/pdf/10.1145/3447548.3467281" }, { label: "Code", href: "https://github.com/illidanlab/FADE" }, { label: "Slides", href: "/publication/fade2021kdd/slides.pdf" }], tags: ["FL","Healthcare","Fairness","Trust"], selected: true, detail: "/publication/fade2021kdd/" },
-  { year: "2021", venue: "ICML", title: "Data-Free Knowledge Distillation for Heterogeneous Federated Learning", authors: [{ name: "Zhuangdi Zhu" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Jiayu Zhou" }], links: [{ label: "Preprint", href: "https://arxiv.org/abs/2105.10056" }, { label: "Code", href: "https://github.com/zhuangdizhu/FedGen" }], tags: ["FL"], detail: "/publication/data_free_fl/" },
-  { year: "2021", venue: "AAAI", title: "Learning Model-Based Privacy Protection under Budget Constraints", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Haotao Wang" }, { name: "Zhangyang Wang" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://ojs.aaai.org/index.php/AAAI/article/view/16941" }, { label: "Slides", href: "https://slideslive.com/38948883/learning-modelbased-privacy-protection-under-budget-constraints?ref=account-folder-75497-folders" }, { label: "Video", href: "https://slideslive.com/38948883/learning-modelbased-privacy-protection-under-budget-constraints?ref=account-folder-75497-folders" }, { label: "Supplementary", href: "/publication/learn2protect/l2p_aaai21_supl.pdf" }], tags: ["Privacy"], detail: "/publication/learn2protect/" },
-  { year: "2020", venue: "Alzheimer's & Dementia", title: "Detecting MCI using real-time, ecologically valid data capture methodology: How to improve scientific rigor in digital biomarker analyses", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Jeffrey Kaye" }, { name: "Hiroko H Dodge" }, { name: "Jiayu Zhou" }], links: [{ label: "PDF", href: "https://alz-journals.onlinelibrary.wiley.com/doi/full/10.1002/alz.044371" }], tags: ["Healthcare"], selected: true, detail: "/publication/ad2020/" },
-  { year: "2019", venue: "TKDD", title: "Variant Grassmann Manifolds: A Representation Augmentation Method for Action Recognition", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Yang Li" }, { name: "Huanhuan Chen" }], links: [{ label: "PDF", href: "https://dl.acm.org/citation.cfm?id=3314203" }, { label: "DOI", href: "https://doi.org/10.1145/3314203" }], tags: [], detail: "/publication/vgm/" },
-  { year: "2019", venue: "TNNLS", title: "Short Sequence Classification Through Discriminable Linear Dynamical System", authors: [{ name: "Yang Li" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Huanhuan Chen" }], links: [{ label: "DOI", href: "https://doi.org/10.1109/TNNLS.2019.2891743" }], tags: [], detail: "/publication/dscri_lds/" },
-  { year: "2018", venue: "KDD (Oral)", title: "Disturbance Grassmann Kernels for Subspace-Based Learning", authors: [{ name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Huanhuan Chen" }, { name: "Feng Lin" }], links: [{ label: "PDF", href: "https://arxiv.org/abs/1802.03517" }, { label: "Video", href: "https://www.youtube.com/watch?v=1qLHgSrcZ4M" }, { label: "DOI", href: "https://doi.org/10.1145/3219819.3219959" }, { label: "Supplementary", href: "/files/sigkdd_supp.pdf" }], tags: [], detail: "/publication/dgkernel/" },
-  { year: "2016", venue: "ECML", title: "Sequential Data Classification in the Space of Liquid State Machines", authors: [{ name: "Yang Li" }, { name: "Junyuan \"Jason\" Hong", highlighted: true }, { name: "Huanhuan Chen" }], links: [{ label: "PDF", href: "https://link.springer.com/chapter/10.1007/978-3-319-46128-1_20" }, { label: "Code", href: "https://github.com/jyhong836/LSMModelSpace" }], tags: [], detail: "/publication/lsm-model-space/" },
-];
+const PUBS_FULL = window.PUBS_FULL;
 
 function Publications() {
   const [filter, setFilter] = React.useState('All');
@@ -648,7 +587,9 @@ function Publications() {
         </div>
 
         <div style={{ borderTop: `1px solid ${C.paper}22` }}>
-          {filtered.map((p, i) => <PubRow key={i} p={p} />)}
+          {filtered.map((p, i) => (
+            <PubRow key={i} p={p} showYear={i === 0 || filtered[i - 1].year !== p.year} />
+          ))}
         </div>
 
         <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end' }}>
@@ -676,15 +617,13 @@ function PubRow({ p, showYear = true }) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: showYear ? '100px 160px 1fr 200px' : '160px 1fr 200px',
+      gridTemplateColumns: '100px 160px 1fr 200px',
       gap: 24,
       padding: '22px 0', borderBottom: `1px solid ${C.paper}18`, alignItems: 'baseline',
     }}>
-      {showYear && (
-        <div style={{ fontFamily: F.mono, fontSize: 13, color: C.paper, opacity: 0.85, letterSpacing: '0.05em' }}>
-          {p.year}
-        </div>
-      )}
+      <div style={{ fontFamily: F.mono, fontSize: 13, color: C.paper, opacity: 0.85, letterSpacing: '0.05em' }}>
+        {showYear ? p.year : ''}
+      </div>
       <div>
         <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 15, color: C.paper }}>{venueBase}</div>
         {typeLabel && (
@@ -724,25 +663,8 @@ function PubRow({ p, showYear = true }) {
 // ————————————————————————————————————————————————————————————
 // 06 — People
 // ————————————————————————————————————————————————————————————
-
-const PEOPLE = [
-  { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'Assistant Professor, NUS ECE · 2026–', accent: true },
-  { name: 'Open Position', role: 'PhD Student', note: 'Apply via form — fully funded', open: true },
-  { name: 'Open Position', role: 'PhD Student', note: 'Apply via form — fully funded', open: true },
-  { name: 'Open Position', role: 'Postdoc', note: 'Trustworthy AI / Healthcare', open: true },
-  { name: 'Open Position', role: 'Remote Intern', note: 'Rolling basis', open: true },
-];
-
-const ALUMNI = [
-  { name: 'Zhangheng Li', now: 'Research Scientist · Zoom AI', prior: 'PhD · UT Austin' },
-  { name: 'Runjin Chen',  now: 'Anthropic', prior: 'PhD · UT Austin · Anthropic Fellow 2025' },
-  { name: 'Wes Robbins',  now: 'Clearview AI', prior: 'PhD · UT Austin' },
-  { name: 'Gabriel Perin',now: 'MS · IME-USP · IBM Research', prior: 'Undergrad · USP, Brazil' },
-  { name: 'Jeffrey Tan',  now: '—', prior: 'Undergrad · UC Berkeley · VLDB 24 Best Paper Nominee' },
-  { name: 'Shuyang Yu',   now: 'Samsung', prior: 'PhD · MSU' },
-  { name: 'Haobo Zhang',  now: 'PhD · UMich · Amazon Intern', prior: 'PhD · MSU · US-UK PETs 3rd place' },
-  { name: 'Siqi Liang',   now: 'PhD · UMich · Amazon Intern', prior: 'PhD · MSU' },
-];
+const PEOPLE = window.PEOPLE;
+const ALUMNI = window.ALUMNI;
 
 function People() {
   return (
@@ -826,20 +748,7 @@ function PersonCard({ p }) {
 // ————————————————————————————————————————————————————————————
 // 07 — News / timeline
 // ————————————————————————————————————————————————————————————
-
-const NEWS = [
-  { date: '01 · 2026', body: 'One paper (Training-Free Robot Planning) accepted to ICRA 2026.', tags: ['Paper'] },
-  { date: '12 · 2025', body: 'Travelling to NeurIPS — co-organizing the GenAI4Health workshop; giving a talk on LLM Brain Rot at LockLLM.', tags: ['Travel', 'Talk'] },
-  { date: '10 · 2025', body: 'New paper covered by Nature News, WIRED, Forbes, and FORTUNE — LLMs can get "Brain Rot" after browsing social media.', tags: ['Press', 'Paper'] },
-  { date: '08 · 2025', body: 'Joining NUS ECE as Tenure-Track Assistant Professor from July 2026, after a year at MGH & Harvard Medical School.', tags: ['Milestone'] },
-  { date: '07 · 2025', body: 'Three papers (LoX, SEAL, More is Less) accepted to COLM 2025 · MedHallu accepted to EMNLP 2025.', tags: ['Paper'] },
-  { date: '07 · 2025', body: 'Area Chair at NeurIPS 2025; co-organizing GenAI4Health and FedKDD.', tags: ['Service'] },
-  { date: '11 · 2024', body: 'A-CONECT chatbot research supported by the NAIRR Pilot Program.', tags: ['Grant'] },
-  { date: '08 · 2024', body: 'LLM-PBE benchmark [VLDB 24] selected as best paper finalist; used for NeurIPS 2024 LLM Privacy Challenge.', tags: ['Honor', 'Paper'] },
-  { date: '07 · 2024', body: 'A-CONECT project supported by OpenAI Researcher Access Program.', tags: ['Grant'] },
-  { date: '05 · 2024', body: 'Named MLSys Rising Star for work in health and trustworthy ML.', tags: ['Honor'] },
-  { date: '03 · 2023', body: 'ILLIDAN Lab team wins 3rd place in U.S. PETs prize challenge — covered by The White House.', tags: ['Honor', 'Press'] },
-];
+const NEWS = window.NEWS;
 
 function News() {
   return (
