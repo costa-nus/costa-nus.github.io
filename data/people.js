@@ -7,7 +7,7 @@ window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'NUS ECE · 2026–', accent: true, url: 'https://jyhong.gitlab.io/' },
   { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
   { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
-  { name: 'Khoi Ho', role: 'Remote Intern', note: '2026', accent: false, url: 'https://hmkhoi2701.github.io/' },
+  { name: 'Minh Khoi Ho', role: 'Remote Intern', note: '2026', accent: false, url: 'https://hmkhoi2701.github.io/' },
   // { name: 'Open Position', role: 'Remote Intern', note: 'Rolling basis', open: true },
 ];
 
