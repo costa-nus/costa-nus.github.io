@@ -756,8 +756,8 @@ function News() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
         <SectionHeader
           kicker="§ 04 · News"
-          title="Dispatches from the frontier."
-          lede="Papers, press, travel, and milestones — a running log of the lab's recent movements."
+          title="What is happening on the coastline."
+          // lede="Papers, press, travel, and milestones — a running log of the lab's recent movements."
         />
 
         <div style={{

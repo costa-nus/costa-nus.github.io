@@ -4,9 +4,9 @@
 //   open:   true  → card rendered as an open/apply slot
 window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'Assistant Professor, NUS ECE · 2026–', accent: true },
-  { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall', accent: false },
-  { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall', accent: false },
-  // { name: 'Open Position', role: 'Postdoc', note: 'Trustworthy AI / Healthcare', open: true },
+  { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall -', accent: false },
+  { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall -', accent: false },
+  { name: 'Khoi Ho', role: 'Remote Intern', note: '2026', accent: false },
   // { name: 'Open Position', role: 'Remote Intern', note: 'Rolling basis', open: true },
 ];
 
