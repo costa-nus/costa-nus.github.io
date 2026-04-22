@@ -9,9 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #f5f1ea; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; background: #f5f1ea; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
   body { scroll-behavior: smooth; }
   a { color: inherit; }
+  img, svg { max-width: 100%; }
   ::selection { background: #EF7C00; color: #f5f1ea; }
   button { cursor: pointer; font: inherit; }
 
@@ -205,6 +206,7 @@
     const [filter, setFilter] = React.useState('All');
     const [query, setQuery] = React.useState('');
     const q = query.trim().toLowerCase();
+    const isMobile = useIsMobile();
 
     const rows = PUBS_FULL
       .filter(p => filter === 'All' ? true : filter === 'Selected' ? p.selected : (p.tags || []).includes(filter))
@@ -219,20 +221,21 @@
     const years = Object.keys(byYear).sort((a, b) => b.localeCompare(a));
 
     return (
-      <section id="publications" style={{ background: C.secondary, padding: '72px 0 120px', color: C.paper, minHeight: '100vh' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 40px' }}>
+      <section id="publications" style={{ background: C.secondary, padding: isMobile ? '48px 0 72px' : '72px 0 120px', color: C.paper, minHeight: '100vh' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
           <a href="/" style={{
             fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
-            color: C.paper, opacity: 0.6, textDecoration: 'none', display: 'inline-block', marginBottom: 32,
+            color: C.paper, opacity: 0.6, textDecoration: 'none', display: 'inline-block', marginBottom: isMobile ? 24 : 32,
           }}>← Back to home</a>
 
-          <div style={{ maxWidth: 900, marginBottom: 48 }}>
+          <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 48 }}>
             <div style={{ fontFamily: F.mono, fontSize: 11, letterSpacing: '0.16em', color: C.paper, opacity: 0.6, textTransform: 'uppercase', fontWeight: 500 }}>
               § Publications · Full archive
             </div>
             <div style={{
-              fontFamily: F.display, fontWeight: 700, fontSize: 56, letterSpacing: '-0.035em',
-              lineHeight: 1.02, color: C.paper, marginTop: 14, textWrap: 'balance',
+              fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
+              letterSpacing: '-0.035em',
+              lineHeight: 1.04, color: C.paper, marginTop: 14, textWrap: 'balance',
             }}>
               Every tide we've tracked.
             </div>
@@ -264,7 +267,9 @@
               style={{
                 fontFamily: F.display, fontSize: 13, padding: '9px 14px',
                 background: 'transparent', border: `1px solid ${C.paper}33`, color: C.paper,
-                outline: 'none', minWidth: 260,
+                outline: 'none',
+                width: isMobile ? '100%' : undefined,
+                minWidth: isMobile ? 0 : 260,
               }}
             />
           </div>

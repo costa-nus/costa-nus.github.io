@@ -18,6 +18,28 @@ const F = {
 };
 
 // ————————————————————————————————————————————————————————————
+// Responsive helpers
+// ————————————————————————————————————————————————————————————
+
+// Single mobile breakpoint. 768px is the phone/tablet boundary — below this
+// the site collapses multi-column grids, stacks rows, and swaps the Nav for
+// a hamburger. Components opt in by calling useIsMobile() and branching on
+// the boolean it returns.
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = React.useState(
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    setIsMobile(mq.matches);
+    return () => mq.removeEventListener('change', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+// ————————————————————————————————————————————————————————————
 // Shared atoms
 // ————————————————————————————————————————————————————————————
 
@@ -42,16 +64,19 @@ function MonoLabel({ children, color = C.ink, opacity = 0.55, size = 11 }) {
 }
 
 function SectionHeader({ kicker, title, lede, align = 'left' }) {
+  const isMobile = useIsMobile();
   return (
-    <div style={{ maxWidth: 900, marginBottom: 56, textAlign: align }}>
+    <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 56, textAlign: align }}>
       <MonoLabel>{kicker}</MonoLabel>
       <div style={{
-        fontFamily: F.display, fontWeight: 700, fontSize: 56, letterSpacing: '-0.035em',
-        lineHeight: 1.02, color: C.ink, marginTop: 14, textWrap: 'balance',
+        fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
+        letterSpacing: '-0.035em',
+        lineHeight: 1.04, color: C.ink, marginTop: 14, textWrap: 'balance',
       }}>{title}</div>
       {lede && (
         <div style={{
-          fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400, fontSize: 22,
+          fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
+          fontSize: 'clamp(17px, 2.1vw, 22px)',
           lineHeight: 1.45, color: C.ink, opacity: 0.72, marginTop: 20, maxWidth: 720,
           textWrap: 'pretty',
         }}>{lede}</div>
@@ -70,7 +95,9 @@ function Nav({ basePath = '' }) {
   const items = ['Research', 'Publications', 'People', 'News', 'Join'];
   const logoHref = basePath || '#top';
   const isHome = basePath === '';
+  const isMobile = useIsMobile();
   const [revealed, setRevealed] = React.useState(!isHome);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (!isHome) return;
@@ -83,6 +110,9 @@ function Nav({ basePath = '' }) {
     obs.observe(hero);
     return () => obs.disconnect();
   }, [isHome]);
+
+  // Close the drawer when resizing back to desktop so it doesn't linger.
+  React.useEffect(() => { if (!isMobile) setMenuOpen(false); }, [isMobile]);
 
   const wrapStyle = isHome
     ? {
@@ -98,36 +128,86 @@ function Nav({ basePath = '' }) {
         backdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.ink}16`,
       };
 
+  const linkStyle = (i, size = 13.5) => ({
+    fontFamily: F.display, fontSize: size, fontWeight: 500, color: C.ink,
+    opacity: i === 'Join' ? 1 : 0.75, textDecoration: 'none', letterSpacing: '-0.005em',
+    ...(i === 'Join' ? { color: C.accent } : {}),
+  });
+
   return (
     <div style={wrapStyle}>
       <div style={{
-        maxWidth: 1280, margin: '0 auto', padding: '18px 40px',
+        maxWidth: 1280, margin: '0 auto',
+        padding: isMobile ? '14px 20px' : '18px 40px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <a href={logoHref} style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
-          <WaveMark size={36} rx={18} />
+          <WaveMark size={isMobile ? 32 : 36} rx={isMobile ? 16 : 18} />
           <div>
-            <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em', color: C.ink, lineHeight: 1 }}>
+            <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: isMobile ? 15 : 17, letterSpacing: '-0.02em', color: C.ink, lineHeight: 1 }}>
               Co<span style={{ color: C.accent }}>STA</span>
               <span style={{ opacity: 0.5, fontWeight: 500 }}>@NUS</span>
             </div>
-            <div style={{ fontFamily: F.mono, fontSize: 8.5, letterSpacing: '0.18em', color: C.ink, opacity: 0.55, marginTop: 3 }}>
+            <div style={{ fontFamily: F.mono, fontSize: isMobile ? 7.5 : 8.5, letterSpacing: '0.18em', color: C.ink, opacity: 0.55, marginTop: 3 }}>
               COGNITIVE SCIENCE · TRUSTWORTHY AI
             </div>
           </div>
         </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+        {isMobile ? (
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            style={{
+              background: 'transparent', border: 'none', padding: 8,
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
+              gap: 5, cursor: 'pointer', width: 40, height: 40,
+            }}
+          >
+            <span style={{
+              width: 22, height: 2, background: C.ink, borderRadius: 1,
+              transformOrigin: 'center', transition: 'transform 200ms, opacity 200ms',
+              transform: menuOpen ? 'translateY(7px) rotate(45deg)' : 'none',
+            }} />
+            <span style={{
+              width: 22, height: 2, background: C.ink, borderRadius: 1,
+              opacity: menuOpen ? 0 : 1, transition: 'opacity 150ms',
+            }} />
+            <span style={{
+              width: 22, height: 2, background: C.ink, borderRadius: 1,
+              transformOrigin: 'center', transition: 'transform 200ms, opacity 200ms',
+              transform: menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none',
+            }} />
+          </button>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+            {items.map(i => (
+              <a key={i} href={`${basePath}#${i.toLowerCase()}`} style={linkStyle(i)}>
+                {i}{i === 'Join' && ' →'}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+      {isMobile && menuOpen && (
+        <div style={{
+          borderTop: `1px solid ${C.ink}16`,
+          padding: '18px 24px 24px',
+          background: C.paper,
+          display: 'flex', flexDirection: 'column', gap: 16,
+        }}>
           {items.map(i => (
-            <a key={i} href={`${basePath}#${i.toLowerCase()}`} style={{
-              fontFamily: F.display, fontSize: 13.5, fontWeight: 500, color: C.ink,
-              opacity: i === 'Join' ? 1 : 0.75, textDecoration: 'none', letterSpacing: '-0.005em',
-              ...(i === 'Join' ? { color: C.accent } : {}),
-            }}>
+            <a
+              key={i}
+              href={`${basePath}#${i.toLowerCase()}`}
+              onClick={() => setMenuOpen(false)}
+              style={linkStyle(i, 17)}
+            >
               {i}{i === 'Join' && ' →'}
             </a>
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -169,8 +249,9 @@ function OceanWave({ baseY, amp, speed, phase, stroke, strokeOpacity, strokeWidt
 }
 
 function Hero() {
+  const isMobile = useIsMobile();
   return (
-    <section id="top" style={{ background: C.paper, paddingTop: 64, paddingBottom: 96, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box' }}>
+    <section id="top" style={{ background: C.paper, paddingTop: isMobile ? 80 : 64, paddingBottom: isMobile ? 72 : 96, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box' }}>
       {/* Coastline SVG backdrop — animated, full viewport width */}
       <svg
         viewBox="0 0 1400 400" preserveAspectRatio="none"
@@ -209,6 +290,9 @@ function Hero() {
           isolation: isolate;
           animation: costaBreathe 4.2s ease-in-out infinite;
           will-change: transform;
+        }
+        @media (max-width: 767px) {
+          .costa-sun { right: 14%; top: 96px; width: 11px; height: 11px; }
         }
         .costa-sun::after {
           content:''; position:absolute; inset: -3px; border-radius: 50%;
@@ -265,10 +349,10 @@ function Hero() {
         <span className="costa-sun-ring costa-sun-ring-1" />
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative' }}>
         <MonoLabel></MonoLabel>
         <h1 style={{
-          fontFamily: F.display, fontWeight: 500, fontSize: 'clamp(44px, 6.2vw, 96px)',
+          fontFamily: F.display, fontWeight: 500, fontSize: 'clamp(38px, 7.8vw, 96px)',
           letterSpacing: '-0.04em', lineHeight: 1.0, color: `${C.ink}80`, margin: '28px 0 0',
           textWrap: 'balance',
         }}>
@@ -282,8 +366,10 @@ function Hero() {
         </h1>
 
         <div style={{
-          fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400, fontSize: 26, lineHeight: 1.4,
-          color: C.ink, opacity: 0.78, maxWidth: 780, marginTop: 40, textWrap: 'pretty',
+          fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
+          fontSize: 'clamp(18px, 2.4vw, 26px)', lineHeight: 1.4,
+          color: C.ink, opacity: 0.78, maxWidth: 780,
+          marginTop: isMobile ? 28 : 40, textWrap: 'pretty',
         }}>
           A frontier where human minds meet machine intelligence — navigating the uncharted
           waters of trustworthy AI, guided by cognitive science and a commitment to safe,
@@ -292,7 +378,8 @@ function Hero() {
 
         {/* Meta row */}
         <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: 48, marginTop: 56,
+          display: 'flex', flexWrap: 'wrap', gap: isMobile ? 24 : 48,
+          marginTop: isMobile ? 40 : 56,
           borderTop: `1px solid ${C.ink}1f`, paddingTop: 24,
         }}>
           {[
@@ -319,14 +406,17 @@ function Hero() {
 // ————————————————————————————————————————————————————————————
 
 function PIIntro() {
+  const isMobile = useIsMobile();
   return (
-    <section style={{ background: C.paperWarm, padding: '96px 0' }}>
+    <section style={{ background: C.paperWarm, padding: isMobile ? '64px 0' : '96px 0' }}>
       <div style={{
-        maxWidth: 1280, margin: '0 auto', padding: '0 40px',
-        display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80, alignItems: 'start',
+        maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr',
+        gap: isMobile ? 40 : 80, alignItems: 'start',
       }}>
         {/* portrait */}
-        <div>
+        <div style={{ maxWidth: isMobile ? 320 : 'none', margin: isMobile ? '0 auto' : undefined, width: '100%' }}>
           <div style={{
             aspectRatio: '3 / 4', border: `1px solid ${C.ink}22`,
             position: 'relative', overflow: 'hidden', background: C.paper,
@@ -359,7 +449,8 @@ function PIIntro() {
         <div>
           <MonoLabel>A word from the PI</MonoLabel>
           <div style={{
-            fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400, fontSize: 30,
+            fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
+            fontSize: 'clamp(22px, 3vw, 30px)',
             lineHeight: 1.35, color: C.ink, marginTop: 16, textWrap: 'pretty', letterSpacing: '-0.01em',
           }}>
             “My research vision is to <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>harmonize, understand, and deploy</u>
@@ -368,7 +459,9 @@ function PIIntro() {
           </div>
 
           <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 40, marginTop: 48,
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+            gap: isMobile ? 20 : 40, marginTop: isMobile ? 32 : 48,
             fontFamily: F.display, fontSize: 15, lineHeight: 1.6, color: C.ink, opacity: 0.85,
           }}>
             <p style={{ margin: 0 }}>
@@ -422,17 +515,22 @@ function PIIntro() {
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
+  const isMobile = useIsMobile();
 
   return (
-    <section id="research" style={{ background: C.paper, padding: '120px 0' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+    <section id="research" style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
         <SectionHeader
           kicker="§ 01 · Research"
           title="Three currents, one coastline."
           lede="We work at the intersection of cognitive science, healthcare, and trustworthy AI — each theme feeding the next."
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: isMobile ? 20 : 32,
+        }}>
           {pillars.map((p, i) => <PillarCard key={p.id} p={p} i={i} />)}
         </div>
       </div>
@@ -441,10 +539,13 @@ function ResearchPillars() {
 }
 
 function PillarCard({ p, i }) {
+  const isMobile = useIsMobile();
   return (
     <div style={{
-      background: '#fff', border: `1px solid ${C.ink}14`, padding: 32,
-      display: 'flex', flexDirection: 'column', minHeight: 520,
+      background: '#fff', border: `1px solid ${C.ink}14`,
+      padding: isMobile ? 24 : 32,
+      display: 'flex', flexDirection: 'column',
+      minHeight: isMobile ? 'auto' : 520,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
@@ -452,8 +553,9 @@ function PillarCard({ p, i }) {
       </div>
 
       <div style={{
-        fontFamily: F.display, fontWeight: 700, fontSize: 28, letterSpacing: '-0.025em',
-        color: C.ink, marginTop: 24, lineHeight: 1.1, textWrap: 'balance', minHeight: 66,
+        fontFamily: F.display, fontWeight: 700, fontSize: isMobile ? 24 : 28, letterSpacing: '-0.025em',
+        color: C.ink, marginTop: 24, lineHeight: 1.1, textWrap: 'balance',
+        minHeight: isMobile ? 'auto' : 66,
       }}>{p.title}</div>
 
       <div style={{
@@ -543,6 +645,7 @@ const PUBS_FULL = window.PUBS_FULL;
 
 function Publications() {
   const [filter, setFilter] = React.useState('All');
+  const isMobile = useIsMobile();
   // Selected = PI-flagged entries from the archive. Derived so the landing
   // page and /publications/ stay in sync from a single source of truth.
   const selected = React.useMemo(() => PUBS_FULL.filter(p => p.selected), []);
@@ -554,15 +657,16 @@ function Publications() {
   const filtered = filter === 'All' ? selected : selected.filter(p => (p.tags || []).includes(filter));
 
   return (
-    <section id="publications" style={{ background: C.secondary, padding: '120px 0', color: C.paper }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
-        <div style={{ maxWidth: 900, marginBottom: 56 }}>
+    <section id="publications" style={{ background: C.secondary, padding: isMobile ? '72px 0' : '120px 0', color: C.paper }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
+        <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 56 }}>
           <div style={{ fontFamily: F.mono, fontSize: 11, letterSpacing: '0.16em', color: C.paper, opacity: 0.6, textTransform: 'uppercase', fontWeight: 500 }}>
             § 02 · Publications
           </div>
           <div style={{
-            fontFamily: F.display, fontWeight: 700, fontSize: 56, letterSpacing: '-0.035em',
-            lineHeight: 1.02, color: C.paper, marginTop: 14, textWrap: 'balance',
+            fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
+            letterSpacing: '-0.035em',
+            lineHeight: 1.04, color: C.paper, marginTop: 14, textWrap: 'balance',
           }}>
             A selected record of what we've charted.
           </div>
@@ -607,6 +711,7 @@ function Publications() {
 }
 
 function PubRow({ p, showYear = true }) {
+  const isMobile = useIsMobile();
   // venue may be bare ("ICLR") or carry a parenthetical modifier ("ICLR (Spotlight)",
   // "VLDB (Best Paper Finalist)"). Split so the two-line column still shows a
   // distinct type sub-label when there is one.
@@ -614,6 +719,58 @@ function PubRow({ p, showYear = true }) {
   const venueBase = venueMatch ? venueMatch[1] : p.venue;
   const typeLabel = venueMatch ? venueMatch[2] : (p.type || '');
   const highlight = /(Spotlight|Best Paper|Finalist|Oral)/i.test(typeLabel);
+
+  const tagChips = (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
+      {p.tags.map(t => (
+        <span key={t} style={{
+          fontFamily: F.mono, fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase',
+          padding: '4px 8px', border: `1px solid ${C.paper}33`, color: C.paper, opacity: 0.7,
+          whiteSpace: 'nowrap',
+        }}>{t}</span>
+      ))}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div style={{ padding: '18px 0', borderBottom: `1px solid ${C.paper}18` }}>
+        <div style={{
+          display: 'flex', gap: 10, alignItems: 'baseline', flexWrap: 'wrap',
+          fontFamily: F.mono, fontSize: 11, letterSpacing: '0.08em', color: C.paper, opacity: 0.75,
+        }}>
+          <span>{p.year}</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span style={{ fontFamily: F.display, fontWeight: 600, fontSize: 13, opacity: 1, letterSpacing: 0 }}>
+            {venueBase}
+          </span>
+          {typeLabel && (
+            <span style={{
+              color: highlight ? C.accent : C.paper, opacity: highlight ? 1 : 0.55,
+              textTransform: 'uppercase', fontWeight: 500,
+            }}>
+              {typeLabel}
+            </span>
+          )}
+        </div>
+        <div style={{
+          fontFamily: F.editorial, fontSize: 17, lineHeight: 1.32, color: C.paper,
+          letterSpacing: '-0.005em', marginTop: 8, textWrap: 'pretty',
+        }}>
+          {p.selected && (
+            <span title="PI's selected pick" style={{
+              color: C.accent, marginRight: 6, fontFamily: F.display, fontSize: 15,
+            }}>★</span>
+          )}
+          {p.title}
+        </div>
+        {p.tags && p.tags.length > 0 && (
+          <div style={{ marginTop: 10 }}>{tagChips}</div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -647,15 +804,7 @@ function PubRow({ p, showYear = true }) {
         )}
         {p.title}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'flex-end' }}>
-        {p.tags.map(t => (
-          <span key={t} style={{
-            fontFamily: F.mono, fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase',
-            padding: '4px 8px', border: `1px solid ${C.paper}33`, color: C.paper, opacity: 0.7,
-            whiteSpace: 'nowrap',
-          }}>{t}</span>
-        ))}
-      </div>
+      {tagChips}
     </div>
   );
 }
@@ -667,9 +816,10 @@ const PEOPLE = window.PEOPLE;
 const ALUMNI = window.ALUMNI;
 
 function People() {
+  const isMobile = useIsMobile();
   return (
-    <section id="people" style={{ background: C.paper, padding: '120px 0' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+    <section id="people" style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
         <SectionHeader
           kicker="§ 03 · People"
           title="Navigators, in and out of the lab."
@@ -678,22 +828,33 @@ function People() {
 
         <MonoLabel size={10}>Current & opening</MonoLabel>
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 1,
+          display: 'grid',
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '180px' : '240px'}, 1fr))`,
+          gap: 1,
           marginTop: 16, background: `${C.ink}18`, border: `1px solid ${C.ink}18`,
         }}>
           {PEOPLE.map((p, i) => <PersonCard key={i} p={p} />)}
         </div>
 
-        <div style={{ height: 80 }} />
+        <div style={{ height: isMobile ? 48 : 80 }} />
         <MonoLabel size={10}>Previous mentees</MonoLabel>
         <div style={{ marginTop: 16, borderTop: `1px solid ${C.ink}22` }}>
           {ALUMNI.map((a, i) => (
             <div key={i} style={{
-              display: 'grid', gridTemplateColumns: '1fr 1.2fr 1.4fr', gap: 24,
-              padding: '16px 0', borderBottom: `1px solid ${C.ink}15`, alignItems: 'baseline',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr 1.4fr',
+              gap: isMobile ? 4 : 24,
+              padding: isMobile ? '14px 0' : '16px 0',
+              borderBottom: `1px solid ${C.ink}15`,
+              alignItems: 'baseline',
             }}>
               <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 17, color: C.ink, letterSpacing: '-0.015em' }}>
-                {a.name}
+                {a.url ? (
+                  <a href={a.url} target="_blank" rel="noopener noreferrer"
+                     style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.ink}33` }}>
+                    {a.name}
+                  </a>
+                ) : a.name}
               </div>
               <div style={{ fontFamily: F.display, fontSize: 13, color: C.ink, opacity: 0.6 }}>
                 {a.prior}
@@ -751,9 +912,10 @@ function PersonCard({ p }) {
 const NEWS = window.NEWS;
 
 function News() {
+  const isMobile = useIsMobile();
   return (
-    <section id="news" style={{ background: C.paperWarm, padding: '120px 0' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+    <section id="news" style={{ background: C.paperWarm, padding: isMobile ? '72px 0' : '120px 0' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
         <SectionHeader
           kicker="§ 04 · News"
           title="What is happening on the coastline."
@@ -766,8 +928,11 @@ function News() {
           <div>
             {NEWS.map((n, i) => (
               <div key={i} style={{
-                display: 'grid', gridTemplateColumns: '140px 1fr', gap: 24,
-                padding: '22px 0', borderBottom: `1px solid ${C.ink}15`, alignItems: 'flex-start',
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : '140px 1fr',
+                gap: isMobile ? 8 : 24,
+                padding: isMobile ? '18px 0' : '22px 0',
+                borderBottom: `1px solid ${C.ink}15`, alignItems: 'flex-start',
               }}>
                 <div style={{
                   fontFamily: F.mono, fontSize: 12, letterSpacing: '0.08em', color: C.ink, opacity: 0.7,
@@ -808,8 +973,9 @@ function News() {
 // ————————————————————————————————————————————————————————————
 
 function Join() {
+  const isMobile = useIsMobile();
   return (
-    <section id="join" style={{ background: C.ink, color: C.paper, padding: '120px 0', position: 'relative', overflow: 'hidden' }}>
+    <section id="join" style={{ background: C.ink, color: C.paper, padding: isMobile ? '72px 0' : '120px 0', position: 'relative', overflow: 'hidden' }}>
       {/* token field backdrop */}
       <svg
         viewBox="0 0 1400 500" preserveAspectRatio="xMidYMid slice"
@@ -832,17 +998,18 @@ function Join() {
         <circle cx="1150" cy="110" r="10" fill={C.accent} />
       </svg>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative' }}>
         <MonoLabel color={C.paper} opacity={0.7}>§ 05 · Join</MonoLabel>
         <div style={{
-          fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(48px, 6vw, 84px)',
-          letterSpacing: '-0.04em', lineHeight: 1, marginTop: 16, maxWidth: 900, textWrap: 'balance',
+          fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(40px, 7vw, 84px)',
+          letterSpacing: '-0.04em', lineHeight: 1.02, marginTop: 16, maxWidth: 900, textWrap: 'balance',
         }}>
           Sail with us to the<br />
           <span style={{ fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400 }}>cognitive coastline</span>.
         </div>
         <div style={{
-          fontFamily: F.editorial, fontStyle: 'italic', fontSize: 24, lineHeight: 1.45,
+          fontFamily: F.editorial, fontStyle: 'italic',
+          fontSize: 'clamp(18px, 2.3vw, 24px)', lineHeight: 1.45,
           opacity: 0.82, marginTop: 28, maxWidth: 720, textWrap: 'pretty',
         }}>
           We're seeking self-motivated PhD students and remote interns. If you're drawn to the
@@ -850,7 +1017,9 @@ function Join() {
         </div>
 
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, marginTop: 64,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: isMobile ? 16 : 32, marginTop: isMobile ? 40 : 64,
         }}>
           {[
             {
@@ -884,7 +1053,7 @@ function Join() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 48, alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: isMobile ? 32 : 48, alignItems: 'center' }}>
           <a
             href="https://forms.gle/4LufZpRmkTfyj5uq9"
             target="_blank"
@@ -907,7 +1076,10 @@ function Join() {
               letterSpacing: '-0.01em',
             }}
           >Read openings document</a>
-          <div style={{ fontFamily: F.mono, fontSize: 11, opacity: 0.55, marginLeft: 12, letterSpacing: '0.1em' }}>
+          <div style={{
+            fontFamily: F.mono, fontSize: 11, opacity: 0.55, letterSpacing: '0.1em',
+            marginLeft: isMobile ? 0 : 12, marginTop: isMobile ? 4 : 0, width: isMobile ? '100%' : 'auto',
+          }}>
             PI response subject to high inbound volume.
           </div>
         </div>
@@ -923,11 +1095,14 @@ function Join() {
 function Footer({ basePath = '' }) {
   // basePath mirrors Nav's — sub-pages pass '/' so in-site hash links resolve to home.
   const h = (frag) => `${basePath}${frag}`;
+  const isMobile = useIsMobile();
   return (
-    <footer style={{ background: C.paper, padding: '72px 0 48px', borderTop: `1px solid ${C.ink}1a` }}>
+    <footer style={{ background: C.paper, padding: isMobile ? '56px 0 40px' : '72px 0 48px', borderTop: `1px solid ${C.ink}1a` }}>
       <div style={{
-        maxWidth: 1280, margin: '0 auto', padding: '0 40px',
-        display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 40,
+        maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr 1fr',
+        gap: isMobile ? 32 : 40,
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -974,8 +1149,11 @@ function Footer({ basePath = '' }) {
         ))}
       </div>
       <div style={{
-        maxWidth: 1280, margin: '56px auto 0', padding: '24px 40px 0',
-        borderTop: `1px solid ${C.ink}18`, display: 'flex', justifyContent: 'space-between',
+        maxWidth: 1280, margin: '56px auto 0',
+        padding: isMobile ? '24px 20px 0' : '24px 40px 0',
+        borderTop: `1px solid ${C.ink}18`,
+        display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between', gap: isMobile ? 8 : 0,
         fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.12em', color: C.ink, opacity: 0.55, textTransform: 'uppercase',
       }}>
         <span>© 2026 CoSTA Lab · NUS ECE</span>
@@ -987,5 +1165,5 @@ function Footer({ basePath = '' }) {
 
 Object.assign(window, {
   Nav, Hero, PIIntro, ResearchPillars, Publications, People, News, Join, Footer,
-  PUBS_FULL, PubRow, WaveMark, MonoLabel, SectionHeader, C, F,
+  PUBS_FULL, PubRow, WaveMark, MonoLabel, SectionHeader, C, F, useIsMobile,
 });
