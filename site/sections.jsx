@@ -1281,44 +1281,7 @@ function Join() {
           intersection of cognitive science, healthcare, and trustworthy AI — we'd love to hear from you.
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-          gap: isMobile ? 16 : 32, marginTop: isMobile ? 40 : 64,
-        }}>
-          {[
-            {
-              tag: '01 · PhD student',
-              title: 'Fully-funded PhD',
-              body: 'NUS ECE. Strong background in ML, NLP, HCI, or cognitive science.',
-            },
-            {
-              tag: '02 · Intern',
-              title: 'Research intern',
-              body: 'Co-authored publications on AI/ML or cognitive science.',
-            },
-            {
-              tag: '03 · Collaborator',
-              title: 'Collaborations',
-              body: 'Cross-disciplinary — cognitive science, medicine, AI safety. ',
-            },
-          ].map(c => (
-            <div key={c.tag} style={{
-              border: `1px solid ${C.paper}2a`, background: `${C.paper}06`, padding: 28,
-              backdropFilter: 'blur(4px)',
-            }}>
-              <MonoLabel color={C.accent} opacity={1} size={10}>{c.tag}</MonoLabel>
-              <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 24, letterSpacing: '-0.02em', marginTop: 14, lineHeight: 1.15, whiteSpace: 'pre-line' }}>
-                {c.title}
-              </div>
-              <div style={{ fontFamily: F.display, fontSize: 14, lineHeight: 1.55, opacity: 0.82, marginTop: 12 }}>
-                {c.body}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: isMobile ? 32 : 48, alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: isMobile ? 40 : 64, alignItems: 'center' }}>
           <a
             href="https://forms.gle/4LufZpRmkTfyj5uq9"
             target="_blank"
