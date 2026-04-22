@@ -63,6 +63,37 @@ function MonoLabel({ children, color = C.ink, opacity = 0.55, size = 11 }) {
   );
 }
 
+// Renders the NUS black-horizontal wordmark tinted to `color`. The source JPG
+// is black-on-white; an SVG feColorMatrix filter inverts it, then maps
+// luminance into alpha while forcing RGB to the target color — so the white
+// background disappears and the logo itself takes on the brand color.
+function NusLogo({ height = 32, color = C.ink, title = 'National University of Singapore' }) {
+  const src = 'site/nus-logo-black-horizontal.jpg';
+  const id = React.useId();
+  const r = parseInt(color.slice(1, 3), 16) / 255;
+  const g = parseInt(color.slice(3, 5), 16) / 255;
+  const b = parseInt(color.slice(5, 7), 16) / 255;
+  const width = Math.round(height * 2.8);
+  return (
+    <svg
+      width={width} height={height} viewBox={`0 0 ${width} ${height}`}
+      role="img" aria-label={title}
+      style={{ display: 'block' }}
+    >
+      <defs>
+        <filter id={id} colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0" />
+          <feColorMatrix type="matrix" values={`0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0.3333 0.3333 0.3333 0 0`} />
+        </filter>
+      </defs>
+      <image
+        href={src} x="0" y="0" width={width} height={height}
+        preserveAspectRatio="xMinYMid meet" filter={`url(#${id})`}
+      />
+    </svg>
+  );
+}
+
 function SectionHeader({ kicker, title, lede, align = 'left' }) {
   const isMobile = useIsMobile();
   return (
@@ -350,6 +381,15 @@ function Hero() {
       </div>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative' }}>
+        <a
+          href="https://nus.edu.sg"
+          target="_blank"
+          rel="noreferrer"
+          style={{ display: 'inline-block', marginBottom: isMobile ? 20 : 28 }}
+          aria-label="National University of Singapore"
+        >
+          <NusLogo height={isMobile ? 72 : 104} color={C.ink} />
+        </a>
         <MonoLabel></MonoLabel>
         <h1 style={{
           fontFamily: F.display, fontWeight: 500, fontSize: 'clamp(38px, 7.8vw, 96px)',
