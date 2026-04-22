@@ -1118,20 +1118,18 @@ function People() {
   );
 }
 
+// Visual priority, strongest → softest: PI (ink) > RA/PhD (fog) > Intern (white) > Open (paperWarm + dashed).
+// Keys must match the `kind` enum in data/people.js; unknown/missing values fall back to 'ra'.
+const PERSON_PALETTE = {
+  pi:     { bg: C.ink,       fg: C.paper, dot: C.accent,      dotBorder: 'none' },
+  ra:     { bg: C.fog,       fg: C.ink,   dot: C.ink,         dotBorder: 'none' },
+  intern: { bg: '#fff',      fg: C.ink,   dot: `${C.ink}25`,  dotBorder: 'none' },
+  open:   { bg: C.paperWarm, fg: C.ink,   dot: 'transparent', dotBorder: `1.5px dashed ${C.ink}55` },
+};
+
 function PersonCard({ p }) {
-  // Category derives from explicit flags first (PI, open slot), otherwise
-  // from the role string — "Intern" vs anything else (RA / PhD / core).
-  const kind = p.accent ? 'pi'
-    : p.open ? 'open'
-    : /intern/i.test(p.role) ? 'intern'
-    : 'researcher';
-  // Visual priority, strongest → softest: PI (ink) > RA/PhD (fog) > Intern (plain white) > Open (paperWarm + dashed).
-  const palette = {
-    pi:         { bg: C.ink,       fg: C.paper, dot: C.accent,      dotBorder: 'none' },
-    researcher: { bg: C.fog,       fg: C.ink,   dot: C.ink,         dotBorder: 'none' },
-    intern:     { bg: '#fff',      fg: C.ink,   dot: `${C.ink}25`,  dotBorder: 'none' },
-    open:       { bg: C.paperWarm, fg: C.ink,   dot: 'transparent', dotBorder: `1.5px dashed ${C.ink}55` },
-  }[kind];
+  const kind = PERSON_PALETTE[p.kind] ? p.kind : 'ra';
+  const palette = PERSON_PALETTE[kind];
   const { bg, fg } = palette;
   return (
     <div style={{
@@ -1144,7 +1142,7 @@ function PersonCard({ p }) {
           background: palette.dot,
           border: palette.dotBorder,
         }} />
-        {p.open && (
+        {kind === 'open' && (
           <div style={{
             fontFamily: F.mono, fontSize: 9, letterSpacing: '0.16em', color: C.accent,
             textTransform: 'uppercase', fontWeight: 600,
@@ -1164,7 +1162,7 @@ function PersonCard({ p }) {
           {p.role}
         </div>
         <div style={{ fontFamily: F.mono, fontSize: 9.5, letterSpacing: '0.08em', opacity: 0.55, marginTop: 10 }}>
-          {p.note}
+          {p.term}
         </div>
       </div>
     </div>
