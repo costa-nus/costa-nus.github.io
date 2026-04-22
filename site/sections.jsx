@@ -823,7 +823,7 @@ function People() {
         <SectionHeader
           kicker="§ 03 · People"
           title="Navigators, in and out of the lab."
-          lede="Current members, open positions, and alumni charting their own courses after CoSTA."
+          // lede="Current members, open positions, and alumni charting their own courses after CoSTA."
         />
 
         <MonoLabel size={10}>Current & opening</MonoLabel>
