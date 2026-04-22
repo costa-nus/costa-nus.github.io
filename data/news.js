@@ -3,6 +3,7 @@
 //   date: display string (free-form, e.g. "01 · 2026")
 //   tags: string[] used for the News section's tag filter chips
 window.NEWS = [
+  { date: '04 · 2026', body: 'Jason is co-organizing AutoML 2026.', tags: ['Service'] },
   { date: '01 · 2026', body: 'One paper (Training-Free Robot Planning) accepted to ICRA 2026.', tags: ['Paper'] },
   { date: '10 · 2025', body: 'New paper covered by Nature News, WIRED, Forbes, and FORTUNE — LLMs can get "Brain Rot" after browsing social media.', tags: ['Press', 'Paper'] },
   // { date: '08 · 2025', body: 'Jason is joining NUS ECE as a Tenure-Track Assistant Professor starting July 2026, after a year at MGH & Harvard Medical School.', tags: ['Milestone'] },

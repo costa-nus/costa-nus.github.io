@@ -16,10 +16,18 @@ window.WHAT_WE_BUILD = [
   {
     name: 'A-CONECT',
     tagline: 'A conversational AI for early dementia intervention.',
-    status: 'Live · Public beta',
+    status: 'Public beta',
     href: 'https://a-conect.github.io/#/features',
     image: 'site/projects/aconect.jpg',
     theme: 'T2',
+  },
+  {
+    name: 'AutoML 2026',
+    tagline: 'A conference on automated machine learning.',
+    status: 'Conference · 2026',
+    href: 'https://2026.automl.cc/',
+    image: 'site/projects/automl2026.jpg',
+    theme: 'T1',
   },
   {
     name: 'GenAI4Health @ NeurIPS 2025',

@@ -464,7 +464,7 @@ function PIIntro() {
             fontSize: 'clamp(22px, 3vw, 30px)',
             lineHeight: 1.35, color: C.ink, marginTop: 16, textWrap: 'pretty', letterSpacing: '-0.01em',
           }}>
-            “My research vision is to explore the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
+            “My research interest is to explore the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
             {' '}— navigating the uncharted waters of trustworthy AI, guided by cognitive
             science and a commitment to safe, ethical innovation.”
           </div>
@@ -1074,7 +1074,7 @@ function People() {
           // lede="Current members, open positions, and alumni charting their own courses after CoSTA."
         />
 
-        <MonoLabel size={10}>Current & opening</MonoLabel>
+        <MonoLabel size={10}>Current members</MonoLabel>
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '180px' : '240px'}, 1fr))`,
@@ -1085,7 +1085,7 @@ function People() {
         </div>
 
         <div style={{ height: isMobile ? 48 : 80 }} />
-        <MonoLabel size={10}>Previous mentees</MonoLabel>
+        <MonoLabel size={10}>Previous mentees with PI (before NUS)</MonoLabel>
         <div style={{ marginTop: 16, borderTop: `1px solid ${C.ink}22` }}>
           {ALUMNI.map((a, i) => (
             <div key={i} style={{
@@ -1325,7 +1325,7 @@ function Join() {
               padding: '16px 24px', textDecoration: 'none', border: `1px solid ${C.paper}3a`,
               letterSpacing: '-0.01em',
             }}
-          >Read openings document</a>
+          >Latest opening info</a>
           <div style={{
             fontFamily: F.mono, fontSize: 11, opacity: 0.55, letterSpacing: '0.1em',
             marginLeft: isMobile ? 0 : 12, marginTop: isMobile ? 4 : 0, width: isMobile ? '100%' : 'auto',
