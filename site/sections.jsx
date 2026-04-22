@@ -436,10 +436,21 @@ function PIIntro() {
             }} />
           </div>
           <div style={{ marginTop: 20 }}>
-            <MonoLabel size={9}>PI · Principal Investigator</MonoLabel>
-            <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 26, letterSpacing: '-0.02em', color: C.ink, marginTop: 8 }}>
+            <MonoLabel size={9}>Principal Investigator</MonoLabel>
+            <a
+              href="https://jyhong.gitlab.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-block', fontFamily: F.display, fontWeight: 700, fontSize: 26,
+                letterSpacing: '-0.02em', color: C.ink, marginTop: 8,
+                textDecoration: 'none', transition: 'color 0.15s ease-out',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = C.accent; }}
+              onMouseLeave={e => { e.currentTarget.style.color = C.ink; }}
+            >
               Junyuan "Jason" Hong
-            </div>
+            </a>
             <div style={{ fontFamily: F.display, fontSize: 14, color: C.ink, opacity: 0.7, marginTop: 4 }}>
               Incoming Assistant Professor, NUS ECE
             </div>
@@ -947,7 +958,12 @@ function PersonCard({ p }) {
       </div>
       <div>
         <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 17, letterSpacing: '-0.015em', lineHeight: 1.15 }}>
-          {p.name}
+          {p.url ? (
+            <a href={p.url} target="_blank" rel="noopener noreferrer"
+               style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${fg}33` }}>
+              {p.name}
+            </a>
+          ) : p.name}
         </div>
         <div style={{ fontFamily: F.display, fontSize: 12.5, opacity: 0.75, marginTop: 4 }}>
           {p.role}

@@ -1,12 +1,13 @@
 // Lab members and open positions — rendered on the home page People section.
-// Entry shape: { name, role, note, accent?, open? }
+// Entry shape: { name, role, note, accent?, open?, url? }
 //   accent: true  → name gets orange accent (e.g. PI)
 //   open:   true  → card rendered as an open/apply slot
+//   url:    optional homepage; when present, the name renders as a link.
 window.PEOPLE = [
-  { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'Assistant Professor, NUS ECE · 2026–', accent: true },
-  { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall -', accent: false },
-  { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall -', accent: false },
-  { name: 'Khoi Ho', role: 'Remote Intern', note: '2026', accent: false },
+  { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'NUS ECE · 2026–', accent: true, url: 'https://jyhong.gitlab.io/' },
+  { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
+  { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
+  { name: 'Khoi Ho', role: 'Remote Intern', note: '2026', accent: false, url: 'https://hmkhoi2701.github.io/' },
   // { name: 'Open Position', role: 'Remote Intern', note: 'Rolling basis', open: true },
 ];
 
