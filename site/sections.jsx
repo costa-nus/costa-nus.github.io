@@ -1116,10 +1116,9 @@ function Footer({ basePath = '' }) {
               </div>
             </div>
           </div>
-          <div style={{ fontFamily: F.editorial, fontStyle: 'italic', fontSize: 18, color: C.ink, opacity: 0.72, marginTop: 20, maxWidth: 360, lineHeight: 1.4 }}>
-            A research lab at the National University of Singapore, Department of
-            Electrical &amp; Computer Engineering.
-          </div>
+          {/* <div style={{ fontFamily: F.editorial, fontStyle: 'italic', fontSize: 18, color: C.ink, opacity: 0.72, marginTop: 20, maxWidth: 360, lineHeight: 1.4 }}>
+            A research lab at NUS ECE.
+          </div> */}
         </div>
 
         {[
