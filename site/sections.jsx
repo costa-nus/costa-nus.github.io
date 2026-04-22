@@ -753,6 +753,41 @@ function PubRow({ p, showYear = true }) {
     </div>
   );
 
+  // When a paper has press coverage, surface outlet names (echoing the
+  // PIIntro "Covered in" strip) in the slot that would otherwise hold
+  // tag chips. Italic editorial serif, hover brightens to accent.
+  const mediaStrip = p.media && p.media.length > 0 ? (
+    <div style={{
+      display: 'flex', flexWrap: 'wrap', gap: '4px 12px',
+      justifyContent: isMobile ? 'flex-start' : 'flex-end',
+      alignItems: 'baseline',
+    }}>
+      <span style={{
+        fontFamily: F.mono, fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase',
+        color: C.paper, opacity: 0.5, fontWeight: 500, marginRight: 2,
+      }}>Covered in</span>
+      {p.media.map(m => (
+        <a key={m.name} href={m.href} target="_blank" rel="noopener noreferrer"
+           style={{
+             fontFamily: F.editorial, fontStyle: 'italic', fontSize: 13,
+             color: C.paper, opacity: 0.7, textDecoration: 'none',
+             letterSpacing: '-0.005em', whiteSpace: 'nowrap',
+             transition: 'opacity 0.15s ease-out, color 0.15s ease-out',
+           }}
+           onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.accent; }}
+           onMouseLeave={e => { e.currentTarget.style.opacity = '0.7'; e.currentTarget.style.color = C.paper; }}
+        >{m.name}</a>
+      ))}
+    </div>
+  ) : null;
+  const hasTags = p.tags && p.tags.length > 0;
+  const sideSlot = mediaStrip ? (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: isMobile ? 'flex-start' : 'flex-end' }}>
+      {mediaStrip}
+      {hasTags && tagChips}
+    </div>
+  ) : (hasTags ? tagChips : null);
+
   if (isMobile) {
     return (
       <div style={{ padding: '18px 0', borderBottom: `1px solid ${C.paper}18` }}>
@@ -785,9 +820,7 @@ function PubRow({ p, showYear = true }) {
           )}
           {titleNode}
         </div>
-        {p.tags && p.tags.length > 0 && (
-          <div style={{ marginTop: 10 }}>{tagChips}</div>
-        )}
+        {sideSlot && <div style={{ marginTop: 10 }}>{sideSlot}</div>}
       </div>
     );
   }
@@ -825,7 +858,7 @@ function PubRow({ p, showYear = true }) {
         )}
         {titleNode}
       </div>
-      {tagChips}
+      {sideSlot}
     </div>
   );
 }
