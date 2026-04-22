@@ -1119,8 +1119,20 @@ function People() {
 }
 
 function PersonCard({ p }) {
-  const bg = p.accent ? C.ink : p.open ? C.paperWarm : '#fff';
-  const fg = p.accent ? C.paper : C.ink;
+  // Category derives from explicit flags first (PI, open slot), otherwise
+  // from the role string — "Intern" vs anything else (RA / PhD / core).
+  const kind = p.accent ? 'pi'
+    : p.open ? 'open'
+    : /intern/i.test(p.role) ? 'intern'
+    : 'researcher';
+  // Visual priority, strongest → softest: PI (ink) > RA/PhD (fog) > Intern (plain white) > Open (paperWarm + dashed).
+  const palette = {
+    pi:         { bg: C.ink,       fg: C.paper, dot: C.accent,      dotBorder: 'none' },
+    researcher: { bg: C.fog,       fg: C.ink,   dot: C.ink,         dotBorder: 'none' },
+    intern:     { bg: '#fff',      fg: C.ink,   dot: `${C.ink}25`,  dotBorder: 'none' },
+    open:       { bg: C.paperWarm, fg: C.ink,   dot: 'transparent', dotBorder: `1.5px dashed ${C.ink}55` },
+  }[kind];
+  const { bg, fg } = palette;
   return (
     <div style={{
       background: bg, color: fg, padding: 24, minHeight: 180, display: 'flex', flexDirection: 'column',
@@ -1129,8 +1141,8 @@ function PersonCard({ p }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{
           width: 44, height: 44, borderRadius: 22,
-          background: p.accent ? C.accent : `${C.ink}15`,
-          border: p.open ? `1.5px dashed ${C.ink}55` : 'none',
+          background: palette.dot,
+          border: palette.dotBorder,
         }} />
         {p.open && (
           <div style={{

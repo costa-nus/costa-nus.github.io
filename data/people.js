@@ -1,14 +1,21 @@
 // Lab members and open positions — rendered on the home page People section.
 // Entry shape: { name, role, note, accent?, open?, url? }
-//   accent: true  → name gets orange accent (e.g. PI)
-//   open:   true  → card rendered as an open/apply slot
+//   accent: true  → PI card (dark ink bg, orange avatar)
+//   open:   true  → open/apply slot (paperWarm bg, dashed avatar)
+//   otherwise the card's color is derived from `role` (priority ramp
+//   PI > RA/PhD > Intern > Open encoded in bg intensity):
+//     contains "Intern"  → intern card  (white bg, subtle)
+//     anything else      → researcher  (fog bg, for RA / PhD / core)
 //   url:    optional homepage; when present, the name renders as a link.
 window.PEOPLE = [
-  { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: 'NUS ECE · 2026–', accent: true, url: 'https://jyhong.gitlab.io/' },
-  { name: 'Junrui Zhang', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
-  { name: 'Runchuan Zhu', role: 'Research Assistant', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
-  { name: 'Minh Khoi Ho', role: 'Remote Intern', note: '2026', accent: false, url: 'https://hmkhoi2701.github.io/' },
+  { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', note: '2026 Fall -', accent: true, url: 'https://jyhong.gitlab.io/' },
+  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
+  { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', note: '2026 Fall -', accent: false, url: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
+  { name: 'Minh Khoi Ho', role: 'Remote Intern · MBZUAI', note: '2026 Spring', accent: false, url: 'https://hmkhoi2701.github.io/' },
+  { name: 'Xiang Gao', role: 'Remote Intern · Tsinghua (Yao class)', note: '2026 Spring', accent: false, url: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
   // { name: 'Open Position', role: 'Remote Intern', note: 'Rolling basis', open: true },
+  { name: 'Open Position', role: 'Remote Intern', note: '2026 Summer', open: true },
+  { name: 'Open Position', role: 'PhD', note: '2027 Fall', open: true },
 ];
 
 // Lab alumni — current affiliation + prior role at the lab.
