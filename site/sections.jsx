@@ -876,6 +876,20 @@ function PillarFigure({ kind }) {
 // Link labels preserve the PI site's capsule text verbatim ("PDF", "🌍 Website",
 // "🤗 Dataset", etc.).
 const PUBS_FULL = window.PUBS_FULL;
+const RECENT_MONTHS_WINDOW = 6;
+
+// Decide whether a publication counts as "recent" for the home-page
+// Most-recent subsection. Reads `p.date` as ISO "YYYY-MM-DD" (synced from
+// jyhong.gitlab.io — see CLAUDE.md). Falls back to `{year}-12-31` so newly
+// added entries without a date still surface if their year overlaps the
+// window — no manual annotation needed.
+function isRecent(p, now = new Date(), monthsBack = RECENT_MONTHS_WINDOW) {
+  const cutoff = new Date(now);
+  cutoff.setMonth(cutoff.getMonth() - monthsBack);
+  const cutoffISO = cutoff.toISOString().slice(0, 10);
+  const dateISO = p.date || (p.year ? `${p.year}-12-31` : null);
+  return dateISO != null && dateISO >= cutoffISO;
+}
 
 function Publications() {
   const [filter, setFilter] = React.useState('All');
@@ -883,12 +897,30 @@ function Publications() {
   // Selected = PI-flagged entries from the archive. Derived so the landing
   // page and /publications/ stay in sync from a single source of truth.
   const selected = React.useMemo(() => PUBS_FULL.filter(p => p.selected), []);
+  // Most recent = entries whose `date` falls inside the rolling window.
+  // Sorted newest-first by date, then by year as a tiebreaker.
+  const recent = React.useMemo(() => {
+    const now = new Date();
+    return PUBS_FULL
+      .filter(p => isRecent(p, now, RECENT_MONTHS_WINDOW))
+      .slice()
+      .sort((a, b) => (b.date || '').localeCompare(a.date || '')
+        || String(b.year).localeCompare(String(a.year)));
+  }, []);
   const tags = React.useMemo(() => {
     const set = new Set();
     selected.forEach(p => (p.tags || []).forEach(t => set.add(t)));
     return ['All', ...[...set].sort()];
   }, [selected]);
   const filtered = filter === 'All' ? selected : selected.filter(p => (p.tags || []).includes(filter));
+
+  const subHeader = (label) => (
+    <div style={{
+      fontFamily: F.mono, fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
+      color: C.paper, opacity: 0.55, fontWeight: 500,
+      marginTop: 8, marginBottom: 14,
+    }}>{label}</div>
+  );
 
   return (
     <section id="publications" style={{ background: C.secondary, padding: isMobile ? '72px 0' : '120px 0', color: C.paper }}>
@@ -905,6 +937,24 @@ function Publications() {
             A selected record of what we've charted.
           </div>
         </div>
+
+        {recent.length > 0 && (
+          <div style={{ marginBottom: isMobile ? 48 : 64 }}>
+            {subHeader(`Most recent · last ${RECENT_MONTHS_WINDOW} months`)}
+            <div style={{ borderTop: `1px solid ${C.paper}22` }}>
+              {recent.map((p, i) => (
+                <PubRow
+                  key={`r-${i}`}
+                  p={p}
+                  showYear={i === 0 || recent[i - 1].year !== p.year}
+                  showStar={false}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {subHeader('Selected')}
 
         {/* filter chips */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 32 }}>
@@ -958,7 +1008,7 @@ function pickPubHref(p) {
   return [...links].sort((a, b) => score(a) - score(b))[0].href;
 }
 
-function PubRow({ p, showYear = true }) {
+function PubRow({ p, showYear = true, showStar = true }) {
   const isMobile = useIsMobile();
   // venue may be bare ("ICLR") or carry a parenthetical modifier ("ICLR (Spotlight)",
   // "VLDB (Best Paper Finalist)"). Split so the two-line column still shows a
@@ -1047,7 +1097,7 @@ function PubRow({ p, showYear = true }) {
           fontFamily: F.editorial, fontSize: 17, lineHeight: 1.32, color: C.paper,
           letterSpacing: '-0.005em', marginTop: 8, textWrap: 'pretty',
         }}>
-          {p.selected && (
+          {showStar && p.selected && (
             <span title="PI's selected pick" style={{
               color: C.accent, marginRight: 6, fontFamily: F.display, fontSize: 15,
             }}>★</span>
@@ -1084,7 +1134,7 @@ function PubRow({ p, showYear = true }) {
         fontFamily: F.editorial, fontSize: 19, lineHeight: 1.35, color: C.paper,
         letterSpacing: '-0.005em', textWrap: 'pretty',
       }}>
-        {p.selected && (
+        {showStar && p.selected && (
           <span title="PI's selected pick" style={{
             color: C.accent, marginRight: 8, fontFamily: F.display, fontSize: 16,
             verticalAlign: '1px',
