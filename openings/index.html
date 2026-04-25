@@ -35,23 +35,14 @@
   const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfAXIiRBbyh-GPMjiRHeZbyPghTxrDVV-ZEh8R0kcTUpIxlfA/viewform';
   const APPLY_URL = 'https://cde.nus.edu.sg/graduate/graduate-programmes-by-research/';
 
-  const PILLARS = [
-    {
-      tag: '01',
-      title: 'Cognitive Science of AI',
-      body: 'We aim to understand the inner workings and vulnerabilities of AI systems through the lens of cognitive psychology and neuroscience.',
-    },
-    {
-      tag: '02',
-      title: 'AI for Cognitive Health',
-      body: 'We leverage AI to simulate cognitive symptoms, advance our understanding, and treatment of cognitive disorders.',
-    },
-    {
-      tag: '03',
-      title: 'AI Safety',
-      body: 'We are dedicated to developing fundamental computational methodologies for accountable and interpretable AI safety, including risk quantification and mitigation.',
-    },
-  ];
+  // Sourced from window.RESEARCH_PILLARS (data/research.js) so the openings page
+  // stays in sync with the home page. Project the richer pillar shape down to
+  // the { tag, title, body } the card below renders.
+  const PILLARS = (window.RESEARCH_PILLARS || []).map(p => ({
+    tag: String(p.id).replace(/^T/, '').padStart(2, '0'),
+    title: p.title,
+    body: p.lede,
+  }));
 
   const OPENINGS = [
     {
