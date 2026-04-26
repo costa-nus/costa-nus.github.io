@@ -6,10 +6,11 @@ window.RESEARCH_PILLARS = [
       id: 'T1',
       title: 'Cognitive Science of AI',
       // lede: 'We aim to understand the inner workings and vulnerabilities of AI systems through the lens of cognitive psychology and neuroscience.',
-      lede: 'Understand the inner mechanisms of AI systems through the lens of cognitive psychology and neuroscience',
+      lede: 'Understand the inner mechanisms of AI systems through the lens of cognitive psychology and neuroscience.',
       bullets: [
         'Does AI *internally* share the same mechanistc vulnerabilities as humans, e.g., brain rot [3], emotion biases?',
-        'How to steer AI behaviors internally (by neurons [2]) or externally (by prompts [1])?',
+        'Can we steer AI behaviors via intervening cognitive mechanisms internally (by neurons [2]) or externally (by prompts [1])?',
+        // 'How to steer AI behaviors internally (by neurons [2]) or externally (by prompts [1])?',
         // 'Developing general automatic frameworks of reasoning and learning, e.g., LLM-driven Auto Differentiation [1].',
         // 'Understanding the learning process and cognitive behaviors of AI via psychological or neuron intervention [2] [3].',
       ],

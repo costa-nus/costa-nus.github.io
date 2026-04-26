@@ -16,7 +16,7 @@ function ResearchPillars() {
         <SectionHeader
           kicker="§ 01 · Research"
           title="Three currents, one coastline."
-          lede="We work at the intersection of cognitive science, healthcare, and trustworthy AI — each theme feeding the next."
+          lede="We aim to build trustworthy AI via exploring the cognitive dark matter (the human's internal cognitive processes that are not observable in data, e.g., the emotion, intention, etc.), which forges the fundation for applying AI in high-stakes domains, specifically cognitive health."
         />
 
         <div style={{
