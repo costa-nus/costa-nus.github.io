@@ -2,7 +2,7 @@
 // Pillars come from window.RESEARCH_PILLARS (data/research.js); press and
 // projects from window.PRESS_COVERAGE / window.WHAT_WE_BUILD.
 
-const { C, F, useIsMobile, MonoLabel, SectionHeader } = window;
+const { C, F, useIsMobile, MonoLabel, SectionHeader, mdInline } = window;
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
@@ -225,7 +225,7 @@ function PillarCard({ p, i }) {
       <div style={{
         fontFamily: F.editorial, fontStyle: 'italic', fontSize: 16, lineHeight: 1.45,
         color: C.ink, opacity: 0.7, marginTop: 18, textWrap: 'pretty',
-      }}>{p.lede}</div>
+      }}>{mdInline(p.lede)}</div>
 
       <ul style={{
         listStyle: 'none', padding: 0, margin: '28px 0 0',
@@ -236,7 +236,7 @@ function PillarCard({ p, i }) {
             <span style={{ color: C.accent, fontFamily: F.mono, fontSize: 11, marginTop: 3, width: 22, flexShrink: 0 }}>
               0{j + 1}
             </span>
-            <span style={{ opacity: 0.88 }}>{b}</span>
+            <span style={{ opacity: 0.88 }}>{mdInline(b)}</span>
           </li>
         ))}
       </ul>

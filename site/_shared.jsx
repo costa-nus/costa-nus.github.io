@@ -109,4 +109,27 @@ function SectionHeader({ kicker, title, lede, align = 'left' }) {
   );
 }
 
-Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, NusLogo, SectionHeader });
+// Lightweight inline Markdown — supports **bold** and *italic* only. Used to
+// keep small bits of copy in data/*.js editable without dragging in a parser.
+// Returns either the original string (no markup found) or an array of React
+// nodes. Patterns can't nest and don't support escapes; that's by design —
+// this is for short, hand-written labels, not arbitrary input.
+function mdInline(s) {
+  if (typeof s !== 'string') return s;
+  const re = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+  const out = [];
+  let last = 0;
+  let m;
+  let i = 0;
+  while ((m = re.exec(s)) !== null) {
+    if (m.index > last) out.push(s.slice(last, m.index));
+    if (m[1] !== undefined) out.push(<b key={i++}>{m[1]}</b>);
+    else out.push(<i key={i++}>{m[2]}</i>);
+    last = re.lastIndex;
+  }
+  if (!out.length) return s;
+  if (last < s.length) out.push(s.slice(last));
+  return out;
+}
+
+Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, NusLogo, SectionHeader, mdInline });

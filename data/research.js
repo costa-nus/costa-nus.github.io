@@ -1,6 +1,10 @@
 // Research pillars — three-column cards on the home page Research section.
 // Entry shape: { id, title, lede, bullets, refs, figure }
 //   figure: 'neurons' | 'pulse' | 'shield'   (small decorative SVG)
+//   lede + bullets accept inline Markdown: **bold** and *italic*. Patterns
+//   don't nest and don't support escapes (see mdInline in site/_shared.jsx).
+//   Note: lede renders in editorial italic, so *italic* inside it is a no-op
+//   visually — use **bold** for emphasis there.
 window.RESEARCH_PILLARS = [
     {
       id: 'T1',
@@ -22,7 +26,7 @@ window.RESEARCH_PILLARS = [
       title: 'Trustworthy AI',
       lede: 'Develop fundamental computational methodologies to make AI cognitive behaviors accountable, interpretable and therefore trustworthy.',
       bullets: [
-        'Risk quantification and mitigation for AI security/privacy [5].',
+        'Risk quantification and mitigation for AI security/privacy [1,5].',
         'Harnessing compound AI/agentic systems in the wild [6].',
         // 'Privacy attack and defense in machine learning and multi-agent networks [5].',
         // 'Constitutional AI agents in security-sensitive environments [6].',
