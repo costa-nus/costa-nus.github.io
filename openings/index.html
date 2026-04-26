@@ -22,12 +22,16 @@
 <body>
 <div id="root"></div>
 
-<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs the section files. -->
 <script src="../data/publications.js"></script>
 <script src="../data/people.js"></script>
 <script src="../data/news.js"></script>
 <script src="../data/research.js"></script>
-<script type="text/babel" src="../site/sections.jsx"></script>
+
+<!-- Section components — only those this page composes. Order matters: see index.html for the rationale. -->
+<script type="text/babel" src="../site/_shared.jsx"></script>
+<script type="text/babel" src="../site/nav.jsx"></script>
+<script type="text/babel" src="../site/footer.jsx"></script>
 <script type="text/babel">
   // Standalone openings page. Content sourced from the lab's canonical
   // "Openings at CoSTA@NUS Lab" document; rendered in the site's visual style.

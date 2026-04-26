@@ -56,14 +56,19 @@
 <body>
 <div id="root"></div>
 
-<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs the section files. -->
 <script src="../data/publications.js"></script>
 <script src="../data/people.js"></script>
 <script src="../data/news.js"></script>
 <script src="../data/research.js"></script>
-<script type="text/babel" src="../site/sections.jsx"></script>
+
+<!-- Section components — only those this page composes. Order matters: see index.html for the rationale. -->
+<script type="text/babel" src="../site/_shared.jsx"></script>
+<script type="text/babel" src="../site/nav.jsx"></script>
+<script type="text/babel" src="../site/publications.jsx"></script>
+<script type="text/babel" src="../site/footer.jsx"></script>
 <script type="text/babel">
-  // Standalone publications archive. Reuses PUBS_FULL from sections.jsx and
+  // Standalone publications archive. Reuses PUBS_FULL from site/publications.jsx and
   // renders in the PI-site visual style: venue badge + title on one line,
   // authors (with tooltip info icons) on the next, and link capsules below.
   // Tag vocabulary matches the archive's actual distribution.

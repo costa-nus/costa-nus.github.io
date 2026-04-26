@@ -116,14 +116,28 @@
   window.parent.postMessage({type: '__edit_mode_available'}, '*');
 </script>
 
-<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs sections.jsx. -->
+<!-- Content data — plain JS, loads synchronously so window.* is populated before Babel runs the section files. -->
 <script src="data/publications.js"></script>
 <script src="data/people.js"></script>
 <script src="data/news.js"></script>
 <script src="data/research.js"></script>
 <script src="data/press.js"></script>
 <script src="data/building.js"></script>
-<script type="text/babel" src="site/sections.jsx"></script>
+
+<!-- Section components — split per page section. Order matters: _shared.jsx
+     publishes the design tokens + atoms (C, F, useIsMobile, MonoLabel,
+     SectionHeader, WaveMark, NusLogo) onto window first; each subsequent
+     file destructures what it needs off window and re-exports its own component. -->
+<script type="text/babel" src="site/_shared.jsx"></script>
+<script type="text/babel" src="site/nav.jsx"></script>
+<script type="text/babel" src="site/hero.jsx"></script>
+<script type="text/babel" src="site/pi-intro.jsx"></script>
+<script type="text/babel" src="site/research.jsx"></script>
+<script type="text/babel" src="site/publications.jsx"></script>
+<script type="text/babel" src="site/people.jsx"></script>
+<script type="text/babel" src="site/news.jsx"></script>
+<script type="text/babel" src="site/join.jsx"></script>
+<script type="text/babel" src="site/footer.jsx"></script>
 <script type="text/babel">
   function App() {
     const [, force] = React.useReducer(x => x + 1, 0);
