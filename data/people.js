@@ -30,7 +30,7 @@ window.ALUMNI = [
   { name: 'Wes Robbins',  now: 'Clearview AI', prior: 'PhD · UT Austin', url: 'https://wes-robbins.xyz/' },
   { name: 'Gabriel Perin',now: 'MS · IME-USP · IBM Research', prior: 'Undergrad · USP, Brazil', url: 'https://scholar.google.com/citations?user=Ihn-OugAAAAJ&hl=en' },
   { name: 'Ostap Kilbasovych', now: 'MS · Mundus', prior: 'Undergrad · Ivan Franko National U. of Lviv, Ukraine', url: 'https://www.linkedin.com/in/ostap-kilbasovych-b88830175/' },
-  { name: 'Jeffrey Tan',  now: '—', prior: 'Undergrad · UC Berkeley · VLDB 24 Best Paper Nominee', url: 'https://www.linkedin.com/in/tanjeffreyz/' },
+  { name: 'Jeffrey Tan',  now: 'Google', prior: 'Undergrad · UC Berkeley · VLDB 24 Best Paper Nominee', url: 'https://www.linkedin.com/in/tanjeffreyz/' },
   { name: 'Shuyang Yu',   now: 'Samsung', prior: 'PhD · MSU', url: 'https://scholar.google.com.hk/citations?user=ftBPf3oAAAAJ&hl=en' },
   { name: 'Haobo Zhang',  now: 'PhD · UMich · Amazon Intern', prior: 'PhD · MSU · US-UK PETs 3rd place', url: 'https://scholar.google.com/citations?user=uiNEZZQAAAAJ&hl=en' },
   { name: 'Siqi Liang',   now: 'PhD · UMich · Amazon Intern', prior: 'PhD · MSU', url: 'https://agentds.github.io/' },
