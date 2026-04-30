@@ -1,63 +1,81 @@
-// Site footer — wordmark + three columns of links.
+// Site footer — wordmark + social icons.
 
-const { C, F, useIsMobile, WaveMark, MonoLabel } = window;
+const { C, F, useIsMobile, WaveMark } = window;
 
-function Footer({ basePath = '' }) {
-  // basePath mirrors Nav's — sub-pages pass '/' so in-site hash links resolve to home.
-  const h = (frag) => `${basePath}${frag}`;
+const SOCIALS = [
+  {
+    label: 'X (Twitter)',
+    href: 'https://x.com/hjy836',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Google Scholar',
+    href: 'https://scholar.google.com/citations?user=7Cbv6doAAAAJ&hl=en',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2 1 9l11 7 9-5.727V17h2V9zM5 13.18v4L12 21l7-3.82v-4L12 17z" />
+      </svg>
+    ),
+  },
+];
+
+function SocialIcon({ label, href, icon }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener"
+      aria-label={label}
+      title={label}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 40, height: 40, borderRadius: 20,
+        border: `1px solid ${C.ink}26`,
+        color: C.ink, opacity: 0.78,
+        textDecoration: 'none', transition: 'opacity 0.15s, border-color 0.15s',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.opacity = 1; e.currentTarget.style.borderColor = `${C.ink}66`; }}
+      onMouseLeave={(e) => { e.currentTarget.style.opacity = 0.78; e.currentTarget.style.borderColor = `${C.ink}26`; }}
+    >
+      {icon}
+    </a>
+  );
+}
+
+function Footer() {
   const isMobile = useIsMobile();
   return (
-    <footer style={{ background: C.paper, padding: isMobile ? '56px 0 40px' : '72px 0 48px', borderTop: `1px solid ${C.ink}1a` }}>
+    <footer style={{ background: C.paper, padding: isMobile ? '48px 0 32px' : '56px 0 36px', borderTop: `1px solid ${C.ink}1a` }}>
       <div style={{
         maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr 1fr',
-        gap: isMobile ? 32 : 40,
+        display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between',
+        gap: isMobile ? 24 : 0,
       }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <WaveMark size={44} rx={22} />
-            <div>
-              <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 20, letterSpacing: '-0.02em', color: C.ink, lineHeight: 1 }}>
-                Co<span style={{ color: C.accent }}>STA</span><span style={{ opacity: 0.55, fontWeight: 500 }}>@NUS</span>
-              </div>
-              <div style={{ fontFamily: F.mono, fontSize: 9, letterSpacing: '0.18em', color: C.ink, opacity: 0.6, marginTop: 4 }}>
-                COGNITIVE SCIENCE · TRUSTWORTHY AI
-              </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <WaveMark size={44} rx={22} />
+          <div>
+            <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 20, letterSpacing: '-0.02em', color: C.ink, lineHeight: 1 }}>
+              Co<span style={{ color: C.accent }}>STA</span><span style={{ opacity: 0.55, fontWeight: 500 }}>@NUS</span>
+            </div>
+            <div style={{ fontFamily: F.mono, fontSize: 9, letterSpacing: '0.18em', color: C.ink, opacity: 0.6, marginTop: 4 }}>
+              COGNITIVE SCIENCE · TRUSTWORTHY AI
             </div>
           </div>
-          {/* <div style={{ fontFamily: F.editorial, fontStyle: 'italic', fontSize: 18, color: C.ink, opacity: 0.72, marginTop: 20, maxWidth: 360, lineHeight: 1.4 }}>
-            A research lab at NUS ECE.
-          </div> */}
         </div>
 
-        {[
-          ['Lab', [['Research', h('#research')], ['Publications', h('#publications')], ['People', h('#people')], ['News', h('#news')]]],
-          ['Connect', [
-            ['Join →', h('#join')],
-            ['Openings', '/openings/'],
-            ['Interest form', 'https://forms.gle/4LufZpRmkTfyj5uq9'],
-          ]],
-          ['External', [
-            ['NUS ECE', 'https://cde.nus.edu.sg/ece/'],
-            ['PI\'s site', 'https://jyhong.gitlab.io/'],
-          ]],
-        ].map(([h, links]) => (
-          <div key={h}>
-            <MonoLabel size={9.5}>{h}</MonoLabel>
-            <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {links.map(([t, href]) => (
-                <a key={t} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener' : undefined} style={{
-                  fontFamily: F.display, fontSize: 14, color: C.ink, textDecoration: 'none', opacity: 0.78,
-                }}>{t}</a>
-              ))}
-            </div>
-          </div>
-        ))}
+        <div style={{ display: 'flex', gap: 10 }}>
+          {SOCIALS.map((s) => <SocialIcon key={s.label} {...s} />)}
+        </div>
       </div>
+
       <div style={{
-        maxWidth: 1280, margin: '56px auto 0',
-        padding: isMobile ? '24px 20px 0' : '24px 40px 0',
+        maxWidth: 1280, margin: isMobile ? '32px auto 0' : '40px auto 0',
+        padding: isMobile ? '20px 20px 0' : '20px 40px 0',
         borderTop: `1px solid ${C.ink}18`,
         display: 'flex', flexDirection: isMobile ? 'column' : 'row',
         justifyContent: 'space-between', gap: isMobile ? 8 : 0,
