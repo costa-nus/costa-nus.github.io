@@ -33,6 +33,7 @@ window.BLOGS = [
     summary: "An analysis of CRA Taulbee Survey data through AY 2023–24 — bachelor's enrollment up 22%, new PhD students up 13.1% year-over-year, and where the data still has gaps.",
     author: 'CoSTA@NUS',
     tags: ['Analysis', 'Education'],
+    thumbnail: '/blogs/thumbs/2026-05-01-ai-on-cs-edu.svg',
     external: 'https://costa-nus.github.io/ai-on-cs-edu/',
   },
   {
