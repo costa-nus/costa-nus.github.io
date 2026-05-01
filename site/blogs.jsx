@@ -9,7 +9,10 @@
 // requiring a separate HTML file per post. The home/list view is just the
 // no-hash state of the same page.
 
-const { C, F, useIsMobile, MonoLabel, SectionHeader, WaveMark } = window;
+const { C, F, useIsMobile, MonoLabel, SectionHeader } = window;
+
+// Default image used when an entry has no `thumbnail` of its own.
+const PLACEHOLDER_THUMB = '/blogs/thumbs/_placeholder.png';
 
 const BLOGS = window.BLOGS || [];
 
@@ -61,35 +64,24 @@ function formatDate(iso) {
 // set the card links out to that URL in a new tab (with a small ↗ indicator);
 // otherwise it uses the in-page hash route to open the post inline.
 //
-// Thumbnail rules:
-//   - If `post.thumbnail` is set, render that image (cover-fit).
-//   - Otherwise render a synthetic placeholder: paperWarm block with a
-//     WaveMark glyph centered. Keeps cards visually consistent without
-//     requiring an image asset for every post.
+// Thumbnail rules: render `post.thumbnail` if set, otherwise the default
+// placeholder PNG. Either way it's an <img> with cover-fit, so cards never
+// look empty.
 function BlogCardThumb({ post, isMobile }) {
-  const wrapStyle = {
-    flex: '0 0 auto',
-    width: isMobile ? '100%' : 200,
-    aspectRatio: isMobile ? '16 / 9' : '4 / 3',
-    background: C.paperWarm,
-    border: `1px solid ${C.ink}18`,
-    overflow: 'hidden',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-  };
-  if (post.thumbnail) {
-    return (
-      <div style={wrapStyle}>
-        <img
-          src={post.thumbnail}
-          alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        />
-      </div>
-    );
-  }
   return (
-    <div style={wrapStyle} aria-hidden="true">
-      <WaveMark size={isMobile ? 64 : 56} rx={isMobile ? 32 : 28} />
+    <div style={{
+      flex: '0 0 auto',
+      width: isMobile ? '100%' : 200,
+      aspectRatio: isMobile ? '16 / 9' : '4 / 3',
+      background: C.paperWarm,
+      border: `1px solid ${C.ink}18`,
+      overflow: 'hidden',
+    }}>
+      <img
+        src={post.thumbnail || PLACEHOLDER_THUMB}
+        alt=""
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
     </div>
   );
 }
