@@ -57,49 +57,59 @@ function formatDate(iso) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────
-// BlogCard — list-view item.
-//
-// TODO (you): design how a single blog post looks in the list. The lab's
-// visual language is set in site/_shared.jsx (tokens C/F) and the News
-// section (site/news.jsx) shows a minimal date-on-left, body-on-right row.
-// You can mirror that for consistency, OR go richer (a card with summary
-// preview + tag chips). What you pick shapes the feel of the whole page.
-//
-// Trade-offs to consider:
-//   - Minimal row (like News): visually consistent with the rest of the site,
-//     but a long list of titles can feel sparse if there's only a handful.
-//   - Card with summary: more inviting for browsing, but heavier — and risks
-//     diverging from the editorial restraint elsewhere on the site.
-//   - Hybrid: title + date + tags as a row, summary revealed on hover or
-//     always shown but de-emphasized.
-//
-// Available styling tokens (already destructured at top of file):
-//   C.ink, C.accent, C.paper, C.paperWarm   (palette)
-//   F.display, F.editorial, F.mono           (font families)
-//   isMobile                                 (boolean — single-column layout)
-//
-// Props passed in:
-//   post: { slug, date, title, summary, author, tags }
-//
-// The wrapper <a> is provided — its `href={'#' + post.slug}` is what makes
-// hash routing work, so keep it. Implement the *contents* of the anchor.
+// BlogCard — list-view item. Renders a date-kicker, large title, italic
+// summary, and tag chips. If `post.external` is set the card links out to
+// that URL in a new tab (with a small ↗ indicator); otherwise it uses the
+// in-page hash route to open the post inline.
 function BlogCard({ post, isMobile }) {
+  const isExternal = !!post.external;
+  const href = isExternal ? post.external : `#${post.slug}`;
+  const targetProps = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   return (
     <a
-      href={`#${post.slug}`}
+      href={href}
+      {...targetProps}
       style={{
         display: 'block',
         textDecoration: 'none',
         color: 'inherit',
-        padding: isMobile ? '20px 0' : '24px 0',
+        padding: isMobile ? '20px 0' : '28px 0',
         borderBottom: `1px solid ${C.ink}15`,
       }}
     >
-      {/* TODO: render the post preview here. ~5–10 lines. */}
-      <div style={{ fontFamily: F.mono, fontSize: 12, color: C.ink, opacity: 0.5 }}>
-        {/* placeholder so you can see the page renders before you fill this in */}
-        {post.slug}
+      <div style={{
+        fontFamily: F.mono, fontSize: 11, letterSpacing: '0.12em',
+        color: C.ink, opacity: 0.55, textTransform: 'uppercase',
+      }}>
+        {formatDate(post.date)}{post.author ? ` · ${post.author}` : ''}
       </div>
+      <div style={{
+        fontFamily: F.display, fontWeight: 600, fontSize: isMobile ? 20 : 24,
+        letterSpacing: '-0.02em', lineHeight: 1.2, color: C.ink,
+        marginTop: 8, textWrap: 'balance',
+      }}>
+        {post.title}{isExternal && <span style={{ color: C.accent, marginLeft: 8 }}>↗</span>}
+      </div>
+      {post.summary && (
+        <div style={{
+          fontFamily: F.editorial, fontStyle: 'italic', fontSize: isMobile ? 15 : 16.5,
+          lineHeight: 1.5, color: C.ink, opacity: 0.72,
+          marginTop: 8, textWrap: 'pretty',
+        }}>
+          {post.summary}
+        </div>
+      )}
+      {post.tags && post.tags.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+          {post.tags.map(t => (
+            <span key={t} style={{
+              fontFamily: F.mono, fontSize: 9.5, letterSpacing: '0.12em', textTransform: 'uppercase',
+              padding: '2px 8px', border: `1px solid ${C.ink}30`, color: C.ink, opacity: 0.7,
+              fontWeight: 500,
+            }}>{t}</span>
+          ))}
+        </div>
+      )}
     </a>
   );
 }
