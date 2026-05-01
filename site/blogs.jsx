@@ -12,7 +12,7 @@
 const { C, F, useIsMobile, MonoLabel, SectionHeader } = window;
 
 // Default image used when an entry has no `thumbnail` of its own.
-const PLACEHOLDER_THUMB = '/blogs/thumbs/_placeholder.png';
+const PLACEHOLDER_THUMB = '/blogs/thumbs/_placeholder-1.png';
 
 const BLOGS = window.BLOGS || [];
 
@@ -75,7 +75,7 @@ function BlogCardThumb({ post, isMobile }) {
       aspectRatio: isMobile ? '16 / 9' : '4 / 3',
       background: C.paperWarm,
       border: `1px solid ${C.ink}18`,
-      borderRadius: 12,
+      borderRadius: 30,
       overflow: 'hidden',
     }}>
       <img
