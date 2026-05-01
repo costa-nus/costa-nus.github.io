@@ -8,20 +8,23 @@
 //   - External post: `external` is a full URL; the list-page card links out
 //     to it (new tab) and no .md file is needed.
 //
-// Entry shape: { slug, date, title, summary, author, tags, external? }
-//   slug    : URL fragment + filename stem. File path is `data/blogs/${slug}.md`.
-//             Convention: `<YYYY-MM-DD>-<kebab-title>` so the directory sorts
-//             chronologically when listed.
-//   date    : ISO `YYYY-MM-DD`. Used for sorting and for the human-readable
-//             label on the list page.
-//   title   : display title (mirrored in the .md frontmatter for internal
-//             posts; this copy is for the list page so it can render without
-//             fetching every file).
-//   summary : 1–2 sentence preview shown on the list page.
-//   author  : free-form display string (e.g. "Jason Hong").
-//   tags    : string[] for future filter chips.
-//   external: optional full URL. Presence flips the entry to "external"
-//             rendering: the card links out and no .md is loaded.
+// Entry shape: { slug, date, title, summary, author, tags, thumbnail?, external? }
+//   slug      : URL fragment + filename stem. File path is `data/blogs/${slug}.md`.
+//               Convention: `<YYYY-MM-DD>-<kebab-title>` so the directory sorts
+//               chronologically when listed.
+//   date      : ISO `YYYY-MM-DD`. Used for sorting and for the human-readable
+//               label on the list page.
+//   title     : display title (mirrored in the .md frontmatter for internal
+//               posts; this copy is for the list page so it can render without
+//               fetching every file).
+//   summary   : 1–2 sentence preview shown on the list page.
+//   author    : free-form display string (e.g. "Jason Hong").
+//   tags      : string[] for future filter chips.
+//   thumbnail : optional image URL (relative or absolute) shown on the list
+//               card. When omitted, a brand-styled placeholder block (wave
+//               glyph on paperWarm) is rendered instead.
+//   external  : optional full URL. Presence flips the entry to "external"
+//               rendering: the card links out and no .md is loaded.
 window.BLOGS = [
   {
     slug: '2026-05-01-ai-on-cs-edu',

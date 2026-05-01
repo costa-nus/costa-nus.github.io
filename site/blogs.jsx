@@ -9,7 +9,7 @@
 // requiring a separate HTML file per post. The home/list view is just the
 // no-hash state of the same page.
 
-const { C, F, useIsMobile, MonoLabel, SectionHeader } = window;
+const { C, F, useIsMobile, MonoLabel, SectionHeader, WaveMark } = window;
 
 const BLOGS = window.BLOGS || [];
 
@@ -57,10 +57,43 @@ function formatDate(iso) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────
-// BlogCard — list-view item. Renders a date-kicker, large title, italic
-// summary, and tag chips. If `post.external` is set the card links out to
-// that URL in a new tab (with a small ↗ indicator); otherwise it uses the
-// in-page hash route to open the post inline.
+// BlogCard — list-view item. Thumbnail + text card. If `post.external` is
+// set the card links out to that URL in a new tab (with a small ↗ indicator);
+// otherwise it uses the in-page hash route to open the post inline.
+//
+// Thumbnail rules:
+//   - If `post.thumbnail` is set, render that image (cover-fit).
+//   - Otherwise render a synthetic placeholder: paperWarm block with a
+//     WaveMark glyph centered. Keeps cards visually consistent without
+//     requiring an image asset for every post.
+function BlogCardThumb({ post, isMobile }) {
+  const wrapStyle = {
+    flex: '0 0 auto',
+    width: isMobile ? '100%' : 200,
+    aspectRatio: isMobile ? '16 / 9' : '4 / 3',
+    background: C.paperWarm,
+    border: `1px solid ${C.ink}18`,
+    overflow: 'hidden',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  };
+  if (post.thumbnail) {
+    return (
+      <div style={wrapStyle}>
+        <img
+          src={post.thumbnail}
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
+    );
+  }
+  return (
+    <div style={wrapStyle} aria-hidden="true">
+      <WaveMark size={isMobile ? 64 : 56} rx={isMobile ? 32 : 28} />
+    </div>
+  );
+}
+
 function BlogCard({ post, isMobile }) {
   const isExternal = !!post.external;
   const href = isExternal ? post.external : `#${post.slug}`;
@@ -70,46 +103,53 @@ function BlogCard({ post, isMobile }) {
       href={href}
       {...targetProps}
       style={{
-        display: 'block',
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 16 : 28,
         textDecoration: 'none',
         color: 'inherit',
         padding: isMobile ? '20px 0' : '28px 0',
         borderBottom: `1px solid ${C.ink}15`,
+        alignItems: isMobile ? 'stretch' : 'flex-start',
       }}
     >
-      <div style={{
-        fontFamily: F.mono, fontSize: 11, letterSpacing: '0.12em',
-        color: C.ink, opacity: 0.55, textTransform: 'uppercase',
-      }}>
-        {formatDate(post.date)}{post.author ? ` · ${post.author}` : ''}
-      </div>
-      <div style={{
-        fontFamily: F.display, fontWeight: 600, fontSize: isMobile ? 20 : 24,
-        letterSpacing: '-0.02em', lineHeight: 1.2, color: C.ink,
-        marginTop: 8, textWrap: 'balance',
-      }}>
-        {post.title}{isExternal && <span style={{ color: C.accent, marginLeft: 8 }}>↗</span>}
-      </div>
-      {post.summary && (
+      <BlogCardThumb post={post} isMobile={isMobile} />
+
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontFamily: F.editorial, fontStyle: 'italic', fontSize: isMobile ? 15 : 16.5,
-          lineHeight: 1.5, color: C.ink, opacity: 0.72,
-          marginTop: 8, textWrap: 'pretty',
+          fontFamily: F.mono, fontSize: 11, letterSpacing: '0.12em',
+          color: C.ink, opacity: 0.55, textTransform: 'uppercase',
         }}>
-          {post.summary}
+          {formatDate(post.date)}{post.author ? ` · ${post.author}` : ''}
         </div>
-      )}
-      {post.tags && post.tags.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-          {post.tags.map(t => (
-            <span key={t} style={{
-              fontFamily: F.mono, fontSize: 9.5, letterSpacing: '0.12em', textTransform: 'uppercase',
-              padding: '2px 8px', border: `1px solid ${C.ink}30`, color: C.ink, opacity: 0.7,
-              fontWeight: 500,
-            }}>{t}</span>
-          ))}
+        <div style={{
+          fontFamily: F.display, fontWeight: 600, fontSize: isMobile ? 20 : 24,
+          letterSpacing: '-0.02em', lineHeight: 1.2, color: C.ink,
+          marginTop: 8, textWrap: 'balance',
+        }}>
+          {post.title}{isExternal && <span style={{ color: C.accent, marginLeft: 8 }}>↗</span>}
         </div>
-      )}
+        {post.summary && (
+          <div style={{
+            fontFamily: F.editorial, fontStyle: 'italic', fontSize: isMobile ? 15 : 16.5,
+            lineHeight: 1.5, color: C.ink, opacity: 0.72,
+            marginTop: 8, textWrap: 'pretty',
+          }}>
+            {post.summary}
+          </div>
+        )}
+        {post.tags && post.tags.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+            {post.tags.map(t => (
+              <span key={t} style={{
+                fontFamily: F.mono, fontSize: 9.5, letterSpacing: '0.12em', textTransform: 'uppercase',
+                padding: '2px 8px', border: `1px solid ${C.ink}30`, color: C.ink, opacity: 0.7,
+                fontWeight: 500,
+              }}>{t}</span>
+            ))}
+          </div>
+        )}
+      </div>
     </a>
   );
 }
