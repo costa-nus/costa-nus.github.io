@@ -5,7 +5,16 @@ const { C, F, useIsMobile, WaveMark } = window;
 function Nav({ basePath = '' }) {
   // basePath: '' on the home page (hash jumps stay on-page); '/' (or similar)
   // on standalone sub-pages so hash links navigate back to the corresponding home section.
-  const items = ['Research', 'Publications', 'People', 'News', 'Join'];
+  // Items default to home-page section anchors; an explicit `path` makes the
+  // entry a sub-page link instead (e.g. Blogs, which lives at /blogs/).
+  const items = [
+    { label: 'Research' },
+    { label: 'Publications' },
+    { label: 'People' },
+    { label: 'News' },
+    { label: 'Blogs', path: '/blogs/' },
+    { label: 'Join' },
+  ];
   const logoHref = basePath || '#top';
   const isHome = basePath === '';
   const isMobile = useIsMobile();
@@ -41,11 +50,13 @@ function Nav({ basePath = '' }) {
         backdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.ink}16`,
       };
 
-  const linkStyle = (i, size = 13.5) => ({
+  const linkStyle = (label, size = 13.5) => ({
     fontFamily: F.display, fontSize: size, fontWeight: 500, color: C.ink,
-    opacity: i === 'Join' ? 1 : 0.75, textDecoration: 'none', letterSpacing: '-0.005em',
-    ...(i === 'Join' ? { color: C.accent } : {}),
+    opacity: label === 'Join' ? 1 : 0.75, textDecoration: 'none', letterSpacing: '-0.005em',
+    ...(label === 'Join' ? { color: C.accent } : {}),
   });
+
+  const hrefFor = (it) => it.path || `${basePath}#${it.label.toLowerCase()}`;
 
   return (
     <div style={wrapStyle}>
@@ -94,9 +105,9 @@ function Nav({ basePath = '' }) {
           </button>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-            {items.map(i => (
-              <a key={i} href={`${basePath}#${i.toLowerCase()}`} style={linkStyle(i)}>
-                {i}{i === 'Join' && ' →'}
+            {items.map(it => (
+              <a key={it.label} href={hrefFor(it)} style={linkStyle(it.label)}>
+                {it.label}{it.label === 'Join' && ' →'}
               </a>
             ))}
           </div>
@@ -109,14 +120,14 @@ function Nav({ basePath = '' }) {
           background: C.paper,
           display: 'flex', flexDirection: 'column', gap: 16,
         }}>
-          {items.map(i => (
+          {items.map(it => (
             <a
-              key={i}
-              href={`${basePath}#${i.toLowerCase()}`}
+              key={it.label}
+              href={hrefFor(it)}
               onClick={() => setMenuOpen(false)}
-              style={linkStyle(i, 17)}
+              style={linkStyle(it.label, 17)}
             >
-              {i}{i === 'Join' && ' →'}
+              {it.label}{it.label === 'Join' && ' →'}
             </a>
           ))}
         </div>
