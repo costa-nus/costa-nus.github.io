@@ -75,6 +75,7 @@ function BlogCardThumb({ post, isMobile }) {
       aspectRatio: isMobile ? '16 / 9' : '4 / 3',
       background: C.paperWarm,
       border: `1px solid ${C.ink}18`,
+      borderRadius: 12,
       overflow: 'hidden',
     }}>
       <img
