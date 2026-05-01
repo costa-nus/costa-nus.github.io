@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!--
+  CoSTA@NUS Lab — standalone blog post template.
+
+  USAGE
+  ─────
+  1. Copy this file to `blogs/<slug>/index.html` where <slug> follows the
+     convention `<YYYY-MM-DD>-<kebab-title>` so URLs sort chronologically and
+     match `data/blogs.js` entries.
+  2. Fill in the four "EDIT" zones below: <title>, the og:* meta tags, the
+     post header block, and the <article> body.
+  3. Optionally register the post in `data/blogs.js` so it appears on /blogs/.
+
+  This page is "self-contained" in the sense that it has no JS dependencies
+  and the body is pure HTML — but it does reference one shared stylesheet at
+  /css/site.css. Linking the global stylesheet (rather than inlining its
+  contents) means palette/typography updates to the lab's design system
+  propagate automatically to every published post.
+
+  If you ever need to mirror a post outside this domain, copy /css/site.css
+  alongside the file and adjust the <link href>.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- EDIT ── post-specific metadata ─────────────────────────────────────── -->
+<title>Post title — CoSTA@NUS Lab</title>
+<meta name="description" content="One-sentence summary of the post." />
+<meta property="og:title" content="Post title — CoSTA@NUS Lab" />
+<meta property="og:description" content="One-sentence summary of the post." />
+<meta property="og:type" content="article" />
+<!-- ─────────────────────────────────────────────────────────────────────── -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://costa-nus.github.io/css/site.css">
+</head>
+<body>
+
+<!-- ── Nav (statically rendered mirror of the React Nav) ──────────────── -->
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a class="brand" href="/">
+      <svg width="36" height="36" viewBox="0 0 96 96" aria-hidden="true">
+        <rect width="96" height="96" rx="18" fill="#003D7C"/>
+        <path d="M 14 34 Q 28 28 42 34 T 66 34 T 86 34" fill="none" stroke="#f5f1ea" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 14 52 Q 28 46 42 52 T 66 52 T 86 52" fill="none" stroke="#EF7C00" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 14 70 Q 28 64 42 70 T 66 70 T 86 70" fill="none" stroke="#f5f1ea" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="brand-name">Co<span class="accent">STA</span><span class="at">@NUS</span></div>
+        <div class="brand-tag">COGNITIVE SCIENCE · TRUSTWORTHY AI</div>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <a href="/#research">Research</a>
+      <a href="/#publications">Publications</a>
+      <a href="/#people">People</a>
+      <a href="/#news">News</a>
+      <a href="/blogs/">Blogs</a>
+      <a class="cta" href="/#join">Join →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Article ─────────────────────────────────────────────────────────── -->
+<article class="article-wrap">
+  <a class="back-link" href="/blogs/">← All posts</a>
+
+  <!-- EDIT ── post header ───────────────────────────────────────────────── -->
+  <div class="post-kicker">May 1, 2026 · Jason Hong</div>
+  <h1 class="post-title">Post title goes here, balanced for line breaks.</h1>
+  <p class="post-lede">A one- or two-sentence lede in editorial italic — sets the frame for what the reader is about to spend their attention on.</p>
+  <div class="post-tags">
+    <span>Tag One</span>
+    <span>Tag Two</span>
+  </div>
+  <!-- ─────────────────────────────────────────────────────────────────── -->
+
+  <!-- EDIT ── post body. Below is a kitchen-sink showing every supported
+       prose element so you can copy-paste from this template. Delete what
+       you don't use. ─────────────────────────────────────────────────── -->
+  <div class="prose">
+
+    <p>Open with a paragraph. <strong>Bold</strong> and <em>italic</em> work
+    inline, as do <a href="/">links</a> and <code>inline code</code>. Long
+    paragraphs are set in Fraunces at 19px with generous line height — the
+    same editorial register as the home page's lede passages.</p>
+
+    <h2>A second-level heading</h2>
+
+    <p>Use <code>h2</code> for major sections and <code>h3</code> for
+    sub-sections. Don't use <code>h1</code> in the body — the post title
+    above is the page's only <code>h1</code>.</p>
+
+    <h3>A third-level heading</h3>
+
+    <p>Lists come in two flavors:</p>
+
+    <ul>
+      <li>Unordered for parallel items.</li>
+      <li>Markers are tinted in the lab accent color.</li>
+      <li>Spacing is set wider than browser defaults so dense bullets breathe.</li>
+    </ul>
+
+    <ol>
+      <li>Ordered when sequence matters.</li>
+      <li>Same accent-tinted markers.</li>
+    </ol>
+
+    <blockquote>
+      Block quotes sit slightly inset, with an accent-color rule on the left
+      and italic body type. Best for short pulled passages, not extended
+      excerpts.
+    </blockquote>
+
+    <p>For longer code listings, use a fenced block:</p>
+
+    <pre><code>def coastline(x):
+    return "where human minds meet machine intelligence"
+</code></pre>
+
+    <figure>
+      <!-- Replace with a real image path, e.g. ./hero.jpg co-located with this index.html. -->
+      <img src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'&gt;&lt;rect width='16' height='9' fill='%23ece4d3'/&gt;&lt;/svg&gt;" alt="Placeholder" />
+      <figcaption>Figure 1 — captions are mono-set, all-caps, low-emphasis.</figcaption>
+    </figure>
+
+    <hr />
+
+    <p class="post-signoff">— J.</p>
+
+  </div>
+  <!-- ─────────────────────────────────────────────────────────────────── -->
+</article>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="brand">
+      <svg width="44" height="44" viewBox="0 0 96 96" aria-hidden="true">
+        <rect width="96" height="96" rx="22" fill="#003D7C"/>
+        <path d="M 14 34 Q 28 28 42 34 T 66 34 T 86 34" fill="none" stroke="#f5f1ea" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 14 52 Q 28 46 42 52 T 66 52 T 86 52" fill="none" stroke="#EF7C00" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 14 70 Q 28 64 42 70 T 66 70 T 86 70" fill="none" stroke="#f5f1ea" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="brand-name">Co<span class="accent">STA</span><span class="at">@NUS</span></div>
+        <div class="brand-tag">COGNITIVE SCIENCE · TRUSTWORTHY AI</div>
+      </div>
+    </div>
+  </div>
+  <div class="site-footer-meta">
+    <span>© 2026 CoSTA Lab · NUS ECE</span>
+    <span>Designed on the coastline · v1.0</span>
+  </div>
+</footer>
+
+</body>
+</html>

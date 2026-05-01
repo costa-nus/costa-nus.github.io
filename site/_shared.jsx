@@ -1,6 +1,11 @@
 // Shared design tokens + tiny primitives used by every section file.
 // Loaded first (see <script> order in HTML) so subsequent files can pull
 // these off `window` via destructure.
+//
+// NOTE — token sync. The values in `C` and `F` are mirrored as CSS custom
+// properties in /css/site.css (loaded by every HTML page). React inline
+// styles read from these JS constants; static HTML pages read from the CSS
+// variables. When changing the palette/fonts, update both.
 
 const C = {
   ink: '#003D7C',
