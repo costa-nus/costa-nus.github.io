@@ -34,10 +34,155 @@ function OceanWave({ baseY, amp, speed, phase, stroke, strokeOpacity, strokeWidt
   return <path d={d} fill="none" stroke={stroke} strokeOpacity={strokeOpacity} strokeWidth={strokeWidth} strokeLinecap="round" />;
 }
 
+function setupMethodScrollAnimation(svg, triggerEl) {
+  const gsap = window.gsap;
+  const ScrollTrigger = window.ScrollTrigger;
+  if (!gsap || !ScrollTrigger || !window.MotionPathPlugin) return null;
+
+  const strokes = svg.querySelectorAll('path[stroke]');
+  const fillsNoStroke = Array.from(svg.querySelectorAll('path[fill]:not([stroke])'));
+  const circles = Array.from(svg.querySelectorAll('circle'));
+  const smallFills = fillsNoStroke.filter(h => { const b = h.getBBox(); return b.width * b.height < 20; });
+  const bigFills = fillsNoStroke.filter(h => { const b = h.getBBox(); return b.width * b.height >= 20; });
+  const dots = [...bigFills, ...circles, ...smallFills];
+  if (!strokes.length || !dots.length) return null;
+
+  const center = (el) => {
+    if (el.tagName === 'circle') {
+      return { x: parseFloat(el.getAttribute('cx')) || 0, y: parseFloat(el.getAttribute('cy')) || 0 };
+    }
+    const b = el.getBBox();
+    return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+  };
+  const pathEnds = (el) => {
+    const d = el.getAttribute('d'); if (!d) return null;
+    const segs = d.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi); if (!segs || !segs.length) return null;
+    let sx = 0, sy = 0, ex = 0, ey = 0, cx = 0, cy = 0;
+    segs.forEach((seg, i) => {
+      const cmd = seg[0].toUpperCase();
+      const nums = seg.slice(1).trim().split(/[\s,]+/).map(parseFloat).filter(n => !isNaN(n));
+      if (!nums.length) return;
+      if (i === 0 && cmd === 'M') { sx = nums[0]; sy = nums[1]; cx = sx; cy = sy; }
+      switch (cmd) {
+        case 'M': case 'L': if (nums.length >= 2) { cx = nums[nums.length - 2]; cy = nums[nums.length - 1]; } break;
+        case 'H': cx = nums[nums.length - 1]; break;
+        case 'V': cy = nums[nums.length - 1]; break;
+        case 'C': if (nums.length >= 6) { cx = nums[nums.length - 2]; cy = nums[nums.length - 1]; } break;
+        case 'S': case 'Q': if (nums.length >= 4) { cx = nums[nums.length - 2]; cy = nums[nums.length - 1]; } break;
+        case 'T': if (nums.length >= 2) { cx = nums[nums.length - 2]; cy = nums[nums.length - 1]; } break;
+        case 'A': if (nums.length >= 7) { cx = nums[nums.length - 2]; cy = nums[nums.length - 1]; } break;
+      }
+      if (i === segs.length - 1) { ex = cx; ey = cy; }
+    });
+    return { start: { x: sx, y: sy }, end: { x: ex, y: ey } };
+  };
+
+  const MAX_DIST = 50;
+  const used = new Set();
+  let pairs = [];
+  dots.forEach((d) => {
+    const c = center(d);
+    let best = null, minDist = Infinity;
+    strokes.forEach((p) => {
+      if (used.has(p)) return;
+      const ends = pathEnds(p); if (!ends) return;
+      const dStart = Math.hypot(c.x - ends.start.x, c.y - ends.start.y);
+      const dEnd = Math.hypot(c.x - ends.end.x, c.y - ends.end.y);
+      const m = Math.min(dStart, dEnd);
+      if (m < MAX_DIST && m < minDist) { minDist = m; best = p; }
+    });
+    if (best) { pairs.push({ node: d, path: best }); used.add(best); }
+  });
+  if (pairs.length < dots.length / 2) {
+    pairs = [];
+    dots.forEach((d, m) => { if (m < strokes.length) pairs.push({ node: d, path: strokes[m] }); });
+  }
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: triggerEl,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1.2,
+      invalidateOnRefresh: true,
+    },
+  });
+  pairs.forEach((pair, i) => {
+    const clone = pair.node.cloneNode(true);
+    const fillColor = pair.node.getAttribute('fill') || '#94C8FA';
+    clone.setAttribute('fill', fillColor);
+    clone.setAttribute('filter', 'drop-shadow(0 0 3px rgba(148, 200, 250, 0.7))');
+    clone.removeAttribute('class');
+    clone.style.animation = 'none'; // suppress the CSS pulse so GSAP fully controls opacity
+    svg.appendChild(clone);
+    gsap.set(clone, { opacity: 0 });
+    tl.to(clone, { opacity: 1, duration: 0.3, ease: 'power2.out' }, i * 0.08);
+    tl.to(clone, {
+      motionPath: { path: pair.path, align: pair.path, alignOrigin: [0.5, 0.5], autoRotate: false },
+      duration: 2.5,
+      ease: 'none',
+    }, i * 0.08);
+  });
+
+  return tl.scrollTrigger;
+}
+
 function Hero() {
   const isMobile = useIsMobile();
+  const sectionRef = React.useRef(null);
+  const bgRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!bgRef.current || !sectionRef.current) return;
+    if (typeof window === 'undefined') return;
+    if (window.innerWidth <= 768) return;
+    let st = null;
+    let cancelled = false;
+    fetch('site/method-bg.svg')
+      .then((r) => r.text())
+      .then((txt) => {
+        if (cancelled || !bgRef.current) return;
+        bgRef.current.innerHTML = txt;
+        const svg = bgRef.current.querySelector('svg');
+        if (!svg) return;
+        svg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+        svg.style.display = 'block';
+        const tryStart = () => {
+          if (cancelled) return;
+          if (!window.gsap || !window.MotionPathPlugin || !window.ScrollTrigger) {
+            return setTimeout(tryStart, 80);
+          }
+          st = setupMethodScrollAnimation(svg, sectionRef.current);
+        };
+        tryStart();
+      });
+    return () => {
+      cancelled = true;
+      if (st) st.kill();
+    };
+  }, []);
+
   return (
-    <section id="top" style={{ background: C.paper, paddingTop: isMobile ? 80 : 64, paddingBottom: isMobile ? 72 : 96, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box' }}>
+    <section ref={sectionRef} id="top" style={{ background: C.paper, paddingTop: isMobile ? 80 : 64, paddingBottom: isMobile ? 72 : 96, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box' }}>
+      {/* Decorative method-network backdrop — bottom-aligned, scaled to span the section, scroll-driven */}
+      <div
+        ref={bgRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: 0,
+          transform: isMobile ? 'translateX(-50%)' : 'translateX(-35%)',
+          width: isMobile ? '140vw' : 'min(1200px, 88vw)',
+          maxWidth: 'none',
+          opacity: 0.6,
+          pointerEvents: 'none',
+          userSelect: 'none',
+          zIndex: 0,
+        }}
+      />
       {/* Coastline SVG backdrop — animated, full viewport width */}
       <svg
         viewBox="0 0 1400 400" preserveAspectRatio="none"
@@ -135,7 +280,7 @@ function Hero() {
         <span className="costa-sun-ring costa-sun-ring-1" />
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative', zIndex: 1 }}>
         <a
           href="https://nus.edu.sg"
           target="_blank"
