@@ -12,8 +12,8 @@
 //   url:  optional homepage; when present, the name renders as a link.
 window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', term: '2026 Fall -', kind: 'pi', url: 'https://jyhong.gitlab.io/' },
-  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
-  { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', term: '2026 Fall -', kind: 'ra', url: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
+  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ&hl=zh-CN' },
+  { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', term: '2026 Fall -', kind: 'ra', url: 'https://zrc007.github.io/', scholar: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ&hl=zh-CN' },
   { name: 'Minh Khoi Ho', role: 'Remote Intern · MBZUAI', term: '2026 Spring', kind: 'intern', url: 'https://hmkhoi2701.github.io/' },
   { name: 'Xiang Gao', role: 'Remote Intern · Tsinghua (Yao class)', term: '2026 Spring', kind: 'intern', url: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
   // { name: 'Open Position', role: 'Remote Intern', term: 'Rolling basis', kind: 'open' },
