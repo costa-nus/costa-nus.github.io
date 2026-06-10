@@ -92,15 +92,18 @@ function NusLogo({ height = 32, color = C.ink, title = 'National University of S
   );
 }
 
+// Single-level section header: one plain title line. `kicker` and `lede` are
+// optional and retained for sub-pages that still pass them; the live home-page
+// sections pass only `title`.
 function SectionHeader({ kicker, title, lede, align = 'left' }) {
   const isMobile = useIsMobile();
   return (
     <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 56, textAlign: align }}>
-      <MonoLabel>{kicker}</MonoLabel>
+      {kicker && <MonoLabel>{kicker}</MonoLabel>}
       <div style={{
         fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
         letterSpacing: '-0.035em',
-        lineHeight: 1.04, color: C.ink, marginTop: 14, textWrap: 'balance',
+        lineHeight: 1.04, color: C.ink, marginTop: kicker ? 14 : 0, textWrap: 'balance',
       }}>{title}</div>
       {lede && (
         <div style={{

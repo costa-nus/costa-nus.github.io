@@ -54,15 +54,12 @@ function Publications() {
     <section id="publications" style={{ background: C.secondary, padding: isMobile ? '72px 0' : '120px 0', color: C.paper }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
         <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 56 }}>
-          <div style={{ fontFamily: F.mono, fontSize: 11, letterSpacing: '0.16em', color: C.paper, opacity: 0.6, textTransform: 'uppercase', fontWeight: 500 }}>
-            § 02 · Publications
-          </div>
           <div style={{
             fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
             letterSpacing: '-0.035em',
-            lineHeight: 1.04, color: C.paper, marginTop: 14, textWrap: 'balance',
+            lineHeight: 1.04, color: C.paper, textWrap: 'balance',
           }}>
-            A selected record of what we've charted.
+            Publications
           </div>
         </div>
 

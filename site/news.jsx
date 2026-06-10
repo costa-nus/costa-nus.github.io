@@ -9,11 +9,7 @@ function News() {
   return (
     <section id="news" style={{ background: C.paperWarm, padding: isMobile ? '56px 0' : '80px 0' }}>
       <div style={{ maxWidth: 960, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
-        <SectionHeader
-          kicker="§ 04 · News"
-          title="What is happening on the coastline."
-          // lede="Papers, press, travel, and milestones — a running log of the lab's recent movements."
-        />
+        <SectionHeader title="News" />
 
         <div style={{
           paddingTop: 16, borderTop: `1px solid ${C.ink}20`,

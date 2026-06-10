@@ -13,11 +13,7 @@ function ResearchPillars() {
   return (
     <section id="research" style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
-        <SectionHeader
-          kicker="§ 01 · Research"
-          title="Three currents, one coastline."
-          lede="We aim to build trustworthy AI via exploring the cognitive dark matter (the human's internal cognitive processes that are not observable in data, e.g., the emotion, intention, etc.), which forges the fundation for applying AI in high-stakes domains, specifically cognitive health."
-        />
+        <SectionHeader title="Research" />
 
         <div style={{
           display: 'grid',

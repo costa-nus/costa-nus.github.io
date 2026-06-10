@@ -11,11 +11,7 @@ function People() {
   return (
     <section id="people" style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
-        <SectionHeader
-          kicker="§ 03 · People"
-          title="Navigators, in and out of the lab."
-          // lede="Current members, open positions, and alumni charting their own courses after CoSTA."
-        />
+        <SectionHeader title="People" />
 
         <MonoLabel size={10}>Current members</MonoLabel>
         <div style={{

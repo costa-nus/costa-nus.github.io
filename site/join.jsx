@@ -1,6 +1,6 @@
 // Join section — recruiting CTA over a token-field SVG backdrop.
 
-const { C, F, useIsMobile, MonoLabel } = window;
+const { C, F, useIsMobile } = window;
 
 function Join() {
   const isMobile = useIsMobile();
@@ -29,13 +29,11 @@ function Join() {
       </svg>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative' }}>
-        <MonoLabel color={C.paper} opacity={0.7}>§ 05 · Join</MonoLabel>
         <div style={{
           fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(40px, 7vw, 84px)',
-          letterSpacing: '-0.04em', lineHeight: 1.02, marginTop: 16, maxWidth: 900, textWrap: 'balance',
+          letterSpacing: '-0.04em', lineHeight: 1.02, maxWidth: 900, textWrap: 'balance',
         }}>
-          Sail with us to the<br />
-          <span style={{ fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400 }}>cognitive coastline</span>.
+          Join
         </div>
         <div style={{
           fontFamily: F.editorial, fontStyle: 'italic',
