@@ -243,11 +243,26 @@ function PillarCard({ p, i }) {
         display: 'flex', flexDirection: 'column', gap: 6,
       }}>
         <MonoLabel size={9}>Selected work</MonoLabel>
-        {p.refs.map(r => (
-          <div key={r} style={{ fontFamily: F.mono, fontSize: 10.5, color: C.ink, opacity: 0.7, letterSpacing: '0.02em' }}>
-            {r.startsWith('[') ? r : `→ ${r}`}
-          </div>
-        ))}
+        {p.refs.map((r, k) => {
+          // Refs are either a bare string (muted text) or { label, href }
+          // (linked to the paper's PDF). Normalize to one shape.
+          const label = typeof r === 'string' ? r : r.label;
+          const href = typeof r === 'string' ? null : r.href;
+          const text = label.startsWith('[') ? label : `→ ${label}`;
+          const base = { fontFamily: F.mono, fontSize: 10.5, color: C.ink, opacity: 0.7, letterSpacing: '0.02em' };
+          if (!href) return <div key={label} style={base}>{text}</div>;
+          return (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ ...base, textDecoration: 'none', transition: 'color 0.18s ease-out, opacity 0.18s ease-out' }}
+              onMouseEnter={e => { e.currentTarget.style.color = C.accent; e.currentTarget.style.opacity = 1; }}
+              onMouseLeave={e => { e.currentTarget.style.color = C.ink; e.currentTarget.style.opacity = 0.7; }}
+            >{text}</a>
+          );
+        })}
       </div>
     </div>
   );
