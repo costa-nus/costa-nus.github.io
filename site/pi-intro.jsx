@@ -4,6 +4,11 @@ const { C, F, useIsMobile, MonoLabel, SPONSORS } = window;
 
 function PIIntro() {
   const isMobile = useIsMobile();
+  // Subtle accent-underlined inline link, reused across the bio prose.
+  const link = {
+    color: C.ink, fontWeight: 600, textDecoration: 'none',
+    borderBottom: `1.5px solid ${C.accent}59`, paddingBottom: 1,
+  };
   return (
     <section style={{ background: C.paperWarm, padding: isMobile ? '64px 0' : '96px 0' }}>
       <div style={{
@@ -55,31 +60,33 @@ function PIIntro() {
         </div>
 
         <div>
-          {/* <MonoLabel>A word from the PI</MonoLabel> */}
-          <div style={{
-            fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
-            fontSize: 'clamp(22px, 3vw, 30px)',
-            lineHeight: 1.35, color: C.ink, marginTop: 16, textWrap: 'pretty', letterSpacing: '-0.01em',
+          {/* <MonoLabel>About the PI</MonoLabel> */}
+          <p style={{
+            fontFamily: F.display, fontWeight: 500,
+            fontSize: 'clamp(18px, 2.3vw, 23px)',
+            lineHeight: 1.5, color: C.ink, margin: '16px 0 0',
+            textWrap: 'pretty', letterSpacing: '-0.015em',
           }}>
-            “We are exploring the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
-            {' '}— navigating the uncharted waters of trustworthy AI, guided by cognitive
-            science and a commitment to safe, ethical innovation.”
-          </div>
+            Jason is an incoming Assistant Professor at the{' '}
+            <a href="https://cde.nus.edu.sg/ece/" target="_blank" rel="noopener noreferrer" style={link}>ECE department of NUS</a>{' '}
+            (from July 2026). His research interest is to build trustworthy AI by exploring the frontier where{' '}
+            <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>.
+          </p>
 
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-            gap: isMobile ? 20 : 40, marginTop: isMobile ? 32 : 48,
+            gap: isMobile ? 20 : 40, marginTop: isMobile ? 28 : 36,
             fontFamily: F.display, fontSize: 15, lineHeight: 1.6, color: C.ink, opacity: 0.85,
           }}>
             <p style={{ margin: 0 }}>
-              Previously a research fellow at Massachusetts General Hospital &amp; Harvard Medical
-              School, after two years at Institute for Foundations of Machine Learning (IFML) and
-              the University of Texas at Austin.
+              After earned PhD in CSE from Michigan State University, He was trained at Mass. General Hospital &amp; Harvard Medical
+              School, and the Institute for Foundations of Machine Learning
+              (IFML), UT Austin.
             </p>
             <p style={{ margin: 0 }}>
-              Named an <b style={{ color: C.ink }}>MLSys Rising Star</b> (2024), <b>Top Area Chair</b> at
-              NeurIPS 2025, and a <b>Best Paper Finalist</b> at VLDB 2024. 
+              Recognized as an <b style={{ color: C.ink }}>MLSys Rising Star</b> (2024), a{' '}
+              <b>Best Paper Finalist</b> at VLDB 2024, and a <b>Top Area Chair</b> at NeurIPS 2025 and Top Reviewer at NeurIPS/ICML.
             </p>
           </div>
 
