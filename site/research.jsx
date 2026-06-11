@@ -43,12 +43,12 @@ function PressCoverage({ items }) {
         gap: 16, marginBottom: isMobile ? 20 : 28, flexWrap: 'wrap',
       }}>
         <div>
-          <MonoLabel>In the press</MonoLabel>
+          {/* <MonoLabel>In the press</MonoLabel> */}
           <div style={{
             fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
             color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
           }}>
-            Our research on LLM Brain Rot, featured by major outlets.
+            Our research in press
           </div>
         </div>
       </div>
@@ -150,12 +150,13 @@ function WhatWeBuild({ items }) {
         gap: 16, marginBottom: isMobile ? 20 : 28, flexWrap: 'wrap',
       }}>
         <div>
-          <MonoLabel>What we're building</MonoLabel>
+          {/* <MonoLabel>What we're building</MonoLabel> */}
           <div style={{
             fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
             color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
           }}>
-            Tools, workshops, and competitions — building the product and the community out of lab.
+            What we're building
+            {/* Tools, workshops, and competitions — building the product and the community out of lab. */}
           </div>
         </div>
       </div>

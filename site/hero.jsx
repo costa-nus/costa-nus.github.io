@@ -1,38 +1,6 @@
-// Hero section + animated coastline waves used as its backdrop.
+// Hero section + scroll-driven method-network backdrop.
 
 const { C, F, useIsMobile, MonoLabel, NusLogo } = window;
-
-function useOceanPath({ baseY, amp, speed, phase = 0, segments = 14, width = 1400 }) {
-  const [t, setT] = React.useState(0);
-  React.useEffect(() => {
-    let raf; const start = performance.now();
-    const tick = (now) => { setT((now - start) / 1000); raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-  const pts = [];
-  for (let i = 0; i <= segments; i++) {
-    const x = (i / segments) * width;
-    const y = baseY
-      + Math.sin(t * speed + phase + i * 0.7) * amp
-      + Math.sin(t * speed * 0.6 + phase * 1.3 + i * 1.4) * amp * 0.35;
-    pts.push([x, y]);
-  }
-  let d = `M ${pts[0][0]} ${pts[0][1]}`;
-  for (let i = 1; i < pts.length; i++) {
-    const [x0, y0] = pts[i - 1];
-    const [x1, y1] = pts[i];
-    const cx = (x0 + x1) / 2;
-    d += ` Q ${x0} ${y0} ${cx} ${(y0 + y1) / 2}`;
-  }
-  d += ` T ${pts[pts.length - 1][0]} ${pts[pts.length - 1][1]}`;
-  return d;
-}
-
-function OceanWave({ baseY, amp, speed, phase, stroke, strokeOpacity, strokeWidth }) {
-  const d = useOceanPath({ baseY, amp, speed, phase });
-  return <path d={d} fill="none" stroke={stroke} strokeOpacity={strokeOpacity} strokeWidth={strokeWidth} strokeLinecap="round" />;
-}
 
 function setupMethodScrollAnimation(svg, triggerEl) {
   const gsap = window.gsap;
@@ -183,16 +151,6 @@ function Hero() {
           zIndex: 0,
         }}
       />
-      {/* Coastline SVG backdrop — animated, full viewport width */}
-      <svg
-        viewBox="0 0 1400 400" preserveAspectRatio="none"
-        style={{ position: 'absolute', left: '50%', right: 'auto', bottom: 0, width: '100vw', height: 320, opacity: 0.6, transform: 'translateX(-50%)', pointerEvents: 'none' }}
-      >
-        <OceanWave baseY={180} amp={8}  speed={0.55} phase={0.0} stroke={C.ink}    strokeOpacity={0.18} strokeWidth={1.5} />
-        <OceanWave baseY={220} amp={10} speed={0.70} phase={1.1} stroke={C.accent} strokeOpacity={0.45} strokeWidth={2} />
-        <OceanWave baseY={260} amp={9}  speed={0.50} phase={2.2} stroke={C.ink}    strokeOpacity={0.14} strokeWidth={1.5} />
-        <OceanWave baseY={300} amp={12} speed={0.40} phase={3.3} stroke={C.ink}    strokeOpacity={0.10} strokeWidth={1.5} />
-      </svg>
       {/* sun — breathing */}
       <style>{`
         @keyframes costaBreathe {
@@ -272,7 +230,6 @@ function Hero() {
           width: 0.6em; height: 0.6em; background: ${C.accent}22;
           animation: costaDotHaloInner 4.2s ease-in-out infinite;
         }
-        .costa-wave-wrap { position: absolute; left: 0; right: 0; bottom: 0; width: 100vw; height: 320px; overflow: hidden; pointer-events: none; }
       `}</style>
       <div className="costa-sun">
         <span className="costa-sun-ring costa-sun-ring-3" />

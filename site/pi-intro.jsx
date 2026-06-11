@@ -1,6 +1,6 @@
 // PI introduction strip — portrait + pull-quote + press coverage row.
 
-const { C, F, useIsMobile, MonoLabel } = window;
+const { C, F, useIsMobile, MonoLabel, SPONSORS } = window;
 
 function PIIntro() {
   const isMobile = useIsMobile();
@@ -55,13 +55,13 @@ function PIIntro() {
         </div>
 
         <div>
-          <MonoLabel>A word from the PI</MonoLabel>
+          {/* <MonoLabel>A word from the PI</MonoLabel> */}
           <div style={{
             fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
             fontSize: 'clamp(22px, 3vw, 30px)',
             lineHeight: 1.35, color: C.ink, marginTop: 16, textWrap: 'pretty', letterSpacing: '-0.01em',
           }}>
-            “My research interest is to explore the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
+            “We are exploring the frontier where <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>
             {' '}— navigating the uncharted waters of trustworthy AI, guided by cognitive
             science and a commitment to safe, ethical innovation.”
           </div>
@@ -79,14 +79,13 @@ function PIIntro() {
             </p>
             <p style={{ margin: 0 }}>
               Named an <b style={{ color: C.ink }}>MLSys Rising Star</b> (2024), <b>Top Area Chair</b> at
-              NeurIPS 2025, and a <b>Best Paper Finalist</b> at VLDB 2024. Supported by OpenAI's
-              Researcher Access Program.
+              NeurIPS 2025, and a <b>Best Paper Finalist</b> at VLDB 2024. 
             </p>
           </div>
 
           {/* coverage strip */}
           <div style={{ marginTop: 48 }}>
-            <MonoLabel size={9}>Covered in</MonoLabel>
+            <MonoLabel size={9}>Media Coverage</MonoLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginTop: 14, alignItems: 'center' }}>
               {[
                 ['Nature News',    'https://www.nature.com/articles/d41586-025-03542-2'],
@@ -108,6 +107,35 @@ function PIIntro() {
                   onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.accent; }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '0.5'; e.currentTarget.style.color = C.ink; }}
                 >{n}</a>
+              ))}
+            </div>
+          </div>
+
+          {/* sponsor strip */}
+          <div style={{ marginTop: 40 }}>
+            <MonoLabel size={9}>Sponsors (Inc. Prior Institutes)</MonoLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 16, alignItems: 'center' }}>
+              {SPONSORS.map(({ name, url, image, height }) => (
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={name}
+                  style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
+                >
+                  <img
+                    src={image}
+                    alt={`${name} logo`}
+                    style={{
+                      height, width: 'auto', display: 'block',
+                      filter: 'grayscale(1)', opacity: 0.55,
+                      transition: 'opacity 0.15s ease-out, filter 0.15s ease-out',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.filter = 'grayscale(0)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '0.55'; e.currentTarget.style.filter = 'grayscale(1)'; }}
+                  />
+                </a>
               ))}
             </div>
           </div>
