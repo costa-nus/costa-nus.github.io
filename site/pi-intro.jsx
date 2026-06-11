@@ -1,9 +1,12 @@
 // PI introduction strip — portrait + pull-quote + press coverage row.
 
-const { C, F, useIsMobile, MonoLabel, SPONSORS } = window;
+const { C, F, useIsMobile, MonoLabel, SPONSORS, NEWS } = window;
 
 function PIIntro() {
   const isMobile = useIsMobile();
+  const [showAllNews, setShowAllNews] = React.useState(false);
+  const NEWS_PREVIEW = 7;
+  const visibleNews = showAllNews ? NEWS : NEWS.slice(0, NEWS_PREVIEW);
   // Subtle accent-underlined inline link, reused across the bio prose.
   const link = {
     color: C.ink, fontWeight: 600, textDecoration: 'none',
@@ -67,27 +70,58 @@ function PIIntro() {
             lineHeight: 1.5, color: C.ink, margin: '16px 0 0',
             textWrap: 'pretty', letterSpacing: '-0.015em',
           }}>
-            Jason is an incoming Assistant Professor at the{' '}
-            <a href="https://cde.nus.edu.sg/ece/" target="_blank" rel="noopener noreferrer" style={link}>ECE department of NUS</a>{' '}
-            (from July 2026). His research interest is to build trustworthy AI by exploring the frontier where{' '}
+            At CoSTA Lab, we aim to build trustworthy AI by exploring the frontier where{' '}
             <u style={{ textDecorationColor: C.accent, textDecorationThickness: 2, textUnderlineOffset: 4 }}>human minds meet machine intelligence</u>.
           </p>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-            gap: isMobile ? 20 : 40, marginTop: isMobile ? 28 : 36,
-            fontFamily: F.display, fontSize: 15, lineHeight: 1.6, color: C.ink, opacity: 0.85,
-          }}>
-            <p style={{ margin: 0 }}>
-              After earned PhD in CSE from Michigan State University, He was trained at Mass. General Hospital &amp; Harvard Medical
-              School, and the Institute for Foundations of Machine Learning
-              (IFML), UT Austin.
-            </p>
-            <p style={{ margin: 0 }}>
-              Recognized as an <b style={{ color: C.ink }}>MLSys Rising Star</b> (2024), a{' '}
-              <b>Best Paper Finalist</b> at VLDB 2024, and a <b>Top Area Chair</b> at NeurIPS 2025 and Top Reviewer at NeurIPS/ICML.
-            </p>
+          {/* news */}
+          <div style={{ marginTop: isMobile ? 36 : 44 }}>
+            <MonoLabel size={9}>News</MonoLabel>
+            <div style={{ marginTop: 14, borderTop: `1px solid ${C.ink}20` }}>
+              {visibleNews.map((n, i) => (
+                <div key={i} style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '84px 1fr',
+                  gap: isMobile ? 4 : 20,
+                  padding: '7px 0',
+                  alignItems: 'baseline',
+                }}>
+                  <div style={{
+                    fontFamily: F.mono, fontSize: 12, letterSpacing: '0.08em', color: C.ink, opacity: 0.7,
+                    whiteSpace: 'nowrap',
+                  }}>{n.date}</div>
+                  <div style={{
+                    fontFamily: F.display, fontSize: 15, lineHeight: 1.45, color: C.ink,
+                    textWrap: 'pretty', fontWeight: n.starred ? 500 : 400,
+                  }}>
+                    {n.body}
+                    {n.tags && n.tags.map(t => (
+                      <span key={t} style={{
+                        fontFamily: F.mono, fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase',
+                        padding: '2px 7px', border: `1px solid ${C.ink}30`, color: C.ink, opacity: 0.7,
+                        fontWeight: 500, whiteSpace: 'nowrap',
+                        marginLeft: 8, verticalAlign: '2px', display: 'inline-block',
+                      }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {NEWS.length > NEWS_PREVIEW && (
+              <button
+                onClick={() => setShowAllNews(v => !v)}
+                style={{
+                  marginTop: 14, background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                  fontFamily: F.mono, fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase',
+                  color: C.ink, opacity: 0.7, fontWeight: 600,
+                  transition: 'color 0.15s ease-out, opacity 0.15s ease-out',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = C.accent; e.currentTarget.style.opacity = '1'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = C.ink; e.currentTarget.style.opacity = '0.7'; }}
+              >
+                {showAllNews ? '− Show less' : `+ Show ${NEWS.length - NEWS_PREVIEW} more`}
+              </button>
+            )}
           </div>
 
           {/* coverage strip */}

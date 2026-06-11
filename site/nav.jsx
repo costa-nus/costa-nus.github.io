@@ -11,7 +11,6 @@ function Nav({ basePath = '' }) {
     { label: 'Research' },
     { label: 'Publications' },
     { label: 'People' },
-    { label: 'News' },
     { label: 'Blogs', path: '/blogs/' },
     { label: 'Join' },
   ];
