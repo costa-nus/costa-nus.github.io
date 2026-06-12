@@ -1,6 +1,18 @@
 // PI introduction strip — portrait + pull-quote + press coverage row.
 
-const { C, F, useIsMobile, MonoLabel, SPONSORS, NEWS } = window;
+const { C, F, useIsMobile, MonoLabel, SPONSORS, NEWS, mdInline } = window;
+
+// Per-category color for the news tag chips. Keys match the `tags` strings in
+// data/news.js; unknown tags fall back to ink so a new tag still renders. Hues
+// are kept muted/dark enough to read on the warm paper background and to sit
+// within the coastal palette rather than fighting it.
+const NEWS_TAG_COLORS = {
+  Paper: '#003D7C',  // ink blue — research output
+  Grant: '#1B7A6B',  // teal-green — funding
+  Honor: '#C2620E',  // burnt orange — awards & honors
+  Press: '#9B2C5A',  // berry — media coverage
+};
+const newsTagColor = (t) => NEWS_TAG_COLORS[t] || C.ink;
 
 function PIIntro() {
   const isMobile = useIsMobile();
@@ -94,15 +106,18 @@ function PIIntro() {
                     fontFamily: F.display, fontSize: 15, lineHeight: 1.45, color: C.ink,
                     textWrap: 'pretty', fontWeight: n.starred ? 500 : 400,
                   }}>
-                    {n.body}
-                    {n.tags && n.tags.map(t => (
-                      <span key={t} style={{
-                        fontFamily: F.mono, fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase',
-                        padding: '2px 7px', border: `1px solid ${C.ink}30`, color: C.ink, opacity: 0.7,
-                        fontWeight: 500, whiteSpace: 'nowrap',
-                        marginLeft: 8, verticalAlign: '2px', display: 'inline-block',
-                      }}>{t}</span>
-                    ))}
+                    {mdInline(n.body)}
+                    {n.tags && n.tags.map(t => {
+                      const tc = newsTagColor(t);
+                      return (
+                        <span key={t} style={{
+                          fontFamily: F.mono, fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase',
+                          padding: '2px 7px', border: `1px solid ${tc}59`, color: tc, background: `${tc}14`,
+                          fontWeight: 600, whiteSpace: 'nowrap',
+                          marginLeft: 8, verticalAlign: '2px', display: 'inline-block',
+                        }}>{t}</span>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

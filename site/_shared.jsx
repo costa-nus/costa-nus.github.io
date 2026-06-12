@@ -117,22 +117,28 @@ function SectionHeader({ kicker, title, lede, align = 'left' }) {
   );
 }
 
-// Lightweight inline Markdown — supports **bold** and *italic* only. Used to
-// keep small bits of copy in data/*.js editable without dragging in a parser.
-// Returns either the original string (no markup found) or an array of React
-// nodes. Patterns can't nest and don't support escapes; that's by design —
-// this is for short, hand-written labels, not arbitrary input.
+// Lightweight inline Markdown — supports **bold**, *italic*, and [text](href)
+// links. Used to keep small bits of copy in data/*.js editable without dragging
+// in a parser. Returns either the original string (no markup found) or an array
+// of React nodes. Patterns can't nest and don't support escapes; that's by
+// design — this is for short, hand-written labels, not arbitrary input. Links
+// open in a new tab and inherit the surrounding text color (see people.jsx for
+// the matching inline-link look).
 function mdInline(s) {
   if (typeof s !== 'string') return s;
-  const re = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+  const re = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*/g;
   const out = [];
   let last = 0;
   let m;
   let i = 0;
   while ((m = re.exec(s)) !== null) {
     if (m.index > last) out.push(s.slice(last, m.index));
-    if (m[1] !== undefined) out.push(<b key={i++}>{m[1]}</b>);
-    else out.push(<i key={i++}>{m[2]}</i>);
+    if (m[1] !== undefined) out.push(
+      <a key={i++} href={m[2]} target="_blank" rel="noopener noreferrer"
+         style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.ink}55` }}>{m[1]}</a>
+    );
+    else if (m[3] !== undefined) out.push(<b key={i++}>{m[3]}</b>);
+    else out.push(<i key={i++}>{m[4]}</i>);
     last = re.lastIndex;
   }
   if (!out.length) return s;
