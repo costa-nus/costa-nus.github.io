@@ -1,7 +1,7 @@
 // Publications section + the PubRow building block reused on /publications/.
 // Reads window.PUBS_FULL (data/publications.js) and derives Most-recent + Selected.
 
-const { C, F, useIsMobile } = window;
+const { C, F, useIsMobile, SubSectionTitle } = window;
 
 const PUBS_FULL = window.PUBS_FULL;
 const RECENT_MONTHS_WINDOW = 6;
@@ -20,7 +20,6 @@ function isRecent(p, now = new Date(), monthsBack = RECENT_MONTHS_WINDOW) {
 }
 
 function Publications() {
-  const [filter, setFilter] = React.useState('All');
   const isMobile = useIsMobile();
   // Selected = PI-flagged entries from the archive. Derived so the landing
   // page and /publications/ stay in sync from a single source of truth.
@@ -35,19 +34,8 @@ function Publications() {
       .sort((a, b) => (b.date || '').localeCompare(a.date || '')
         || String(b.year).localeCompare(String(a.year)));
   }, []);
-  const tags = React.useMemo(() => {
-    const set = new Set();
-    selected.forEach(p => (p.tags || []).forEach(t => set.add(t)));
-    return ['All', ...[...set].sort()];
-  }, [selected]);
-  const filtered = filter === 'All' ? selected : selected.filter(p => (p.tags || []).includes(filter));
-
   const subHeader = (label) => (
-    <div style={{
-      fontFamily: F.mono, fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
-      color: C.paper, opacity: 0.55, fontWeight: 500,
-      marginTop: 8, marginBottom: 14,
-    }}>{label}</div>
+    <SubSectionTitle color={C.accent} style={{ marginBottom: 18 }}>{label}</SubSectionTitle>
   );
 
   return (
@@ -81,27 +69,14 @@ function Publications() {
 
         {subHeader('Selected')}
 
-        {/* filter chips */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 32 }}>
-          {tags.map(t => (
-            <button
-              key={t}
-              onClick={() => setFilter(t)}
-              style={{
-                fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.1em', textTransform: 'uppercase',
-                padding: '8px 14px', border: `1px solid ${C.paper}33`,
-                background: filter === t ? C.accent : 'transparent',
-                color: filter === t ? C.paper : C.paper,
-                opacity: filter === t ? 1 : 0.85,
-                cursor: 'pointer', fontWeight: 500,
-              }}
-            >{t}</button>
-          ))}
-        </div>
-
         <div style={{ borderTop: `1px solid ${C.paper}22` }}>
-          {filtered.map((p, i) => (
-            <PubRow key={i} p={p} showYear={i === 0 || filtered[i - 1].year !== p.year} />
+          {selected.map((p, i) => (
+            <PubRow
+              key={i}
+              p={p}
+              showYear={i === 0 || selected[i - 1].year !== p.year}
+              showStar={false}
+            />
           ))}
         </div>
 

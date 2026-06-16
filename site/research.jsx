@@ -2,7 +2,7 @@
 // Pillars come from window.RESEARCH_PILLARS (data/research.js); press and
 // projects from window.PRESS_COVERAGE / window.WHAT_WE_BUILD.
 
-const { C, F, useIsMobile, MonoLabel, SectionHeader, mdInline } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader, mdInline } = window;
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
@@ -44,12 +44,9 @@ function PressCoverage({ items }) {
       }}>
         <div>
           {/* <MonoLabel>In the press</MonoLabel> */}
-          <div style={{
-            fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
-            color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
-          }}>
+          <SubSectionTitle style={{ marginTop: 10 }}>
             Our research in press
-          </div>
+          </SubSectionTitle>
         </div>
       </div>
 
@@ -151,13 +148,10 @@ function WhatWeBuild({ items }) {
       }}>
         <div>
           {/* <MonoLabel>What we're building</MonoLabel> */}
-          <div style={{
-            fontFamily: F.editorial, fontStyle: 'italic', fontSize: 'clamp(20px, 2.4vw, 26px)',
-            color: C.ink, opacity: 0.78, marginTop: 10, textWrap: 'pretty', maxWidth: 620,
-          }}>
+          <SubSectionTitle style={{ marginTop: 10 }}>
             What we're building
             {/* Tools, workshops, and competitions — building the product and the community out of lab. */}
-          </div>
+          </SubSectionTitle>
         </div>
       </div>
 

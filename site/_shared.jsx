@@ -61,6 +61,29 @@ function MonoLabel({ children, color = C.ink, opacity = 0.55, size = 11 }) {
   );
 }
 
+// Shared sub-section title — the heading that introduces a sub-group inside a
+// section (e.g. "Our research in press", "Selected", "Most recent", "Current
+// members"). Uppercase mono with a leading accent bar: it sits in the same
+// label family as the site's kickers/tags, so it never blends into the body
+// text. Single source of truth, so every section stays in sync. The bar is
+// always accent-orange (the brand pop); the text defaults to ink for the light
+// sections. On the dark Publications background pass `color={C.accent}` so the
+// text stays legible (ink would vanish on navy).
+function SubSectionTitle({ children, color = C.ink, style }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, ...style }}>
+      <span aria-hidden="true" style={{
+        display: 'inline-block', width: 3, height: 13, borderRadius: 1,
+        background: C.accent, flexShrink: 0,
+      }} />
+      <span style={{
+        fontFamily: F.mono, fontSize: 12, fontWeight: 600, letterSpacing: '0.18em',
+        textTransform: 'uppercase', color, lineHeight: 1,
+      }}>{children}</span>
+    </div>
+  );
+}
+
 // Renders the NUS black-horizontal wordmark tinted to `color`. The source JPG
 // is black-on-white; an SVG feColorMatrix filter inverts it, then maps
 // luminance into alpha while forcing RGB to the target color — so the white
@@ -146,4 +169,4 @@ function mdInline(s) {
   return out;
 }
 
-Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, NusLogo, SectionHeader, mdInline });
+Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline });

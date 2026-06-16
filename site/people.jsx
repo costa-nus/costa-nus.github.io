@@ -1,7 +1,7 @@
 // People section — current members grid + previous mentees row.
 // Reads window.PEOPLE / window.ALUMNI (data/people.js).
 
-const { C, F, useIsMobile, MonoLabel, SectionHeader } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader } = window;
 
 const PEOPLE = window.PEOPLE;
 const ALUMNI = window.ALUMNI;
@@ -13,7 +13,7 @@ function People() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
         <SectionHeader title="People" />
 
-        <MonoLabel size={10}>Current members</MonoLabel>
+        <SubSectionTitle>Current members</SubSectionTitle>
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '180px' : '240px'}, 1fr))`,
@@ -24,7 +24,7 @@ function People() {
         </div>
 
         <div style={{ height: isMobile ? 48 : 80 }} />
-        <MonoLabel size={10}>Previous mentees with PI (before NUS)</MonoLabel>
+        <SubSectionTitle>Previous mentees with PI (before NUS)</SubSectionTitle>
         <div style={{ marginTop: 16, borderTop: `1px solid ${C.ink}22` }}>
           {ALUMNI.map((a, i) => (
             <div key={i} style={{

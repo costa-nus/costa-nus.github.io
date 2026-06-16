@@ -1,6 +1,6 @@
 // PI introduction strip — portrait + pull-quote + press coverage row.
 
-const { C, F, useIsMobile, MonoLabel, SPONSORS, NEWS, mdInline } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SPONSORS, NEWS, mdInline } = window;
 
 // Per-category color for the news tag chips. Keys match the `tags` strings in
 // data/news.js; unknown tags fall back to ink so a new tag still renders. Hues
@@ -88,7 +88,7 @@ function PIIntro() {
 
           {/* news */}
           <div style={{ marginTop: isMobile ? 36 : 44 }}>
-            <MonoLabel size={9}>News</MonoLabel>
+            <SubSectionTitle>News</SubSectionTitle>
             <div style={{ marginTop: 14, borderTop: `1px solid ${C.ink}20` }}>
               {visibleNews.map((n, i) => (
                 <div key={i} style={{
@@ -141,7 +141,7 @@ function PIIntro() {
 
           {/* coverage strip */}
           <div style={{ marginTop: 48 }}>
-            <MonoLabel size={9}>Media Coverage</MonoLabel>
+            <SubSectionTitle>Media Coverage</SubSectionTitle>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginTop: 14, alignItems: 'center' }}>
               {[
                 ['Nature News',    'https://www.nature.com/articles/d41586-025-03542-2'],
@@ -169,7 +169,7 @@ function PIIntro() {
 
           {/* sponsor strip */}
           <div style={{ marginTop: 40 }}>
-            <MonoLabel size={9}>Sponsors (Inc. Prior Institutes)</MonoLabel>
+            <SubSectionTitle>Sponsors (Inc. Prior Institutes)</SubSectionTitle>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 16, alignItems: 'center' }}>
               {SPONSORS.map(({ name, url, image, height }) => (
                 <a
