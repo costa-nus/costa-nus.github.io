@@ -51,6 +51,16 @@ function Publications() {
           </div>
         </div>
 
+        <div style={{ marginBottom: isMobile ? 32 : 48, display: 'flex' }}>
+          <a href="/publications/" style={{
+            fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: C.accent, textDecoration: 'none', fontWeight: 500,
+            padding: '10px 16px', border: `1px solid ${C.accent}`,
+          }}>
+            View all publications →
+          </a>
+        </div>
+
         {recent.length > 0 && (
           <div style={{ marginBottom: isMobile ? 48 : 64 }}>
             {subHeader(`Most recent · last ${RECENT_MONTHS_WINDOW} months`)}
@@ -78,16 +88,6 @@ function Publications() {
               showStar={false}
             />
           ))}
-        </div>
-
-        <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end' }}>
-          <a href="/publications/" style={{
-            fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
-            color: C.accent, textDecoration: 'none', fontWeight: 500,
-            padding: '10px 16px', border: `1px solid ${C.accent}`,
-          }}>
-            View all publications →
-          </a>
         </div>
       </div>
     </section>
