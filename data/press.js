@@ -42,4 +42,28 @@ window.PRESS_COVERAGE = [
     image: 'site/press/fortune-brainrot.jpg',
     theme: 'T1',
   },
+  {
+    outlet: 'UT ECE News',
+    headline: 'Texas ECE student and postdoc named MLCommons Rising Stars',
+    date: 'May 2024',
+    href: 'https://www.ece.utexas.edu/news/texas-ece-student-and-postdoc-named-mlcommons-rising-stars',
+    image: 'site/press/utece-risingstars.jpg',
+    theme: 'T2',
+  },
+  {
+    outlet: 'MSU Office of Research',
+    headline: 'Privacy-enhancing research earns international attention',
+    date: 'Apr 2023',
+    href: 'https://engineering.msu.edu/news-events/news/2023/04/04/privacy-enhancing-research-earns-international-attention',
+    image: 'site/press/msu-pets.jpg',
+    theme: 'T2',
+  },
+  {
+    outlet: 'The White House',
+    headline: 'U.S. & U.K. announce winners of challenge to drive innovation in privacy-enhancing technologies',
+    date: 'Mar 2023',
+    href: 'https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/',
+    image: 'site/press/whitehouse-pets.jpg',
+    theme: 'T2',
+  },
 ];

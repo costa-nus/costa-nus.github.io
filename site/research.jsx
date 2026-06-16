@@ -50,15 +50,104 @@ function PressCoverage({ items }) {
         </div>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile
-          ? '1fr'
-          : `repeat(auto-fit, minmax(220px, 1fr))`,
-        gap: isMobile ? 16 : 20,
-      }}>
-        {items.map((m, i) => <PressCard key={i} m={m} />)}
+      <CardCarousel cards={items} />
+    </div>
+  );
+}
+
+// Shows at most PER_PAGE cards at once; the rest are hidden to the right and
+// revealed by paging with the ">" / "<" controls. Built on native CSS
+// scroll-snap (grid-auto-flow: column + overflow-x) so the browser handles
+// clamping and snapping; the arrows simply scrollBy one viewport width. On
+// mobile the original single-column stack is kept — horizontal hiding is a
+// desktop affordance.
+const PER_PAGE = 4;
+function CardCarousel({ cards, perPage = PER_PAGE }) {
+  const isMobile = useIsMobile();
+  const scrollerRef = React.useRef(null);
+  const [atStart, setAtStart] = React.useState(true);
+  const [atEnd, setAtEnd] = React.useState(false);
+
+  const updateArrows = React.useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 1);
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 1);
+  }, []);
+
+  React.useEffect(() => {
+    if (isMobile) return;
+    updateArrows();
+    window.addEventListener('resize', updateArrows);
+    return () => window.removeEventListener('resize', updateArrows);
+  }, [isMobile, cards.length, updateArrows]);
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
+        {cards.map((m, i) => <PressCard key={i} m={m} />)}
       </div>
+    );
+  }
+
+  const GAP = 20;
+  const page = (dir) => {
+    const el = scrollerRef.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
+
+  const arrow = (dir, hidden) => (
+    <button
+      type="button"
+      aria-label={dir > 0 ? 'Show next' : 'Show previous'}
+      onClick={() => page(dir)}
+      style={{
+        position: 'absolute', top: '50%', transform: 'translateY(-50%)',
+        // -22 = half the 44px width, so the button's center sits exactly on the
+        // row's edge (right edge of the last card / left edge of the first).
+        [dir > 0 ? 'right' : 'left']: -22,
+        width: 44, height: 44, borderRadius: '50%',
+        background: '#fff', border: `1px solid ${C.ink}22`,
+        boxShadow: `0 6px 18px ${C.ink}22`, cursor: 'pointer', zIndex: 5,
+        display: hidden ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center',
+        color: C.ink, transition: 'border-color 0.18s ease-out, color 0.18s ease-out, box-shadow 0.18s ease-out',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = `${C.accent}88`; e.currentTarget.style.color = C.accent; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = `${C.ink}22`; e.currentTarget.style.color = C.ink; }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+        style={{ transform: dir > 0 ? 'none' : 'scaleX(-1)' }}>
+        <path d="M 5 2 L 10 7 L 5 12" stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <style>{`.cc-scroller::-webkit-scrollbar{display:none}`}</style>
+      <div
+        ref={scrollerRef}
+        className="cc-scroller"
+        onScroll={updateArrows}
+        style={{
+          display: 'grid',
+          gridAutoFlow: 'column',
+          gridAutoColumns: `calc((100% - ${GAP * (perPage - 1)}px) / ${perPage})`,
+          gap: GAP,
+          overflowX: 'auto',
+          scrollSnapType: 'x proximity',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {cards.map((m, i) => (
+          <div key={i} style={{ scrollSnapAlign: 'start' }}>
+            <PressCard m={m} />
+          </div>
+        ))}
+      </div>
+      {arrow(-1, atStart)}
+      {arrow(1, atEnd)}
     </div>
   );
 }
@@ -155,15 +244,7 @@ function WhatWeBuild({ items }) {
         </div>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile
-          ? '1fr'
-          : `repeat(auto-fit, minmax(220px, 1fr))`,
-        gap: isMobile ? 16 : 20,
-      }}>
-        {cards.map((m, i) => <PressCard key={i} m={m} />)}
-      </div>
+      <CardCarousel cards={cards} />
     </div>
   );
 }
