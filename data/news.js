@@ -5,6 +5,7 @@
 //         [text](href) links via mdInline (see site/_shared.jsx)
 //   tags: string[] used for the News section's tag filter chips
 window.NEWS = [
+  { date: '08 · 2026', body: 'One paper ([CALIBURN](https://arxiv.org/abs/2602.02824)) is accepted to EMNLP 2026 Main Conference.', tags: ['Paper'] },
   { date: '08 · 2026', body: 'Jason is co-organizing the AI Agent/LLM for Biomedicine & Health workshop at IEEE BHI 2026.' },
   { date: '07 · 2026', body: 'Jason is co-chairing the [GenAI4Health@NeurIPS 2026](https://genai4health.github.io/) workshop in Sydney.' },
   { date: '07 · 2026', body: 'Jason is co-chairing the [FedKDD/FedMAS 2026](https://fedmas-fedkdd.github.io/fedmas-fedkdd2026/) workshop.' },
