@@ -23,7 +23,8 @@ window.PEOPLE = [
   { name: 'Xiang Gao', role: 'Remote Intern · Tsinghua (Yao class)', term: '2026 Spring', kind: 'intern', scholar: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
   // { name: 'Open Position', role: 'Remote Intern', term: 'Rolling basis', kind: 'open' },
   { name: 'Open Position', role: 'Remote Intern', term: '2026 Summer', kind: 'open' },
-  { name: 'Open Position', role: 'PhD', term: '2027 Fall', kind: 'open' },
+  { name: 'Open Position', role: 'Research Assistant', term: '2027 Fall', kind: 'open' },
+  { name: 'Open Position', role: 'Research Assistant', term: '2028 Fall', kind: 'open' },
 ];
 
 // Lab alumni — current affiliation + prior role at the lab.
