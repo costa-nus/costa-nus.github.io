@@ -103,19 +103,38 @@
   function AuthorList({ authors }) {
     // Same paper-on-opacity recipe the hero lede uses for its title contrast —
     // authors read as clearly secondary to the paper-bright title. Bold
-    // distinguishes the PI without lifting their name off the muted field.
+    // distinguishes the PI without lifting their name off the muted field;
+    // an underline marks students the PI mentors or has mentored (roster
+    // derived from data/people.js — see isMentee in site/_shared.jsx). The two
+    // are independent axes, so a name can carry both. Underline rather than a
+    // color: ★ and hover already own the page's orange. Note the alpha nests —
+    // the wrapper span is already at opacity 0.72, so paper/60 composites to
+    // ~0.43 on the blue: 3.4:1 against the background (clears WCAG 1.4.11 for a
+    // meaning-bearing mark) while staying ~2:1 below the glyphs themselves.
     return (
       <span style={{
         fontFamily: F.display, fontSize: 15.5, lineHeight: 1.55,
         color: C.paper, opacity: 0.72,
       }}>
-        {authors.map((a, i) => (
-          <React.Fragment key={i}>
-            <span style={{ fontWeight: a.highlighted ? 700 : 400 }}>{a.name}</span>
-            {a.note && <AuthorInfo tip={a.note} />}
-            {i < authors.length - 1 ? ', ' : '.'}
-          </React.Fragment>
-        ))}
+        {authors.map((a, i) => {
+          const mentored = typeof isMentee === 'function' && isMentee(a.name);
+          return (
+            <React.Fragment key={i}>
+              <span
+                title={mentored ? 'Student mentored by the PI' : undefined}
+                style={{
+                  fontWeight: a.highlighted ? 700 : 400,
+                  textDecoration: mentored ? 'underline' : 'none',
+                  textDecorationColor: mentored ? `${C.paper}99` : undefined,
+                  textDecorationThickness: mentored ? 1 : undefined,
+                  textUnderlineOffset: mentored ? 3 : undefined,
+                }}
+              >{a.name}</span>
+              {a.note && <AuthorInfo tip={a.note} />}
+              {i < authors.length - 1 ? ', ' : '.'}
+            </React.Fragment>
+          );
+        })}
       </span>
     );
   }
@@ -279,11 +298,25 @@
             />
           </div>
 
+          {/* Result count + key. The underline in the author lists is otherwise a
+              silent convention — the legend spells it out, and demonstrates
+              itself by wearing the same rule it describes. */}
           <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: '4px 16px',
+            alignItems: 'baseline', justifyContent: 'space-between',
             fontFamily: F.mono, fontSize: 10.5, letterSpacing: '0.14em', textTransform: 'uppercase',
             color: C.paper, opacity: 0.55, marginBottom: 8,
           }}>
-            {rows.length} {rows.length === 1 ? 'result' : 'results'}
+            <span>{rows.length} {rows.length === 1 ? 'result' : 'results'}</span>
+            <span>
+              <span style={{
+                textDecoration: 'underline',
+                textDecorationColor: `${C.paper}99`,
+                textDecorationThickness: 1,
+                textUnderlineOffset: 3,
+              }}>Underlined</span>
+              {' — mentored student'}
+            </span>
           </div>
 
           {years.length === 0 && (

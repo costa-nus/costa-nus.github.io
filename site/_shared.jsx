@@ -169,4 +169,35 @@ function mdInline(s) {
   return out;
 }
 
-Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline });
+// Mentored-student roster. Author lists (see /publications/) underline students
+// the PI mentors or has mentored. The roster is DERIVED from data/people.js
+// rather than re-listed here: every current lab member (minus the PI and the
+// unfilled "Open Position" slots) plus every alum. Add a person there and their
+// papers pick up the underline automatically — there is no second list to sync.
+//
+// Venues do not spell a name the same way twice ("Gabriel J. Perin" on LoX vs.
+// "Gabriel Jacob Perin" on LAD-VF), so matching is on a first+last key with
+// middle names, initials, and nicknames dropped rather than on the literal
+// string — an exact-match Set would underline one paper and miss the others.
+function nameKey(name) {
+  const parts = String(name)
+    .replace(/"[^"]*"/g, ' ')       // nickname: Junyuan "Jason" Hong
+    .replace(/[^A-Za-z\s-]/g, ' ') // periods in initials, commas
+    .trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '';
+  return `${parts[0]} ${parts[parts.length - 1]}`.toLowerCase();
+}
+
+// Built once at load; data/*.js files are loaded before any site/*.jsx file.
+const MENTEE_KEYS = new Set(
+  [
+    ...(window.PEOPLE || []).filter(p => p.kind !== 'pi' && p.kind !== 'open'),
+    ...(window.ALUMNI || []),
+  ].map(p => nameKey(p.name)).filter(Boolean)
+);
+
+function isMentee(name) {
+  return MENTEE_KEYS.has(nameKey(name));
+}
+
+Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee });
