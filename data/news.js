@@ -5,6 +5,7 @@
 //         [text](href) links via mdInline (see site/_shared.jsx)
 //   tags: string[] used for the News section's tag filter chips
 window.NEWS = [
+  { date: '10 · 2026', body: 'Jason is named a Top Area Chair at NeurIPS 2026.', tags: ['Honor'] },
   { date: '09 · 2026', body: 'One paper ([The Last Human-Written Paper: Agent-Native Research Artifacts](https://arxiv.org/abs/2604.24658)) is accepted to NeurIPS 2026.', tags: ['Paper'] },
   { date: '08 · 2026', body: 'One paper ([CALIBURN](https://arxiv.org/abs/2602.02824)) is accepted to EMNLP 2026 Main Conference.', tags: ['Paper'] },
   { date: '08 · 2026', body: 'Jason is co-organizing the AI Agent/LLM for Biomedicine & Health workshop at IEEE BHI 2026.' },
