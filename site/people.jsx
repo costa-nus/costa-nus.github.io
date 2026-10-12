@@ -1,13 +1,15 @@
-// People section — current members grid + previous mentees row.
-// Reads window.PEOPLE / window.ALUMNI (data/people.js).
+// People section — current members grid, lab alumni, and a folded list of
+// previous mentees. Reads window.PEOPLE / LAB_ALUMNI / ALUMNI (data/people.js).
 
 const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader } = window;
 
 const PEOPLE = window.PEOPLE;
+const LAB_ALUMNI = window.LAB_ALUMNI;
 const ALUMNI = window.ALUMNI;
 
 function People() {
   const isMobile = useIsMobile();
+  const [showPrevMentees, setShowPrevMentees] = React.useState(false);
   return (
     <section id="people" style={{ background: C.paper, padding: isMobile ? '72px 0' : '120px 0' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
@@ -24,36 +26,67 @@ function People() {
         </div>
 
         <div style={{ height: isMobile ? 48 : 80 }} />
-        <SubSectionTitle>Previous mentees with PI (before NUS)</SubSectionTitle>
-        <div style={{ marginTop: 16, borderTop: `1px solid ${C.ink}22` }}>
-          {ALUMNI.map((a, i) => (
-            <div key={i} style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr 1.4fr',
-              gap: isMobile ? 4 : 24,
-              padding: isMobile ? '14px 0' : '16px 0',
-              borderBottom: `1px solid ${C.ink}15`,
-              alignItems: 'baseline',
-            }}>
-              <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 17, color: C.ink, letterSpacing: '-0.015em' }}>
-                {a.url ? (
-                  <a href={a.url} target="_blank" rel="noopener noreferrer"
-                     style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.ink}33` }}>
-                    {a.name}
-                  </a>
-                ) : a.name}
-              </div>
-              <div style={{ fontFamily: F.display, fontSize: 13, color: C.ink, opacity: 0.6 }}>
-                {a.prior}
-              </div>
-              <div style={{ fontFamily: F.editorial, fontStyle: 'italic', fontSize: 16, color: C.ink, opacity: 0.9 }}>
-                → {a.now}
-              </div>
-            </div>
-          ))}
-        </div>
+        <SubSectionTitle>Alumni</SubSectionTitle>
+        <AlumniList items={LAB_ALUMNI} />
+
+        <div style={{ height: isMobile ? 48 : 80 }} />
+        {/* Folded by default: the pre-NUS list is long and older than the lab itself. */}
+        <button
+          onClick={() => setShowPrevMentees(v => !v)}
+          aria-expanded={showPrevMentees}
+          style={{
+            background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 16, textAlign: 'left',
+          }}
+        >
+          <SubSectionTitle>Previous mentees with PI (before NUS)</SubSectionTitle>
+          <span style={{
+            fontFamily: F.mono, fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: C.ink, opacity: 0.7, fontWeight: 600, whiteSpace: 'nowrap',
+          }}>
+            {showPrevMentees ? '− Hide' : `+ Show ${ALUMNI.length}`}
+          </span>
+        </button>
+        {showPrevMentees && <AlumniList items={ALUMNI} />}
       </div>
     </section>
+  );
+}
+
+// One alumni row: name (linked when `url`) | role at the lab | → where they went.
+// `now` is optional; the third cell is omitted when it is unknown.
+function AlumniList({ items }) {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ marginTop: 16, borderTop: `1px solid ${C.ink}22` }}>
+      {items.map((a, i) => (
+        <div key={i} style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr 1.4fr',
+          gap: isMobile ? 4 : 24,
+          padding: isMobile ? '14px 0' : '16px 0',
+          borderBottom: `1px solid ${C.ink}15`,
+          alignItems: 'baseline',
+        }}>
+          <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 17, color: C.ink, letterSpacing: '-0.015em' }}>
+            {a.url ? (
+              <a href={a.url} target="_blank" rel="noopener noreferrer"
+                 style={{ color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.ink}33` }}>
+                {a.name}
+              </a>
+            ) : a.name}
+          </div>
+          <div style={{ fontFamily: F.display, fontSize: 13, color: C.ink, opacity: 0.6 }}>
+            {a.prior}
+          </div>
+          {a.now && (
+            <div style={{ fontFamily: F.editorial, fontStyle: 'italic', fontSize: 16, color: C.ink, opacity: 0.9 }}>
+              → {a.now}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 

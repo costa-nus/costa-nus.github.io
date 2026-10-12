@@ -192,6 +192,7 @@ function nameKey(name) {
 const MENTEE_KEYS = new Set(
   [
     ...(window.PEOPLE || []).filter(p => p.kind !== 'pi' && p.kind !== 'open'),
+    ...(window.LAB_ALUMNI || []),
     ...(window.ALUMNI || []),
   ].map(p => nameKey(p.name)).filter(Boolean)
 );

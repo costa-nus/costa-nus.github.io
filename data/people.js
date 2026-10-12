@@ -17,17 +17,30 @@
 //             shown as a small accented row under the role.
 window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', term: '2026 Fall -', kind: 'pi', url: 'https://jyhong.gitlab.io/', scholar: 'https://scholar.google.com/citations?user=7Cbv6doAAAAJ&hl=en', x: 'https://x.com/hjy836' },
-  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ' },
+  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ', highlight: 'Research Intern @ Hunyuan' },
   { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', term: '2026 Fall -', kind: 'ra', url: 'https://zrc007.github.io/', scholar: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ', highlight: 'Research Intern @ Qwen' },
-  { name: 'Minh Khoi Ho', role: 'Remote Intern · MBZUAI', term: '2026 Spring', kind: 'intern', url: 'https://hmkhoi2701.github.io/', scholar: 'https://scholar.google.com/citations?user=K5bD_NAAAAAJ' },
-  { name: 'Xiang Gao', role: 'Remote Intern · Tsinghua (Yao class)', term: '2026 Spring', kind: 'intern', scholar: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
+  { name: 'Dongwen Tang', role: 'Research Assistant', term: 'Incoming', kind: 'ra' },
+  { name: 'Amir', role: 'Research Assistant', term: 'Incoming', kind: 'ra' },
+  { name: 'Shuwen Liang', role: 'Remote Intern · ZJU', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Leo He', role: 'Remote Intern · UNC', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Jingze Ge', role: 'Remote Intern · NUS', term: '2026 Fall -', kind: 'intern' },
   // { name: 'Open Position', role: 'Remote Intern', term: 'Rolling basis', kind: 'open' },
   { name: 'Open Position', role: 'Remote Intern', term: '2026 Summer', kind: 'open' },
   { name: 'Open Position', role: 'Research Assistant', term: '2027 Fall', kind: 'open' },
   { name: 'Open Position', role: 'Research Assistant', term: '2028 Fall', kind: 'open' },
 ];
 
-// Lab alumni — current affiliation + prior role at the lab.
+// Alumni of the NUS lab — people who left PEOPLE above. Same entry shape and
+// row layout as ALUMNI below, but `prior` is the role they held at the lab
+// (with term) and `now` is where they went next. Omit `now` when unknown; the
+// "→ …" cell is then left empty. Shown under "Alumni" on the home page.
+window.LAB_ALUMNI = [
+  { name: 'Xiang Gao', prior: 'Remote Intern · Tsinghua (Yao class) · 2026 Spring', now: 'PhD · UIUC', url: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
+  { name: 'Minh Khoi Ho', prior: 'Remote Intern · MBZUAI · 2026 Spring', url: 'https://hmkhoi2701.github.io/' },
+  { name: 'Zeyu Xu', prior: 'Remote Intern · BS · USTC' },
+];
+
+// Previous mentees with the PI before NUS — current affiliation + prior role.
 // Entry shape: { name, now, prior, url? }
 //   url: optional homepage; when present, the name renders as a link.
 window.ALUMNI = [
