@@ -24,6 +24,7 @@ window.PEOPLE = [
   { name: 'Shuwen Liang', role: 'Remote Intern · ZJU', term: '2026 Fall -', kind: 'intern' },
   { name: 'Leo He', role: 'Remote Intern · UNC', term: '2026 Fall -', kind: 'intern' },
   { name: 'Jingze Ge', role: 'Remote Intern · NUS', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Zichen Jiang', role: 'Remote Intern · NUS', term: '2026 Fall -', kind: 'intern' },
   // { name: 'Open Position', role: 'Remote Intern', term: 'Rolling basis', kind: 'open' },
   { name: 'Open Position', role: 'Remote Intern', term: '2026 Summer', kind: 'open' },
   { name: 'Open Position', role: 'Research Assistant', term: '2027 Fall', kind: 'open' },
