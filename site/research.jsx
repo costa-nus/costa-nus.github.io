@@ -274,23 +274,60 @@ function PressPlaceholder({ outlet }) {
   );
 }
 
+// Golden-ratio cover (width : height = φ : 1) across the top of a pillar card.
+const PHI = 1.618;
+
+// The cover's lower part dissolves into the card instead of ending at a hard
+// edge, and the "Theme" label + title ride up onto the faded part. The fade is
+// a mask (alpha falls to 0) rather than a white overlay, so the card's own
+// background shows through whatever color it is. Stops follow an ease-out
+// curve; a straight two-stop ramp leaves a visible gray band on dark art.
+const COVER_FADE = 'linear-gradient(to bottom, #000 0%, #000 42%, rgba(0,0,0,.78) 54%, rgba(0,0,0,.5) 64%, rgba(0,0,0,.25) 73%, rgba(0,0,0,.09) 81%, transparent 90%)';
+
 function PillarCard({ p, i }) {
   const isMobile = useIsMobile();
+  const pad = isMobile ? 24 : 32;
+  // A pillar with `image` gets a full-bleed cover in place of the small
+  // label + figure row; a missing or broken image falls back to that row.
+  const [imgOk, setImgOk] = React.useState(Boolean(p.image));
   return (
     <div style={{
       background: '#fff', border: `1px solid ${C.ink}14`,
-      padding: isMobile ? 24 : 32,
+      padding: pad,
       display: 'flex', flexDirection: 'column',
       minHeight: isMobile ? 'auto' : 520,
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
-        <PillarFigure kind={p.figure} />
-      </div>
+      {imgOk ? (
+        <>
+          {/* Negative margins cancel the card padding so the cover meets the border. */}
+          <div style={{
+            margin: `-${pad}px -${pad}px 0`, aspectRatio: `${PHI} / 1`,
+            overflow: 'hidden', background: C.paperWarm,
+            maskImage: COVER_FADE, WebkitMaskImage: COVER_FADE,
+          }}>
+            <img
+              src={p.image} alt="" aria-hidden="true"
+              onError={() => setImgOk(false)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
+          {/* Pulled up over the faded bottom of the cover; `relative` keeps it
+              painted above the image. */}
+          <div style={{ marginTop: isMobile ? -40 : -52, position: 'relative' }}>
+            <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
+          </div>
+        </>
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
+          <PillarFigure kind={p.figure} />
+        </div>
+      )}
 
       <div style={{
         fontFamily: F.display, fontWeight: 700, fontSize: isMobile ? 24 : 28, letterSpacing: '-0.025em',
-        color: C.ink, marginTop: 24, lineHeight: 1.1, textWrap: 'balance',
+        color: C.ink, marginTop: imgOk ? 10 : 24, lineHeight: 1.1, textWrap: 'balance',
+        position: 'relative',
         minHeight: isMobile ? 'auto' : 66,
       }}>{p.title}</div>
 
