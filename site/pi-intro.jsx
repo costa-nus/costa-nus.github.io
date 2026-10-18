@@ -148,7 +148,7 @@ function PIIntro() {
                 ['WIRED',          'https://www.wired.com/story/ai-models-social-media-cognitive-decline-study/'],
                 ['Forbes',         'https://www.forbes.com/sites/lesliekatz/2025/10/23/junky-online-content-gives-ai-models-brain-rot-too/'],
                 ['FORTUNE',        'https://fortune.com/2025/10/22/ai-brain-rot-junk-social-media-viral-addicting-content-tech/'],
-                ['The White House','https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/'],
+                ['The White House','https://bidenwhitehouse.archives.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/'],
               ].map(([n, href]) => (
                 <a
                   key={n}

@@ -62,7 +62,7 @@ window.PRESS_COVERAGE = [
     outlet: 'The White House',
     headline: 'U.S. & U.K. announce winners of challenge to drive innovation in privacy-enhancing technologies',
     date: 'Mar 2023',
-    href: 'https://www.whitehouse.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/',
+    href: 'https://bidenwhitehouse.archives.gov/ostp/news-updates/2023/03/31/us-uk-annouce-winners-innovation-pets-democratic-values/',
     image: 'site/press/whitehouse-pets.jpg',
     theme: 'T2',
   },
