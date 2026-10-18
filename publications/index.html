@@ -9,40 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/site/wave-mark.svg">
 <link rel="stylesheet" href="/css/site.css">
-<style>
-  /* Author info tooltip — CSS-only, opens on hover/focus of the ⓘ icon. */
-  .author-info {
-    position: relative;
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; margin-left: 4px;
-    border-radius: 50%;
-    color: rgba(245, 241, 234, 0.55);
-    cursor: help;
-    font-family: 'Inter Tight', sans-serif; font-size: 11px; font-weight: 700;
-    line-height: 1;
-    border: 1px solid rgba(245, 241, 234, 0.35);
-    vertical-align: baseline;
-  }
-  .author-info:hover, .author-info:focus-visible {
-    color: #EF7C00; border-color: #EF7C00; outline: none;
-  }
-  .author-info[data-tip]::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%; transform: translateX(-50%);
-    background: #003D7C; color: #f5f1ea;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px; letter-spacing: 0.06em;
-    padding: 6px 10px;
-    border-radius: 4px;
-    white-space: nowrap;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.12s ease-out;
-    z-index: 5;
-  }
-  .author-info:hover::after, .author-info:focus-visible::after { opacity: 1; }
-</style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -88,53 +54,27 @@
     );
   }
 
-  function AuthorInfo({ tip }) {
-    return (
-      <span
-        className="author-info"
-        data-tip={tip}
-        tabIndex="0"
-        role="img"
-        aria-label={`Info: ${tip}`}
-      >i</span>
-    );
-  }
-
   function AuthorList({ authors }) {
     // Same paper-on-opacity recipe the hero lede uses for its title contrast —
-    // authors read as clearly secondary to the paper-bright title. Bold
-    // distinguishes the PI without lifting their name off the muted field;
-    // an underline marks students the PI mentors or has mentored (roster
-    // derived from data/people.js — see isMentee in site/_shared.jsx). The two
-    // are independent axes, so a name can carry both. Underline rather than a
-    // color: ★ and hover already own the page's orange. Note the alpha nests —
-    // the wrapper span is already at opacity 0.72, so paper/60 composites to
-    // ~0.43 on the blue: 3.4:1 against the background (clears WCAG 1.4.11 for a
-    // meaning-bearing mark) while staying ~2:1 below the glyphs themselves.
+    // authors read as clearly secondary to the paper-bright title. The per-name
+    // marks (bold for the PI, underline for a mentored student) come from
+    // AuthorName in site/_shared.jsx, shared with the home-page rows so the two
+    // views cannot drift. Note the alpha nests — the wrapper span is already at
+    // opacity 0.72, so paper/60 composites to ~0.43 on the blue: 3.4:1 against
+    // the background (clears WCAG 1.4.11 for a meaning-bearing mark) while
+    // staying ~2:1 below the glyphs themselves.
     return (
       <span style={{
         fontFamily: F.display, fontSize: 15.5, lineHeight: 1.55,
         color: C.paper, opacity: 0.72,
       }}>
-        {authors.map((a, i) => {
-          const mentored = typeof isMentee === 'function' && isMentee(a.name);
-          return (
-            <React.Fragment key={i}>
-              <span
-                title={mentored ? 'Student mentored by the PI' : undefined}
-                style={{
-                  fontWeight: a.highlighted ? 700 : 400,
-                  textDecoration: mentored ? 'underline' : 'none',
-                  textDecorationColor: mentored ? `${C.paper}99` : undefined,
-                  textDecorationThickness: mentored ? 1 : undefined,
-                  textUnderlineOffset: mentored ? 3 : undefined,
-                }}
-              >{a.name}</span>
-              {a.note && <AuthorInfo tip={a.note} />}
-              {i < authors.length - 1 ? ', ' : '.'}
-            </React.Fragment>
-          );
-        })}
+        {authors.map((a, i) => (
+          <React.Fragment key={i}>
+            <AuthorName author={a} />
+            {a.note && <AuthorInfo tip={a.note} />}
+            {i < authors.length - 1 ? ', ' : '.'}
+          </React.Fragment>
+        ))}
       </span>
     );
   }

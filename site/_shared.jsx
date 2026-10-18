@@ -201,4 +201,40 @@ function isMentee(name) {
   return MENTEE_KEYS.has(nameKey(name));
 }
 
-Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee });
+// ⓘ next to an author, carrying a note like "Equal contribution". Styled by
+// `.author-info` in css/site.css; CSS-only tooltip on hover/focus.
+function AuthorInfo({ tip }) {
+  return (
+    <span
+      className="author-info"
+      data-tip={tip}
+      tabIndex="0"
+      role="img"
+      aria-label={`Info: ${tip}`}
+    >i</span>
+  );
+}
+
+// One author name with the site's two independent marks: bold for the PI
+// (`highlighted`), and an underline for a student the PI mentors or mentored
+// (roster derived from data/people.js — see isMentee above). A name can carry
+// both. Underline rather than a color because ★ and hover already own the
+// page's orange. Shared by the home-page rows and the /publications/ archive so
+// the two cannot drift apart.
+function AuthorName({ author }) {
+  const mentored = isMentee(author.name);
+  return (
+    <span
+      title={mentored ? 'Student mentored by the PI' : undefined}
+      style={{
+        fontWeight: author.highlighted ? 700 : 400,
+        textDecoration: mentored ? 'underline' : 'none',
+        textDecorationColor: mentored ? `${C.paper}99` : undefined,
+        textDecorationThickness: mentored ? 1 : undefined,
+        textUnderlineOffset: mentored ? 3 : undefined,
+      }}
+    >{author.name}</span>
+  );
+}
+
+Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee, AuthorInfo, AuthorName });

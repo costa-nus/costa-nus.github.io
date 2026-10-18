@@ -1,7 +1,7 @@
 // Publications section + the PubRow building block reused on /publications/.
 // Reads window.PUBS_FULL (data/publications.js) and derives Most-recent + Selected.
 
-const { C, F, useIsMobile, SubSectionTitle } = window;
+const { C, F, useIsMobile, SubSectionTitle, AuthorName, AuthorInfo } = window;
 
 const PUBS_FULL = window.PUBS_FULL;
 const RECENT_MONTHS_WINDOW = 6;
@@ -119,6 +119,115 @@ function pickPubHref(p) {
   return [...links].sort((a, b) => score(a) - score(b))[0].href;
 }
 
+// Compact, collapsible author line for the home-page rows. The archive at
+// /publications/ prints every author; here the row has to stay on one line, so
+// the middle of a long list collapses behind an "(N more authors)" control.
+//
+// What survives a collapse, and why: the opening authors and the final author
+// carry the most signal in an author list, the PI anchors the paper to the lab,
+// and an equal-contribution note means a co-first author who would be
+// misleading to hide. Everything else is foldable. Because the PI can sit in
+// the middle of a long list, the hidden names may fall into more than one run —
+// each run gets its own control, and they all toggle together.
+function AuthorLine({ authors, compact }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const list = authors || [];
+  const n = list.length;
+
+  const LEAD = 1;                 // opening author always shown
+  const TAIL = 1;                 // senior/last author always shown
+  const keep = new Set();
+  for (let i = 0; i < Math.min(LEAD, n); i++) keep.add(i);
+  for (let i = Math.max(0, n - TAIL); i < n; i++) keep.add(i);
+  list.forEach((a, i) => { if (a.highlighted || a.note) keep.add(i); });
+
+  // Folding a single name buys no space and costs a control, so don't. Decide
+  // this from the list itself, not from the current expand state, or the
+  // "(less)" control disappears the moment it is needed.
+  const collapsible = (n - keep.size) >= 2;
+  const collapsed = !expanded && collapsible;
+
+  // A gap of a single name would render "(1 more author)" — wider than the
+  // name it hides — so show that name instead.
+  if (collapsed) {
+    let i = 0;
+    while (i < n) {
+      if (keep.has(i)) { i++; continue; }
+      let j = i;
+      while (j < n && !keep.has(j)) j++;
+      if (j - i === 1) keep.add(i);
+      i = j;
+    }
+  }
+  // Flatten to segments first — a name or a run of hidden names — so the ", "
+  // separators fall between segments uniformly and the control is punctuated
+  // like a name rather than butting against the one before it.
+  const segments = [];
+  list.forEach((a, i) => {
+    if (collapsed && !keep.has(i)) {
+      const last = segments[segments.length - 1];
+      if (last && last.gap) last.count++;
+      else segments.push({ gap: true, count: 1, at: i });
+      return;
+    }
+    segments.push({ author: a, at: i });
+  });
+
+  const parts = [];
+  segments.forEach((s, k) => {
+    if (k) parts.push(<span key={`sep-${k}`}>, </span>);
+    parts.push(s.gap
+      ? <button
+          key={`more-${s.at}`}
+          type="button"
+          className="author-more"
+          aria-expanded="false"
+          onClick={() => setExpanded(true)}
+        >({s.count} more author{s.count === 1 ? '' : 's'})</button>
+      : <React.Fragment key={s.at}>
+          <AuthorName author={s.author} />
+          {s.author.note && <AuthorInfo tip={s.author.note} />}
+        </React.Fragment>
+    );
+  });
+
+  // Keeping to one line is a hard constraint, and no name-count heuristic can
+  // promise it: a paper with four equal-contribution authors keeps four names
+  // whatever we do, and the column is only ~490px at 1024px wide. So the
+  // collapsed line clips with an ellipsis, which holds at any width. Because a
+  // clipped line could cut off the "(N more authors)" control, the whole
+  // collapsed line is clickable — the control is the visible affordance, not
+  // the only way out of it.
+  // The clamp keys off `expanded`, not `collapsible`: a short list hides no
+  // names yet can still wrap on a narrow screen, and it has to stay on one
+  // line too. Clicking such a line simply unclamps it.
+  const clamp = !expanded ? {
+    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+    cursor: 'pointer',
+  } : null;
+
+  return (
+    <div
+      style={{
+        fontFamily: F.display, fontSize: compact ? 12 : 13, lineHeight: 1.5,
+        color: C.paper, opacity: 0.62, marginTop: compact ? 6 : 7,
+        ...clamp,
+      }}
+      title={!expanded ? 'Show all authors' : undefined}
+      onClick={!expanded ? () => setExpanded(true) : undefined}
+    >
+      {parts}
+      {expanded && (
+        <>
+          {' '}
+          <button type="button" className="author-more" aria-expanded="true"
+                  onClick={() => setExpanded(false)}>(less)</button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function PubRow({ p, showYear = true, showStar = true }) {
   const isMobile = useIsMobile();
   // venue may be bare ("ICLR") or carry a parenthetical modifier ("ICLR (Spotlight)",
@@ -215,6 +324,7 @@ function PubRow({ p, showYear = true, showStar = true }) {
           )}
           {titleNode}
         </div>
+        {p.authors && p.authors.length > 0 && <AuthorLine authors={p.authors} compact />}
         {sideSlot && <div style={{ marginTop: 10 }}>{sideSlot}</div>}
       </div>
     );
@@ -252,6 +362,7 @@ function PubRow({ p, showYear = true, showStar = true }) {
           }}>★</span>
         )}
         {titleNode}
+        {p.authors && p.authors.length > 0 && <AuthorLine authors={p.authors} />}
       </div>
       {sideSlot}
     </div>

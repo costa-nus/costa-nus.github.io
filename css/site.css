@@ -212,3 +212,56 @@ img { max-width: 100%; height: auto; display: block; }
   .article-wrap { padding: 40px 20px 80px; }
   .prose { font-size: 17.5px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Author lists (home-page Publications rows + /publications/ archive)
+   Shared so the two views mark equal contribution and collapsed authors
+   identically. Lives here rather than in one page's <style> block because
+   both pages render author lists.
+   --------------------------------------------------------------------------- */
+
+/* Author info tooltip — CSS-only, opens on hover/focus of the ⓘ icon. */
+.author-info {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; margin-left: 4px;
+  border-radius: 50%;
+  color: rgba(245, 241, 234, 0.55);
+  cursor: help;
+  font-family: 'Inter Tight', sans-serif; font-size: 11px; font-weight: 700;
+  line-height: 1;
+  border: 1px solid rgba(245, 241, 234, 0.35);
+  vertical-align: baseline;
+}
+.author-info:hover, .author-info:focus-visible {
+  color: #EF7C00; border-color: #EF7C00; outline: none;
+}
+.author-info[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: #003D7C; color: #f5f1ea;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; letter-spacing: 0.06em;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.12s ease-out;
+  z-index: 5;
+}
+.author-info:hover::after, .author-info:focus-visible::after { opacity: 1; }
+
+/* "(N more authors)" — the control that expands a collapsed author list.
+   Dashed underline marks it as revealing hidden text rather than navigating,
+   which keeps it distinct from the solid underline used for mentored students. */
+.author-more {
+  appearance: none; background: none; border: 0; padding: 0;
+  font: inherit; color: inherit;
+  cursor: pointer;
+  text-decoration: underline dashed;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.author-more:hover, .author-more:focus-visible { color: #EF7C00; outline: none; }
