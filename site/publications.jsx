@@ -121,100 +121,104 @@ function pickPubHref(p) {
 
 // Compact, collapsible author line for the home-page rows. The archive at
 // /publications/ prints every author; here the row has to stay on one line, so
-// the middle of a long list collapses behind an "(N more authors)" control.
+// when the full list does not fit, the middle of it collapses behind an
+// "(N more authors)" control — and only as much of it as needed.
 //
-// What survives a collapse, and why: the opening authors and the final author
-// carry the most signal in an author list, the PI anchors the paper to the lab,
-// and an equal-contribution note means a co-first author who would be
-// misleading to hide. Everything else is foldable. Because the PI can sit in
-// the middle of a long list, the hidden names may fall into more than one run —
-// each run gets its own control, and they all toggle together.
+// What survives a collapse, and why: the first and last authors carry the most
+// signal in an author list, the PI anchors the paper to the lab, and an
+// equal-contribution note means a co-first author who would be misleading to
+// hide. Everyone else is optional and is shown front to back while the line has
+// room. Because the PI can sit in the middle of a long list, the hidden names
+// may fall into more than one run — each run gets its own control, and they all
+// expand together.
+
+// The segments a line shows when the names in `visible` are on it: a name, or
+// one control per run of hidden names. A run of a single name is shown as the
+// name, since "(1 more author)" is wider than the name it would hide.
+function authorSegments(n, visible) {
+  const segs = [];
+  let i = 0;
+  while (i < n) {
+    if (visible.has(i)) { segs.push({ at: i }); i++; continue; }
+    let j = i;
+    while (j < n && !visible.has(j)) j++;
+    if (j - i === 1) segs.push({ at: i });
+    else segs.push({ gap: true, at: i, count: j - i });
+    i = j;
+  }
+  return segs;
+}
+
+// How many optional authors (in list order) fit next to the kept ones, given
+// measured widths `m` = { name: [px per author], sep, more: [1-digit, 2-digit] }.
+// Returns optional.length when the whole list fits, so nothing folds.
+function authorsThatFit(n, keep, optional, m, avail) {
+  for (let r = optional.length; r > 0; r--) {
+    const visible = new Set([...keep, ...optional.slice(0, r)]);
+    const width = authorSegments(n, visible).reduce((sum, g, k) =>
+      sum + (k ? m.sep : 0) + (g.gap ? m.more[g.count >= 10 ? 1 : 0] : m.name[g.at]), 0);
+    if (width <= avail) return r;
+  }
+  return 0;   // even the kept names overflow; the ellipsis clamp takes over
+}
+
 function AuthorLine({ authors, compact }) {
   const [expanded, setExpanded] = React.useState(false);
-  // Whether the untruncated list actually overflows its column. Measured, not
-  // guessed: how many names fit depends on their length and the column width,
-  // so a four-author paper that fits should never fold. See the probe below.
-  const [overflows, setOverflows] = React.useState(false);
-  const boxRef = React.useRef(null);
-  const probeRef = React.useRef(null);
   const list = authors || [];
   const n = list.length;
 
-  // The probe is the full list on one unwrapped line, so its intrinsic width is
-  // what the list *would* need. Comparing against the box's own width once the
-  // line is clamped would be circular: folding shrinks the content, which would
-  // immediately unfold it again.
-  const measure = React.useCallback(() => {
+  const keep = new Set();
+  if (n) { keep.add(0); keep.add(n - 1); }
+  list.forEach((a, i) => { if (a.highlighted || a.note) keep.add(i); });
+  const optional = [];
+  for (let i = 0; i < n; i++) if (!keep.has(i)) optional.push(i);
+
+  // Optional authors shown, in list order. Starts at "all"; the layout effect
+  // below measures and corrects it before the first paint.
+  const [reveal, setReveal] = React.useState(optional.length);
+  const boxRef = React.useRef(null);
+  const probeRef = React.useRef(null);
+
+  // Measured, not guessed: how many names fit depends on their length, the
+  // font, and the column width. The probe holds every name on one unwrapped
+  // line, independent of what is currently shown, and the box is a block in a
+  // grid column whose width does not depend on its content — so the result
+  // cannot feed back into the next measurement, and there is nothing to
+  // oscillate.
+  const measureRef = React.useRef(null);
+  measureRef.current = () => {
     const box = boxRef.current, probe = probeRef.current;
     if (!box || !probe) return;
-    const avail = box.clientWidth;
-    if (!avail) return;                   // not laid out yet (hidden pane, etc.)
-    const want = probe.getBoundingClientRect().width;
-    setOverflows(prev => {
-      // Hysteresis: fold when the list clearly does not fit, unfold only when
-      // it clearly does. Without the dead band a width that lands within a
-      // pixel of the threshold can flip on every render.
-      const need = prev ? want > avail - 4 : want > avail + 1;
-      return need === prev ? prev : need;
-    });
-  }, []);
+    const avail = box.getBoundingClientRect().width;   // fractional, unlike clientWidth
+    if (!avail) return;                                // not laid out yet (hidden pane, etc.)
+    const width = el => el.getBoundingClientRect().width;
+    const m = {
+      name: [...probe.querySelectorAll('[data-name]')].map(width),
+      sep: width(probe.querySelector('[data-sep]')),
+      more: [...probe.querySelectorAll('[data-more]')].map(width),
+    };
+    const fit = authorsThatFit(n, keep, optional, m, avail);
+    setReveal(prev => (prev === fit ? prev : fit));
+  };
 
-  // No dependency array: re-measure after every render so a first pass taken
-  // before the grid settled, or before a webfont swapped in, is corrected on
-  // the next one. Clamping does not change the box's width — it is a block in
-  // a grid column — so this converges after one flip rather than oscillating.
-  React.useLayoutEffect(measure);
+  // Every render, so a first pass taken before the grid settled is corrected.
+  React.useLayoutEffect(() => measureRef.current());
 
   React.useLayoutEffect(() => {
     const box = boxRef.current;
     if (!box || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(() => measureRef.current());
     ro.observe(box);
     // Webfonts land after first paint and change every measurement.
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(measure).catch(() => {});
+      document.fonts.ready.then(() => measureRef.current()).catch(() => {});
     }
     return () => ro.disconnect();
-  }, [measure]);
+  }, []);
 
-  const LEAD = 1;                 // opening author always shown
-  const TAIL = 1;                 // senior/last author always shown
-  const keep = new Set();
-  for (let i = 0; i < Math.min(LEAD, n); i++) keep.add(i);
-  for (let i = Math.max(0, n - TAIL); i < n; i++) keep.add(i);
-  list.forEach((a, i) => { if (a.highlighted || a.note) keep.add(i); });
-
-  // Folding a single name buys no space and costs a control, so don't. Decide
-  // this from the list itself, not from the current expand state, or the
-  // "(less)" control disappears the moment it is needed.
-  const collapsible = (n - keep.size) >= 2;
-  const collapsed = !expanded && overflows && collapsible;
-
-  // A gap of a single name would render "(1 more author)" — wider than the
-  // name it hides — so show that name instead.
-  if (collapsed) {
-    let i = 0;
-    while (i < n) {
-      if (keep.has(i)) { i++; continue; }
-      let j = i;
-      while (j < n && !keep.has(j)) j++;
-      if (j - i === 1) keep.add(i);
-      i = j;
-    }
-  }
-  // Flatten to segments first — a name or a run of hidden names — so the ", "
-  // separators fall between segments uniformly and the control is punctuated
-  // like a name rather than butting against the one before it.
-  const segments = [];
-  list.forEach((a, i) => {
-    if (collapsed && !keep.has(i)) {
-      const last = segments[segments.length - 1];
-      if (last && last.gap) last.count++;
-      else segments.push({ gap: true, count: 1, at: i });
-      return;
-    }
-    segments.push({ author: a, at: i });
-  });
+  const folded = !expanded && reveal < optional.length;
+  const visible = new Set([...keep, ...optional.slice(0, folded ? reveal : optional.length)]);
+  const segments = authorSegments(n, visible);
 
   const parts = [];
   segments.forEach((s, k) => {
@@ -226,25 +230,19 @@ function AuthorLine({ authors, compact }) {
           className="author-more"
           aria-expanded="false"
           onClick={() => setExpanded(true)}
-        >({s.count} more author{s.count === 1 ? '' : 's'})</button>
+        >({s.count} more authors)</button>
       : <React.Fragment key={s.at}>
-          <AuthorName author={s.author} />
-          {s.author.note && <AuthorInfo tip={s.author.note} />}
+          <AuthorName author={list[s.at]} />
+          {list[s.at].note && <AuthorInfo tip={list[s.at].note} />}
         </React.Fragment>
     );
   });
 
-  // One line is a hard constraint and folding alone cannot guarantee it: a
-  // paper with several equal-contribution authors keeps those names whatever we
-  // do. So a line that still overflows clips with an ellipsis. Because clipping
-  // could cut off the "(N more authors)" control, the whole unexpanded line is
-  // clickable — the control is the visible affordance, not the only way out.
-  // Applied only when the list really overflows, so a list that fits is left
-  // alone: no clamp, no pointer cursor, no fold.
-  const clamp = !expanded && overflows ? {
-    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-    cursor: 'pointer',
-  } : null;
+  // One line is a hard constraint, so the unexpanded line never wraps. A list
+  // whose kept names alone overflow (several equal-contribution authors) clips
+  // with an ellipsis instead; since that could cut off the control, a folded
+  // line is clickable as a whole.
+  const clamp = expanded ? null : { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
 
   return (
     <div
@@ -252,14 +250,15 @@ function AuthorLine({ authors, compact }) {
       style={{
         fontFamily: F.display, fontSize: compact ? 12 : 13, lineHeight: 1.5,
         color: C.paper, opacity: 0.62, marginTop: compact ? 6 : 7,
-        position: 'relative',
+        position: 'relative', cursor: folded ? 'pointer' : undefined,
         ...clamp,
       }}
-      title={!expanded && overflows ? 'Show all authors' : undefined}
-      onClick={!expanded && overflows ? () => setExpanded(true) : undefined}
+      title={folded ? 'Show all authors' : undefined}
+      onClick={folded ? () => setExpanded(true) : undefined}
     >
-      {/* Off-screen copy of the full list, measured to decide whether to fold.
-          Hidden from assistive tech and from hit-testing; never painted. */}
+      {/* Off-screen measuring copy: each name, a separator, and the control at
+          one- and two-digit counts. Hidden from assistive tech, hit-testing,
+          and the tab order (visibility: hidden); never painted. */}
       <span
         ref={probeRef}
         aria-hidden="true"
@@ -269,12 +268,14 @@ function AuthorLine({ authors, compact }) {
         }}
       >
         {list.map((a, i) => (
-          <React.Fragment key={i}>
-            {i ? ', ' : ''}
+          <span key={i} data-name="">
             <AuthorName author={a} />
             {a.note && <AuthorInfo tip={a.note} />}
-          </React.Fragment>
+          </span>
         ))}
+        <span data-sep="">, </span>
+        <span data-more="" className="author-more">(8 more authors)</span>
+        <span data-more="" className="author-more">(88 more authors)</span>
       </span>
       {parts}
       {expanded && (
