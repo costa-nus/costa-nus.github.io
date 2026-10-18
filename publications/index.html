@@ -175,6 +175,12 @@
   }
 
   function PubEntry({ p }) {
+    // A paper with its own project site sends the title straight there; the
+    // PI's per-paper page is the fallback for everything else. projectHref
+    // comes from site/publications.jsx so the home page agrees on what counts
+    // as a project site.
+    const titleHref = projectHref(p)
+      || (p.detail ? `https://jyhong.gitlab.io${p.detail}` : null);
     return (
       <article style={{
         padding: '22px 0',
@@ -183,9 +189,9 @@
         <div style={{ lineHeight: 1.5 }}>
           <Badge>{p.venue}</Badge>
           <a
-            href={p.detail ? `https://jyhong.gitlab.io${p.detail}` : '#'}
-            target={p.detail ? '_blank' : undefined}
-            rel={p.detail ? 'noopener noreferrer' : undefined}
+            href={titleHref || '#'}
+            target={titleHref ? '_blank' : undefined}
+            rel={titleHref ? 'noopener noreferrer' : undefined}
             style={{
               fontFamily: F.editorial, fontWeight: 500, fontSize: 20,
               lineHeight: 1.35, letterSpacing: '-0.005em',

@@ -94,6 +94,17 @@ function Publications() {
   );
 }
 
+// A paper's project page, or null when it has no standalone site. The PI site
+// labels a project site with the word "Website" (usually "🌍 Website"), which
+// is what both publication views key off to make the title link jump straight
+// to the project page instead of to the PDF or the PI's per-paper page.
+// Exported on window so /publications/ applies the same rule — keep the
+// definition here so the two views cannot drift apart.
+function projectHref(p) {
+  const hit = (p.links || []).find(l => (l.label || '').toLowerCase().includes('website'));
+  return hit ? hit.href : null;
+}
+
 // Pick the best external link for a publication title: prefer a project
 // website, then the PDF/preprint, then fall back to the first link.
 function pickPubHref(p) {
@@ -247,4 +258,4 @@ function PubRow({ p, showYear = true, showStar = true }) {
   );
 }
 
-Object.assign(window, { Publications, PubRow, PUBS_FULL });
+Object.assign(window, { Publications, PubRow, PUBS_FULL, projectHref });
