@@ -131,8 +131,51 @@ function pickPubHref(p) {
 // each run gets its own control, and they all toggle together.
 function AuthorLine({ authors, compact }) {
   const [expanded, setExpanded] = React.useState(false);
+  // Whether the untruncated list actually overflows its column. Measured, not
+  // guessed: how many names fit depends on their length and the column width,
+  // so a four-author paper that fits should never fold. See the probe below.
+  const [overflows, setOverflows] = React.useState(false);
+  const boxRef = React.useRef(null);
+  const probeRef = React.useRef(null);
   const list = authors || [];
   const n = list.length;
+
+  // The probe is the full list on one unwrapped line, so its intrinsic width is
+  // what the list *would* need. Comparing against the box's own width once the
+  // line is clamped would be circular: folding shrinks the content, which would
+  // immediately unfold it again.
+  const measure = React.useCallback(() => {
+    const box = boxRef.current, probe = probeRef.current;
+    if (!box || !probe) return;
+    const avail = box.clientWidth;
+    if (!avail) return;                   // not laid out yet (hidden pane, etc.)
+    const want = probe.getBoundingClientRect().width;
+    setOverflows(prev => {
+      // Hysteresis: fold when the list clearly does not fit, unfold only when
+      // it clearly does. Without the dead band a width that lands within a
+      // pixel of the threshold can flip on every render.
+      const need = prev ? want > avail - 4 : want > avail + 1;
+      return need === prev ? prev : need;
+    });
+  }, []);
+
+  // No dependency array: re-measure after every render so a first pass taken
+  // before the grid settled, or before a webfont swapped in, is corrected on
+  // the next one. Clamping does not change the box's width — it is a block in
+  // a grid column — so this converges after one flip rather than oscillating.
+  React.useLayoutEffect(measure);
+
+  React.useLayoutEffect(() => {
+    const box = boxRef.current;
+    if (!box || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(box);
+    // Webfonts land after first paint and change every measurement.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measure).catch(() => {});
+    }
+    return () => ro.disconnect();
+  }, [measure]);
 
   const LEAD = 1;                 // opening author always shown
   const TAIL = 1;                 // senior/last author always shown
@@ -145,7 +188,7 @@ function AuthorLine({ authors, compact }) {
   // this from the list itself, not from the current expand state, or the
   // "(less)" control disappears the moment it is needed.
   const collapsible = (n - keep.size) >= 2;
-  const collapsed = !expanded && collapsible;
+  const collapsed = !expanded && overflows && collapsible;
 
   // A gap of a single name would render "(1 more author)" — wider than the
   // name it hides — so show that name instead.
@@ -191,31 +234,48 @@ function AuthorLine({ authors, compact }) {
     );
   });
 
-  // Keeping to one line is a hard constraint, and no name-count heuristic can
-  // promise it: a paper with four equal-contribution authors keeps four names
-  // whatever we do, and the column is only ~490px at 1024px wide. So the
-  // collapsed line clips with an ellipsis, which holds at any width. Because a
-  // clipped line could cut off the "(N more authors)" control, the whole
-  // collapsed line is clickable — the control is the visible affordance, not
-  // the only way out of it.
-  // The clamp keys off `expanded`, not `collapsible`: a short list hides no
-  // names yet can still wrap on a narrow screen, and it has to stay on one
-  // line too. Clicking such a line simply unclamps it.
-  const clamp = !expanded ? {
+  // One line is a hard constraint and folding alone cannot guarantee it: a
+  // paper with several equal-contribution authors keeps those names whatever we
+  // do. So a line that still overflows clips with an ellipsis. Because clipping
+  // could cut off the "(N more authors)" control, the whole unexpanded line is
+  // clickable — the control is the visible affordance, not the only way out.
+  // Applied only when the list really overflows, so a list that fits is left
+  // alone: no clamp, no pointer cursor, no fold.
+  const clamp = !expanded && overflows ? {
     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
     cursor: 'pointer',
   } : null;
 
   return (
     <div
+      ref={boxRef}
       style={{
         fontFamily: F.display, fontSize: compact ? 12 : 13, lineHeight: 1.5,
         color: C.paper, opacity: 0.62, marginTop: compact ? 6 : 7,
+        position: 'relative',
         ...clamp,
       }}
-      title={!expanded ? 'Show all authors' : undefined}
-      onClick={!expanded ? () => setExpanded(true) : undefined}
+      title={!expanded && overflows ? 'Show all authors' : undefined}
+      onClick={!expanded && overflows ? () => setExpanded(true) : undefined}
     >
+      {/* Off-screen copy of the full list, measured to decide whether to fold.
+          Hidden from assistive tech and from hit-testing; never painted. */}
+      <span
+        ref={probeRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute', left: 0, top: 0,
+          visibility: 'hidden', pointerEvents: 'none', whiteSpace: 'nowrap',
+        }}
+      >
+        {list.map((a, i) => (
+          <React.Fragment key={i}>
+            {i ? ', ' : ''}
+            <AuthorName author={a} />
+            {a.note && <AuthorInfo tip={a.note} />}
+          </React.Fragment>
+        ))}
+      </span>
       {parts}
       {expanded && (
         <>
@@ -354,6 +414,10 @@ function PubRow({ p, showYear = true, showStar = true }) {
       <div style={{
         fontFamily: F.editorial, fontSize: 19, lineHeight: 1.35, color: C.paper,
         letterSpacing: '-0.005em', textWrap: 'pretty',
+        // A grid item defaults to min-width:auto, so the nowrap author line
+        // below would widen this 1fr track to fit itself — which changes the
+        // width AuthorLine measures against and makes folding oscillate.
+        minWidth: 0,
       }}>
         {showStar && p.selected && (
           <span title="PI's selected pick" style={{
