@@ -19,7 +19,7 @@ window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', term: '2026 Fall -', kind: 'pi', url: 'https://jyhong.gitlab.io/', scholar: 'https://scholar.google.com/citations?user=7Cbv6doAAAAJ&hl=en', x: 'https://x.com/hjy836' },
   { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ', highlight: 'Research Intern @ Hunyuan' },
   { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', term: '2026 Fall -', kind: 'ra', url: 'https://zrc007.github.io/', scholar: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ', highlight: 'Research Intern @ Qwen' },
-  { name: 'Dongwen Tang', role: 'Research Assistant · Ex: Xidian', term: 'Incoming', kind: 'ra', url: 'https://github.com/MTDoven', scholar: 'https://scholar.google.com/citations?user=9lKm_5IAAAAJ' },
+  { name: 'Dongwen Tang', role: 'Research Assistant · Ex: Xidian', term: 'Incoming', kind: 'ra', url: 'https://mtdoven.github.io/Personal-Page/', scholar: 'https://scholar.google.com/citations?user=9lKm_5IAAAAJ' },
   { name: 'Amir Hossein Yari', role: 'Research Assistant · Ex: Sharif Tech', term: 'Incoming', kind: 'ra', url: 'https://amirhosseinyari2002.github.io/', scholar: 'https://scholar.google.com/citations?hl=en&user=cYc6hYkAAAAJ' },
   { name: 'Shuwen Liang', role: 'Remote Intern · ZJU', term: '2026 Fall -', kind: 'intern' },
   { name: 'Leo He', role: 'Remote Intern · UNC', term: '2026 Fall -', kind: 'intern' },
