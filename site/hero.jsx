@@ -95,10 +95,87 @@ function setupMethodScrollAnimation(svg, triggerEl) {
   return tl.scrollTrigger;
 }
 
+// Non-bold letters of the title; collapsed by the scroll handler in Hero so only "CoSTA" remains.
+// clip-path crops horizontally at the shrinking box but leaves ascenders/descenders alone
+// (overflow:hidden would clip them and shift the inline baseline).
+function TitleSeg({ children }) {
+  return (
+    <span data-hs="out" style={{ display: 'inline-block', whiteSpace: 'pre', clipPath: 'inset(-0.3em 0 -0.3em 0)' }}>
+      {children}
+    </span>
+  );
+}
+
 function Hero() {
   const isMobile = useIsMobile();
   const sectionRef = React.useRef(null);
   const bgRef = React.useRef(null);
+  const titleRef = React.useRef(null);
+
+  // Scroll-linked title morph: "Cognitive Science & Trustworthy AI Lab" -> "CoSTA".
+  React.useEffect(() => {
+    const h1 = titleRef.current;
+    if (!h1) return;
+    const outs = Array.from(h1.querySelectorAll('[data-hs="out"]'));
+    const line = h1.querySelector('[data-hs="line"]');
+    const dot = h1.querySelector('[data-hs="in"]');
+    const tints = Array.from(h1.querySelectorAll('[data-hs="tint"]'));
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const ease = (t) => t * t * (3 - 2 * t); // smoothstep: gentle start and end, even middle
+    const STAGGER = 0.06;
+    const DEAD = 80; // initial scroll distance with no visible change, so small nudges don't trigger it
+    const TINT_START = 0.6, TINT_STEP = 0.1, TINT_LEN = 0.2; // A, then T, then S turn accent-orange near the end
+    const PIN = 0.7; // share of scroll offset cancelled while collapsing (1 = fully pinned)
+    let widths = [], lineH = 0, range = 450, raf = 0;
+
+    const measure = () => {
+      h1.style.transform = '';
+      outs.forEach((el) => { el.style.width = ''; });
+      if (line) line.style.height = '';
+      widths = outs.map((el) => el.getBoundingClientRect().width);
+      lineH = line ? line.getBoundingClientRect().height : 0;
+      // The title drifts up at (1 - PIN) of normal scroll speed and finishes collapsing as it
+      // nears the top. Capped so the hero's bottom edge (which clips the title) stays below it.
+      const top0 = h1.getBoundingClientRect().top + window.scrollY;
+      range = Math.min((top0 - 40) / (1 - PIN), window.innerHeight - 300 - DEAD);
+    };
+    const apply = () => {
+      raf = 0;
+      const s = Math.max(0, window.scrollY - DEAD);
+      const p = clamp(s / range);
+      // hold still through the dead zone, then counter-scroll most of the motion while collapsing;
+      // it scrolls away normally afterwards
+      h1.style.transform = window.scrollY === 0 ? '' : `translateY(${Math.min(window.scrollY, DEAD) + PIN * Math.min(s, range)}px)`;
+      const n = outs.length;
+      outs.forEach((el, i) => {
+        const q = ease(clamp((p - i * STAGGER) / (1 - (n - 1) * STAGGER)));
+        el.style.width = q === 0 ? '' : `${widths[i] * (1 - q)}px`;
+        el.style.opacity = String(1 - q);
+      });
+      if (line) {
+        const q = ease(clamp(p / 0.6));
+        line.style.height = q === 0 ? '' : `${lineH * (1 - q)}px`;
+        line.style.opacity = String(1 - q);
+      }
+      tints.forEach((el) => {
+        const t = ease(clamp((p - TINT_START - Number(el.dataset.order) * TINT_STEP) / TINT_LEN));
+        el.style.color = t === 0 ? C.ink : `color-mix(in srgb, ${C.accent} ${t * 100}%, ${C.ink})`;
+      });
+      if (dot) dot.style.opacity = String(ease(clamp((p - 0.5) / 0.5)));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    const onResize = () => { measure(); apply(); };
+
+    measure(); apply();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   React.useEffect(() => {
     if (!bgRef.current || !sectionRef.current) return;
@@ -250,18 +327,25 @@ function Hero() {
           <NusLogo height={isMobile ? 72 : 104} color={C.ink} />
         </a>
         </div>
-        <h1 style={{
+        <h1 ref={titleRef} style={{
           fontFamily: F.display, fontWeight: 500, fontSize: 'clamp(38px, 7.8vw, 96px)',
           letterSpacing: '-0.04em', lineHeight: 1.0, color: `${C.ink}80`, margin: 0,
           textWrap: 'balance',
         }}>
-          <span style={{ fontWeight: 800, color: C.ink }}>Co</span>gnitive{' '}
-          <span style={{ fontWeight: 800, color: C.ink }}>S</span>cience <span style={{ opacity: 0.75 }}>&amp;</span>{' '}
-          <span style={{ fontWeight: 800, color: C.ink }}>T</span>rustworthy{' '}
-          <span style={{ fontWeight: 800, color: C.ink }}>A</span>I
-          <br />
-          Lab
-          <span className="costa-dot-accent" />
+          <span style={{ fontWeight: 800, color: C.ink }}>Co</span>
+          <TitleSeg>gnitive </TitleSeg>
+          <span data-hs="tint" data-order="2" style={{ fontWeight: 800, color: C.ink }}>S</span>
+          <TitleSeg>cience <span style={{ opacity: 0.75 }}>&amp;</span> </TitleSeg>
+          <span data-hs="tint" data-order="1" style={{ fontWeight: 800, color: C.ink }}>T</span>
+          <TitleSeg>rustworthy </TitleSeg>
+          <span data-hs="tint" data-order="0" style={{ fontWeight: 800, color: C.ink }}>A</span>
+          <TitleSeg>I</TitleSeg>
+          {/* accent dot that takes over from the "Lab." dot once the title has collapsed */}
+          <span data-hs="in" className="costa-dot-accent" style={{ opacity: 0 }} />
+          <span data-hs="line" style={{ display: 'block' }}>
+            Lab
+            <span className="costa-dot-accent" />
+          </span>
         </h1>
 {/*
         <div style={{
