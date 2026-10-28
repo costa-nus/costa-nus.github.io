@@ -1,6 +1,6 @@
 // PI introduction strip — portrait + pull-quote + press coverage row.
 
-const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SPONSORS, NEWS, mdInline } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SPONSORS, NEWS, mdInline, INACTIVE_TINT, INACTIVE_TINT_OFF } = window;
 
 // Per-category color for the news tag chips. Keys match the `tags` strings in
 // data/news.js; unknown tags fall back to ink so a new tag still renders. Hues
@@ -185,11 +185,11 @@ function PIIntro() {
                     alt={`${name} logo`}
                     style={{
                       height, width: 'auto', display: 'block',
-                      filter: 'grayscale(1)', opacity: 0.55,
+                      filter: INACTIVE_TINT, opacity: 0.55,
                       transition: 'opacity 0.15s ease-out, filter 0.15s ease-out',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.filter = 'grayscale(0)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '0.55'; e.currentTarget.style.filter = 'grayscale(1)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.filter = INACTIVE_TINT_OFF; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '0.55'; e.currentTarget.style.filter = INACTIVE_TINT; }}
                   />
                 </a>
               ))}

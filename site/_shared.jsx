@@ -237,4 +237,10 @@ function AuthorName({ author }) {
   );
 }
 
-Object.assign(window, { C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee, AuthorInfo, AuthorName });
+// Inactive-state tint for images and logos: desaturated blue-gray matching the ink-at-50%
+// text (e.g. media coverage), instead of neutral gray. Hover state uses INACTIVE_TINT_OFF;
+// both lists have the same functions so the filter transition interpolates.
+const INACTIVE_TINT = 'grayscale(1) sepia(1) hue-rotate(170deg) saturate(1.1)';
+const INACTIVE_TINT_OFF = 'grayscale(0) sepia(0) hue-rotate(0deg) saturate(1)';
+
+Object.assign(window, { INACTIVE_TINT, INACTIVE_TINT_OFF, C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee, AuthorInfo, AuthorName });

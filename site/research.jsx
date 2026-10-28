@@ -2,7 +2,7 @@
 // Pillars come from window.RESEARCH_PILLARS (data/research.js); press and
 // projects from window.PRESS_COVERAGE / window.WHAT_WE_BUILD.
 
-const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader, mdInline } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader, mdInline, INACTIVE_TINT, INACTIVE_TINT_OFF } = window;
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
@@ -285,14 +285,14 @@ const PHI = 1.618;
 // curve; a straight two-stop ramp leaves a visible gray band on dark art.
 const COVER_FADE = 'linear-gradient(to bottom, #000 0%, #000 42%, rgba(0,0,0,.78) 54%, rgba(0,0,0,.5) 64%, rgba(0,0,0,.25) 73%, rgba(0,0,0,.09) 81%, transparent 90%)';
 
-// Cover art sits in grayscale and takes its color back while the card is
+// Cover art sits in a blue-gray tint and takes its color back while the card is
 // hovered (or a link inside it has keyboard focus). Gated on `hover: hover`
 // so touch screens, which never fire a lasting hover, keep the color.
 const PILLAR_COVER_CSS = `
 @media (hover: hover) {
-  .pillar-cover img { filter: grayscale(1); transition: filter 0.4s ease-out; }
+  .pillar-cover img { filter: ${INACTIVE_TINT}; transition: filter 0.4s ease-out; }
   .pillar-card:hover .pillar-cover img,
-  .pillar-card:focus-within .pillar-cover img { filter: grayscale(0); }
+  .pillar-card:focus-within .pillar-cover img { filter: ${INACTIVE_TINT_OFF}; }
 }
 @media (hover: hover) and (prefers-reduced-motion: reduce) {
   .pillar-cover img { transition: none; }
