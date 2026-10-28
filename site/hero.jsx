@@ -133,17 +133,17 @@ function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="top" style={{ background: C.paper, paddingTop: isMobile ? 80 : 64, paddingBottom: isMobile ? 72 : 96, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box' }}>
+    <section ref={sectionRef} id="top" style={{ background: C.paper, paddingTop: isMobile ? 80 : 64, paddingBottom: isMobile ? 80 : 64, position: 'relative', overflow: 'hidden', minHeight: '100vh', boxSizing: 'border-box', display: 'flex' }}>
       {/* Decorative method-network backdrop — bottom-aligned, scaled to span the section, scroll-driven */}
       <div
         ref={bgRef}
         aria-hidden="true"
         style={{
           position: 'absolute',
-          left: '50%',
+          right: 0,
           bottom: 0,
-          transform: isMobile ? 'translateX(-50%)' : 'translateX(-35%)',
-          width: isMobile ? '140vw' : 'min(1200px, 88vw)',
+          transform: 'scaleX(-1)', // mirror horizontally
+          width: '60vw',
           maxWidth: 'none',
           opacity: 0.6,
           pointerEvents: 'none',
@@ -237,7 +237,9 @@ function Hero() {
         <span className="costa-sun-ring costa-sun-ring-1" />
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative', zIndex: 1 }}>
+      {/* 3-row grid: logo | title | meta. Outer rows split 0.8:1.2, so the title sits slightly above center and scales with viewport height. */}
+      <div style={{ maxWidth: 1280, width: '100%', margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px', position: 'relative', zIndex: 1, display: 'grid', gridTemplateRows: '0.8fr auto 1.2fr' }}>
+        <div>
         <a
           href="https://nus.edu.sg"
           target="_blank"
@@ -247,10 +249,10 @@ function Hero() {
         >
           <NusLogo height={isMobile ? 72 : 104} color={C.ink} />
         </a>
-        <MonoLabel></MonoLabel>
+        </div>
         <h1 style={{
           fontFamily: F.display, fontWeight: 500, fontSize: 'clamp(38px, 7.8vw, 96px)',
-          letterSpacing: '-0.04em', lineHeight: 1.0, color: `${C.ink}80`, margin: '28px 0 0',
+          letterSpacing: '-0.04em', lineHeight: 1.0, color: `${C.ink}80`, margin: 0,
           textWrap: 'balance',
         }}>
           <span style={{ fontWeight: 800, color: C.ink }}>Co</span>gnitive{' '}
@@ -273,26 +275,6 @@ function Hero() {
           ethical innovation.
         </div> */}
 
-        {/* Meta row */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: isMobile ? 24 : 48,
-          marginTop: isMobile ? 40 : 56,
-          borderTop: `1px solid ${C.ink}1f`, paddingTop: 24,
-        }}>
-          {[
-            ['LOCATION', (
-              <>
-                <div>Dept. of Electrical & Computer Engineering</div>
-                <div>National University of Singapore</div>
-              </>
-            )],
-          ].map(([k, v]) => (
-            <div key={k}>
-              <MonoLabel size={9.5}>{k}</MonoLabel>
-              <div style={{ fontFamily: F.display, fontSize: 14, color: C.ink, marginTop: 6, fontWeight: 500 }}>{v}</div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
