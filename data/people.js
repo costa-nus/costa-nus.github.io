@@ -17,14 +17,14 @@
 //             shown as a small accented row under the role.
 window.PEOPLE = [
   { name: 'Junyuan "Jason" Hong', role: 'Principal Investigator', term: '2026 Fall -', kind: 'pi', url: 'https://jyhong.gitlab.io/', scholar: 'https://scholar.google.com/citations?user=7Cbv6doAAAAJ&hl=en', x: 'https://x.com/hjy836' },
-  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ', highlight: 'Research Intern @ Hunyuan' },
-  { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: PKU', term: '2026 Fall -', kind: 'ra', url: 'https://zrc007.github.io/', scholar: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ', highlight: 'Research Intern @ Qwen' },
-  { name: 'Dongwen Tang', role: 'Research Assistant · Ex: Xidian', term: 'Incoming', kind: 'ra', url: 'https://mtdoven.github.io/Personal-Page/', scholar: 'https://scholar.google.com/citations?user=9lKm_5IAAAAJ' },
-  { name: 'Amir Hossein Yari', role: 'Research Assistant · Ex: Sharif Tech', term: 'Incoming', kind: 'ra', url: 'https://amirhosseinyari2002.github.io/', scholar: 'https://scholar.google.com/citations?hl=en&user=cYc6hYkAAAAJ' },
-  { name: 'Shuwen Liang', role: 'Remote Intern · ZJU', term: '2026 Fall -', kind: 'intern' },
-  { name: 'Leo He', role: 'Remote Intern · UNC', term: '2026 Fall -', kind: 'intern' },
-  { name: 'Jingze Ge', role: 'Remote Intern · NUS', term: '2026 Fall -', kind: 'intern' },
-  { name: 'Zichen Jiang', role: 'Remote Intern · NUS', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Junrui Zhang', role: 'Research Assistant · Ex: MS@USTC', term: '2026 Fall -', kind: 'ra', url: 'https://alniyatrui.github.io/', scholar: 'https://scholar.google.com/citations?user=n7fNKpYAAAAJ', highlight: 'Research Intern @ Hunyuan' },
+  { name: 'Runchuan Zhu', role: 'Research Assistant · Ex: MS@PKU', term: '2026 Fall -', kind: 'ra', url: 'https://zrc007.github.io/', scholar: 'https://scholar.google.com/citations?user=Y_9AfuIAAAAJ', highlight: 'Research Intern @ Qwen' },
+  { name: 'Dongwen Tang', role: 'Research Assistant · Ex: BEng@Xidian', term: 'Incoming', kind: 'ra', url: 'https://mtdoven.github.io/Personal-Page/', scholar: 'https://scholar.google.com/citations?user=9lKm_5IAAAAJ' },
+  { name: 'Amir Hossein Yari', role: 'Research Assistant · Ex: BS@Sharif Tech', term: 'Incoming', kind: 'ra', url: 'https://amirhosseinyari2002.github.io/', scholar: 'https://scholar.google.com/citations?hl=en&user=cYc6hYkAAAAJ' },
+  { name: 'Shuwen Liang', role: 'Remote Intern · MS@ZJU', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Leo He', role: 'Remote Intern · BS@UNC', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Jingze Ge', role: 'Remote Intern · MS@NUS', term: '2026 Fall -', kind: 'intern' },
+  { name: 'Zichen Jiang', role: 'Remote Intern · BS@NUS', term: '2026 Fall -', kind: 'intern' },
   // { name: 'Open Position', role: 'Remote Intern', term: 'Rolling basis', kind: 'open' },
   { name: 'Open Position', role: 'Remote Intern', term: '2026 Summer', kind: 'open' },
   { name: 'Open Position', role: 'Research Assistant', term: '2027 Fall', kind: 'open' },
@@ -36,9 +36,9 @@ window.PEOPLE = [
 // (with term) and `now` is where they went next. Omit `now` when unknown; the
 // "→ …" cell is then left empty. Shown under "Alumni" on the home page.
 window.LAB_ALUMNI = [
-  { name: 'Xiang Gao', prior: 'Remote Intern · Tsinghua (Yao class) · 2026 Spring', now: 'PhD · UIUC', url: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
-  { name: 'Minh Khoi Ho', prior: 'Remote Intern · MBZUAI · 2026 Spring', url: 'https://hmkhoi2701.github.io/' },
-  { name: 'Zeyu Xu', prior: 'Remote Intern · BS · USTC' },
+  { name: 'Xiang Gao', prior: 'Remote Intern · BS@Tsinghua (Yao class) · 2026 Spring', now: 'PhD · UIUC', url: 'https://scholar.google.com/citations?user=zaMoZTMAAAAJ&hl=en' },
+  { name: 'Minh Khoi Ho', prior: 'Remote Intern · MS@MBZUAI · 2026 Spring', url: 'https://hmkhoi2701.github.io/' },
+  { name: 'Zeyu Xu', prior: 'Remote Intern · BS@USTC' },
 ];
 
 // Previous mentees with the PI before NUS — current affiliation + prior role.

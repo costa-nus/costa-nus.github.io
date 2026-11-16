@@ -137,7 +137,21 @@ function Hero() {
       // The title drifts up at (1 - PIN) of normal scroll speed and finishes collapsing as it
       // nears the top. Capped so the hero's bottom edge (which clips the title) stays below it.
       const top0 = h1.getBoundingClientRect().top + window.scrollY;
-      range = Math.min((top0 - 40) / (1 - PIN), window.innerHeight - 300 - DEAD);
+      // The title moves down inside the hero by DEAD + PIN * range in total. Keep the collapsed
+      // one-line title at least 24px above the hero's bottom
+      // edge, or the hero's overflow:hidden clips "CoSTA" once it has collapsed.
+      const sec = h1.closest('section');
+      const secBottom = sec ? sec.getBoundingClientRect().bottom + window.scrollY : Infinity;
+      const collapsedH = parseFloat(getComputedStyle(h1).fontSize) * 1.1; // one line ("CoSTA"), line-height 1
+      // As the title shrinks, the 0.8fr / 1.2fr grid around it re-centres it, moving its top
+      // down by 0.4 of the height it loses.
+      const settle = 0.4 * Math.max(0, h1.getBoundingClientRect().height - collapsedH);
+      const maxShift = secBottom - (top0 + settle + collapsedH) - 24;
+      range = Math.max(0, Math.min(
+        (top0 - 40) / (1 - PIN),
+        window.innerHeight - 300 - DEAD,
+        (maxShift - DEAD) / PIN,
+      ));
     };
     const apply = () => {
       raf = 0;

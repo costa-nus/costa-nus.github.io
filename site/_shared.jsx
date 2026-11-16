@@ -115,24 +115,36 @@ function NusLogo({ height = 32, color = C.ink, title = 'National University of S
   );
 }
 
-// Single-level section header: one plain title line. `kicker` and `lede` are
-// optional and retained for sub-pages that still pass them; the live home-page
-// sections pass only `title`.
-function SectionHeader({ kicker, title, lede, align = 'left' }) {
+// Section header: a large title, then an optional smaller `subtitle` line.
+// Sections are named by the large title only — no small "§ …" mono kicker
+// above it (JH, 16 Nov 2026). `kicker` and `lede` are still accepted for old
+// callers; `color` lets dark sections pass C.paper.
+function SectionHeader({ kicker, title, subtitle, lede, align = 'left', color = C.ink, marginBottom }) {
   const isMobile = useIsMobile();
   return (
-    <div style={{ maxWidth: 900, marginBottom: isMobile ? 32 : 56, textAlign: align }}>
-      {kicker && <MonoLabel>{kicker}</MonoLabel>}
+    <div style={{
+      maxWidth: 900, textAlign: align,
+      marginBottom: marginBottom !== undefined ? marginBottom : (isMobile ? 32 : 56),
+    }}>
+      {kicker && <MonoLabel color={color}>{kicker}</MonoLabel>}
       <div style={{
-        fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(34px, 6.2vw, 56px)',
+        fontFamily: F.display, fontWeight: 700,
+        fontSize: 'clamp(34px, 6.2vw, 56px)',
         letterSpacing: '-0.035em',
-        lineHeight: 1.04, color: C.ink, marginTop: kicker ? 14 : 0, textWrap: 'balance',
+        lineHeight: 1.04, color, marginTop: kicker ? 14 : 0, textWrap: 'balance',
       }}>{title}</div>
+      {subtitle && (
+        <div style={{
+          fontFamily: F.display, fontWeight: 400, fontSize: 16,
+          lineHeight: 1.55, color, opacity: 0.78,
+          marginTop: 10, textWrap: 'pretty',
+        }}>{subtitle}</div>
+      )}
       {lede && (
         <div style={{
           fontFamily: F.editorial, fontStyle: 'italic', fontWeight: 400,
           fontSize: 'clamp(17px, 2.1vw, 22px)',
-          lineHeight: 1.45, color: C.ink, opacity: 0.72, marginTop: 20, maxWidth: 720,
+          lineHeight: 1.45, color, opacity: 0.72, marginTop: 20, maxWidth: 720,
           textWrap: 'pretty',
         }}>{lede}</div>
       )}
@@ -237,10 +249,21 @@ function AuthorName({ author }) {
   );
 }
 
-// Inactive-state tint for images and logos: desaturated blue-gray matching the ink-at-50%
-// text (e.g. media coverage), instead of neutral gray. Hover state uses INACTIVE_TINT_OFF;
-// both lists have the same functions so the filter transition interpolates.
-const INACTIVE_TINT = 'grayscale(1) sepia(1) hue-rotate(170deg) saturate(1.1)';
-const INACTIVE_TINT_OFF = 'grayscale(0) sepia(0) hue-rotate(0deg) saturate(1)';
+// Inactive state for images and logos (16 Nov 2026).
+//
+// Logos: plain grayscale. A single filter function, so the hover transition
+// interpolates straight from gray to color. The earlier sepia + hue-rotate chain
+// passed through green and orange hues mid-transition (the "flash" on hover).
+const INACTIVE_TINT = 'grayscale(1)';
+const INACTIVE_TINT_OFF = 'grayscale(0)';
 
-Object.assign(window, { INACTIVE_TINT, INACTIVE_TINT_OFF, C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee, AuthorInfo, AuthorName });
+// Cover art (research, press, projects): a duotone that keeps white white and
+// tints only the darker areas toward a muted ink navy. Done with blending, not
+// filters: the image is grayscale with mix-blend-mode: screen over this color, so
+// black becomes this color, white stays white, and mid-grays land in between
+// (mid-gray -> about rgb(142,152,164)). On hover the backdrop goes to black,
+// where screen is a no-op, and grayscale goes to 0, so the transition is a plain
+// fade with no hue shift. The rules live in PILLAR_COVER_CSS (site/research.jsx).
+const INACTIVE_DUOTONE = '#1e3048';
+
+Object.assign(window, { INACTIVE_TINT, INACTIVE_TINT_OFF, INACTIVE_DUOTONE, C, F, useIsMobile, WaveMark, MonoLabel, SubSectionTitle, NusLogo, SectionHeader, mdInline, isMentee, AuthorInfo, AuthorName });

@@ -2,7 +2,7 @@
 // Pillars come from window.RESEARCH_PILLARS (data/research.js); press and
 // projects from window.PRESS_COVERAGE / window.WHAT_WE_BUILD.
 
-const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader, mdInline, INACTIVE_TINT, INACTIVE_TINT_OFF } = window;
+const { C, F, useIsMobile, MonoLabel, SubSectionTitle, SectionHeader, mdInline, INACTIVE_DUOTONE } = window;
 
 function ResearchPillars() {
   const pillars = window.RESEARCH_PILLARS;
@@ -139,6 +139,11 @@ function CardCarousel({ cards, perPage = PER_PAGE }) {
           overflowX: 'auto',
           scrollSnapType: 'x proximity',
           scrollbarWidth: 'none',
+          // overflow-x: auto also clips vertically, which cut off the lifted
+          // card and its hover shadow. Room above/below, cancelled by negative
+          // margins so the row's layout doesn't move.
+          padding: '12px 0 48px',
+          margin: '-12px 0 -48px',
         }}
       >
         {cards.map((m, i) => (
@@ -157,6 +162,7 @@ function PressCard({ m }) {
   const [imgOk, setImgOk] = React.useState(Boolean(m.image));
   return (
     <a
+      className="press-card"
       href={m.href}
       target="_blank"
       rel="noopener noreferrer"
@@ -164,21 +170,19 @@ function PressCard({ m }) {
         display: 'flex', flexDirection: 'column',
         background: '#fff', border: `1px solid ${C.ink}14`,
         textDecoration: 'none', color: 'inherit',
-        transition: 'transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out',
+        transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = `${C.accent}55`;
-        e.currentTarget.style.boxShadow = `0 8px 24px ${C.ink}12`;
+        e.currentTarget.style.transform = 'translateY(-6px)';
+        e.currentTarget.style.boxShadow = `0 16px 36px ${C.ink}1f`;
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = `${C.ink}14`;
         e.currentTarget.style.boxShadow = 'none';
       }}
     >
       {/* cover */}
-      <div style={{
+      <div className="press-cover" style={{
         position: 'relative', aspectRatio: '3 / 2', overflow: 'hidden',
         background: C.paperWarm, borderBottom: `1px solid ${C.ink}10`,
       }}>
@@ -285,21 +289,39 @@ const PHI = 1.618;
 // curve; a straight two-stop ramp leaves a visible gray band on dark art.
 const COVER_FADE = 'linear-gradient(to bottom, #000 0%, #000 42%, rgba(0,0,0,.78) 54%, rgba(0,0,0,.5) 64%, rgba(0,0,0,.25) 73%, rgba(0,0,0,.09) 81%, transparent 90%)';
 
-// Cover art sits in a blue-gray tint and takes its color back while the card is
-// hovered (or a link inside it has keyboard focus). Gated on `hover: hover`
-// so touch screens, which never fire a lasting hover, keep the color.
+// Cover art sits in a navy duotone (see INACTIVE_DUOTONE in site/_shared.jsx)
+// and takes its color back while the card is hovered (or a link inside it has
+// keyboard focus). Gated on `hover: hover` so touch screens, which never fire a
+// lasting hover, keep the color. Press and "What we're building" cards
+// (PressCard) use the same treatment. `!important` beats the covers' inline
+// placeholder background.
 const PILLAR_COVER_CSS = `
 @media (hover: hover) {
-  .pillar-cover img { filter: ${INACTIVE_TINT}; transition: filter 0.4s ease-out; }
-  .pillar-card:hover .pillar-cover img,
-  .pillar-card:focus-within .pillar-cover img { filter: ${INACTIVE_TINT_OFF}; }
+  /* Pillar cards lift on hover, matching PressCard's inline hover. */
+  .pillar-card { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+  .pillar-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px ${C.ink}1f; }
+  .pillar-cover, .press-cover {
+    background-color: ${INACTIVE_DUOTONE} !important; isolation: isolate;
+    /* keep the dark backdrop out of the cover's thin bottom border */
+    background-clip: padding-box !important;
+    transition: background-color 0.4s ease-out;
+  }
+  .pillar-cover img, .press-cover img {
+    filter: grayscale(1); mix-blend-mode: screen; transition: filter 0.4s ease-out;
+  }
+  .pillar-card:hover .pillar-cover, .pillar-card:focus-within .pillar-cover,
+  .press-card:hover .press-cover, .press-card:focus .press-cover { background-color: #000 !important; }
+  .pillar-card:hover .pillar-cover img, .pillar-card:focus-within .pillar-cover img,
+  .press-card:hover .press-cover img, .press-card:focus .press-cover img { filter: grayscale(0); }
 }
 @media (hover: hover) and (prefers-reduced-motion: reduce) {
-  .pillar-cover img { transition: none; }
+  .pillar-card, .pillar-cover, .press-cover, .pillar-cover img, .press-cover img { transition: none; }
 }
 `;
 
-function PillarCard({ p, i }) {
+// `compact` (used by /openings/) keeps the cover, title and lede only: no
+// "Theme" label, numbered questions, or Selected-work citations.
+function PillarCard({ p, i, compact = false }) {
   const isMobile = useIsMobile();
   const pad = isMobile ? 24 : 32;
   // A pillar with `image` gets a full-bleed cover in place of the small
@@ -310,7 +332,7 @@ function PillarCard({ p, i }) {
       background: '#fff', border: `1px solid ${C.ink}14`,
       padding: pad,
       display: 'flex', flexDirection: 'column',
-      minHeight: isMobile ? 'auto' : 520,
+      minHeight: isMobile || compact ? 'auto' : 520,
     }}>
       {imgOk ? (
         <>
@@ -321,27 +343,27 @@ function PillarCard({ p, i }) {
             maskImage: COVER_FADE, WebkitMaskImage: COVER_FADE,
           }}>
             <img
-              src={p.image} alt="" aria-hidden="true"
+              src={/^(\/|https?:)/.test(p.image) ? p.image : '/' + p.image} alt="" aria-hidden="true"
               onError={() => setImgOk(false)}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           </div>
           {/* Pulled up over the faded bottom of the cover; `relative` keeps it
               painted above the image. */}
-          <div style={{ marginTop: isMobile ? -40 : -52, position: 'relative' }}>
+          {!compact && <div style={{ marginTop: isMobile ? -40 : -52, position: 'relative' }}>
             <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
-          </div>
+          </div>}
         </>
       ) : (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <MonoLabel size={10}>Theme · {p.id}</MonoLabel>
+          {!compact && <MonoLabel size={10}>Theme · {p.id}</MonoLabel>}
           <PillarFigure kind={p.figure} />
         </div>
       )}
 
       <div style={{
         fontFamily: F.display, fontWeight: 700, fontSize: isMobile ? 24 : 28, letterSpacing: '-0.025em',
-        color: C.ink, marginTop: imgOk ? 10 : 24, lineHeight: 1.1, textWrap: 'balance',
+        color: C.ink, marginTop: imgOk ? (compact ? (isMobile ? -28 : -36) : 10) : 24, lineHeight: 1.1, textWrap: 'balance',
         position: 'relative',
         minHeight: isMobile ? 'auto' : 66,
       }}>{p.title}</div>
@@ -351,6 +373,7 @@ function PillarCard({ p, i }) {
         color: C.ink, opacity: 0.7, marginTop: 18, textWrap: 'pretty',
       }}>{mdInline(p.lede)}</div>
 
+      {!compact && <>
       <ul style={{
         listStyle: 'none', padding: 0, margin: '28px 0 0',
         fontFamily: F.display, fontSize: 14, lineHeight: 1.55, color: C.ink,
@@ -392,6 +415,7 @@ function PillarCard({ p, i }) {
           );
         })}
       </div>
+      </>}
     </div>
   );
 }
@@ -428,4 +452,4 @@ function PillarFigure({ kind }) {
   );
 }
 
-Object.assign(window, { ResearchPillars });
+Object.assign(window, { ResearchPillars, PillarCard, PILLAR_COVER_CSS });
