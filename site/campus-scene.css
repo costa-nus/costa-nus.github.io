@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'Campus Display';
+  src: url('./fonts/ArchivoBlack-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+.campus-composition { position: relative; margin-top: 16px; }
+.campus-join-title {
+  position: absolute; z-index: 1; top: clamp(28px, 4vw, 64px);
+  left: max(40px, calc((100% - 1120px) / 2)); margin: 0;
+  color: var(--ink); font: 700 clamp(40px, 7vw, 76px)/1.02 var(--f-display);
+  letter-spacing: -.04em; pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.campus-composition:has(.campus[data-focused="true"]) .campus-join-title { opacity: 0; transform: translateY(-8px); }
+.campus { position: relative; width: 100%; margin: 0; }
+.campus-stage { position: relative; height: clamp(460px, 40vw, 660px); }
+.campus-canvas { width: 100%; height: 100%; }
+.campus-canvas canvas { width: 100%; height: 100%; display: block; cursor: default; touch-action: pan-y; }
+.campus-canvas canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -6px; }
+.campus-fallback { position: absolute; inset: 0; }
+.campus-fallback img { width: 100%; height: 100%; object-fit: cover; }
+.campus-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 767px) {
+  .campus-composition { margin-top: 12px; }
+  .campus-join-title { top: 18px; left: 20px; font-size: 48px; }
+  .campus-stage { height: 520px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .campus-join-title { transition: none; } }

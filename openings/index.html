@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/site/wave-mark.svg">
 <link rel="stylesheet" href="/css/site.css">
+<link rel="stylesheet" href="/site/campus-scene.css">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -27,6 +28,7 @@
 <script type="text/babel" src="../site/research.jsx"></script>
 <script type="text/babel" src="../site/nav.jsx"></script>
 <script type="text/babel" src="../site/footer.jsx"></script>
+<script type="text/babel" data-presets="react" src="../site/campus-scene.jsx"></script>
 <script type="text/babel">
   // Standalone openings page. Content sourced from the lab's canonical
   // "Openings at CoSTA@NUS Lab" document; rendered in the site's visual style.
@@ -124,33 +126,16 @@
   function OpeningsHero() {
     const isMobile = useIsMobile();
     return (
-      <section style={{ background: C.paper, padding: isMobile ? '56px 0 40px' : '96px 0 56px' }}>
+      <section style={{ background: C.paper, padding: isMobile ? '36px 0 32px' : '64px 0 40px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
           <a href="/" style={{
             fontFamily: F.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
-            color: C.ink, opacity: 0.6, textDecoration: 'none', display: 'inline-block', marginBottom: isMobile ? 24 : 32,
+            color: C.ink, opacity: 0.6, textDecoration: 'none', display: 'inline-block',
           }}>← Back to home</a>
-
-          <div style={{
-            fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(40px, 7vw, 76px)',
-            letterSpacing: '-0.04em', lineHeight: 1.02,
-            color: C.ink, marginTop: 16, maxWidth: 900, textWrap: 'balance',
-          }}>
-            Join Us
-          </div>
-
-          <div style={{
-            marginTop: isMobile ? 32 : 48,
-            border: `1px solid ${C.ink}1a`,
-            background: C.paperWarm,
-            padding: isMobile ? 14 : 20,
-          }}>
-            <img
-              src="images/image1.png"
-              alt="CoSTA@NUS Lab — cognitive coastline illustration"
-              style={{ display: 'block', width: '100%', height: 'auto' }}
-            />
-          </div>
+        </div>
+        <div className="campus-composition">
+          <h1 className="campus-join-title">Join Us</h1>
+          <CampusScene />
         </div>
       </section>
     );
