@@ -1,14 +1,16 @@
 // Publications — edit-friendly source of truth for the landing-page
 // "Selected" list (entries with `selected: true`), the "Most recent" list
 // (entries whose `date` falls in the last 6 months), and the /publications/
-// full archive. Mirrored from https://jyhong.gitlab.io/.
+// full archive. Canonical for publication metadata (since 16 Nov 2026): edit a
+// paper here first; https://jyhong.gitlab.io/ is updated from this file by the
+// sync-publications skill (see CLAUDE.md).
 // Entry shape: { year, venue, title, authors, links, tags, selected?, date?, detail?, media? }
 //   authors: [{ name, highlighted?, note? }]  // highlighted → bold (PI/lab)
 //                                             // note → tooltip (e.g. "Equal contribution")
 //   links:   [{ label, href }]                // label shown verbatim on capsule
 //   date:    "YYYY-MM-DD"                     // ISO publish date; drives
 //                                             // "Most recent" on the home page.
-//                                             // Synced from `publishDate` in
+//                                             // Pushed to Hugo `publishDate` in
 //                                             // jyhong.gitlab.io/content/publication
 //                                             // (see CLAUDE.md). When missing,
 //                                             // isRecent() falls back to `year`.
