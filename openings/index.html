@@ -40,15 +40,22 @@
   const OPENINGS = [
     {
       tag: 'Remote · Open',
-      title: 'Remote Research Internships',
-      body: 'Multiple remote internship slots for candidates interested in pursuing a PhD in our lab. Work closely with the PI on projects aligned with the three research directions.',
+      title: 'Remote Research Intern',
+      body: 'If you are interested in pursuing a PhD in our lab, you can work closely with the PI on projects for 3-6 months. No prior experience is required. If you are NUS undergraduate students, you can apply through UROP or FYP programs.',
     },
     {
       tag: '2027 – 2028 Fall · Funded',
-      title: 'Research Assistant',
-      body: "One RA position opening in 2027 Fall, and one to two more in 2028 Fall. For excellent students, the PI is happy to nominate/endorse applications to the President's Graduate Fellowship (PGF), AISG PhD Fellowship, and other agency scholarships (A*STAR, SINGA, etc.).",
+      title: 'PhD',
+      body: "Fully funded positions starting in Fall 2027 or Fall 2028. For excellent students, the PI is happy to nominate/endorse applications to the President's Graduate Fellowship (PGF), AISG PhD Fellowship, and other agency scholarships (A*STAR, SINGA, etc.).",
       cta: { label: 'NUS scholarships ↗', href: 'https://nusgs.nus.edu.sg/scholarships/' },
     },
+  ];
+
+  // Ranking stats drawn over the photo in the department box. Keep in step
+  // with the QS links in the paragraph below them.
+  const RANKINGS = [
+    { value: '3', suffix: 'rd', label: 'in the world', caption: 'QS World University Rankings by Subject 2026' },
+    { value: '10', suffix: 'th', label: 'NUS in the world', caption: 'QS World University Rankings 2027' },
   ];
 
   const OFFERS = [
@@ -340,9 +347,69 @@
             border: `1px solid ${C.ink}1a`,
             background: C.paperWarm,
           }}>
+            {/* Photo with the ranking text drawn as HTML on top. Sizes use cqw
+                (percent of this wrapper's width) so the text scales with it. */}
             <div style={{
+              position: 'relative',
+              containerType: 'inline-size',
+              width: `calc(100% + ${isMobile ? 48 : 64}px)`,
+              // Negative bottom margin pulls the paragraph up over the faded bottom of the photo.
+              margin: isMobile ? '-24px -24px -40px' : '-32px -32px -64px',
+            }}>
+              <img
+                src="/site/nus-atrium.webp"
+                alt=""
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  maxWidth: 'none',
+                  height: 'auto',
+                  aspectRatio: isMobile ? '4 / 3' : '12 / 5',
+                  objectFit: 'cover',
+                  objectPosition: 'center 10%',
+                  // Fade the bottom edge into the box background (C.paperWarm).
+                  WebkitMaskImage: 'linear-gradient(to bottom, #000 58%, transparent 94%)',
+                  maskImage: 'linear-gradient(to bottom, #000 58%, transparent 94%)',
+                }}
+              />
+              <div style={{
+                position: 'absolute', top: '5%', left: 0, right: 0, padding: '0 5%',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                fontFamily: F.display, color: C.ink, textAlign: 'center', letterSpacing: '-0.02em',
+              }}>
+                <div style={{ fontWeight: 800, fontSize: 'clamp(20px, 5.2cqw, 66px)', lineHeight: 1 }}>
+                  NUS ECE
+                </div>
+                <div style={{
+                  display: 'grid', gridTemplateColumns: 'auto 2px auto',
+                  columnGap: '3cqw', alignItems: 'center', marginTop: '1cqw',
+                }}>
+                  {RANKINGS.map((r, i) => (
+                    <React.Fragment key={r.caption}>
+                      {i > 0 && <div style={{ alignSelf: 'stretch', background: C.ink }} />}
+                      <div>
+                        <div style={{ fontWeight: 800, color: C.accent, fontSize: 'clamp(30px, 6.5cqw, 82px)', lineHeight: 0.95 }}>
+                          {r.value}
+                          <sup style={{ fontSize: '0.45em', lineHeight: 1, verticalAlign: 'top', position: 'relative', top: '0.08em', marginLeft: '0.04em' }}>
+                            {r.suffix}
+                          </sup>
+                        </div>
+                        <div style={{ fontWeight: 700, fontSize: 'clamp(11px, 1.9cqw, 24px)', lineHeight: 1.2, marginTop: '0.4cqw' }}>
+                          {r.label}
+                        </div>
+                        <div style={{ fontWeight: 500, fontSize: 'clamp(9px, 1.1cqw, 14px)', lineHeight: 1.3, marginTop: '0.4cqw' }}>
+                          {r.caption}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{
+              position: 'relative', // paint above the photo wrapper it overlaps
               fontFamily: F.editorial, fontSize: isMobile ? 17 : 19, lineHeight: 1.55,
-              color: C.ink, marginTop: 12, textWrap: 'pretty',
+              color: C.ink, textWrap: 'pretty',
             }}>
               The Department of Electrical and Computer Engineering (<a href="https://www.topuniversities.com/university-subject-rankings/electrical-electronic-engineering" target="_blank" rel="noopener noreferrer" style={{ fontStyle: 'italic', color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.accent}66` }}>QS2026 #3</a>) at
               the National University of Singapore (<a href="https://www.topuniversities.com/world-university-rankings" target="_blank" rel="noopener noreferrer" style={{ fontStyle: 'italic', color: 'inherit', textDecoration: 'none', borderBottom: `1px solid ${C.accent}66` }}>QS2027 #10</a>), housed under the
