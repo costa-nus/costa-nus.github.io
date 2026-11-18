@@ -12,7 +12,7 @@
         if (!entry.isIntersecting) return;
         observer.disconnect();
         try {
-          const { createCampus } = await import('/site/campus-scene.js?v=4');
+          const { createCampus } = await import('/site/campus-scene.js?v=15');
           await document.fonts.load('240px "Campus Display"').catch(() => []);
           if (cancelled) return;
           controller.current = createCampus(host.current, () => setStatus('fallback'), setSelected);

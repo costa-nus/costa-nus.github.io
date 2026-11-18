@@ -7,7 +7,7 @@
 }
 .campus-composition { position: relative; margin-top: 16px; }
 .campus-join-title {
-  position: absolute; z-index: 1; top: clamp(28px, 4vw, 64px);
+  position: absolute; z-index: 1; top: clamp(64px, 9.3vw, 136px);
   left: max(40px, calc((100% - 1120px) / 2)); margin: 0;
   color: var(--ink); font: 700 clamp(40px, 7vw, 76px)/1.02 var(--f-display);
   letter-spacing: -.04em; pointer-events: none;

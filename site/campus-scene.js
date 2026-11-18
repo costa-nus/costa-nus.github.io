@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.min.js';
-import { buildCampusModels } from './campus-models.js';
+import { buildCampusModels } from './campus-models.js?v=12';
 
 export function createCampus(host, onFailure, onSelection) {
   const scene=new T.Scene(), fogColor=new T.Color(getComputedStyle(host).getPropertyValue('--paper').trim() || '#f5f1ea');
@@ -11,16 +11,35 @@ export function createCampus(host, onFailure, onSelection) {
   const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('role','group');
   canvas.setAttribute('aria-label','Interactive NUS campus. Click a building to zoom in; click open space to return. Keys 1, 2 and 3 select buildings. Drag or arrow keys rotate. Escape or Home returns to overview.');
   host.append(canvas);
-  const camera=new T.OrthographicCamera(-24,24,12,-12,.1,200);
+  // One perspective camera serves every view. At FLAT_FOV it stands so far back
+  // that the overview reads as orthographic; a close-up that has a reference
+  // photograph opens the lens to that photograph's angle, which turns the approach
+  // into a dolly zoom.
+  const FLAT_FOV=2.5,camera=new T.PerspectiveCamera(FLAT_FOV,2,1,1000);
   scene.add(new T.HemisphereLight('#ecf5ff','#738282',1.7));
   const sun=new T.DirectionalLight('#fff0d7',2.6);sun.position.set(-18,34,22);sun.castShadow=true;
   sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-35,right:35,top:24,bottom:-24,near:1,far:90});
   sun.shadow.normalBias=.025;sun.shadow.bias=-.00008;scene.add(sun);
   const fill=new T.DirectionalLight('#b4d2ed',.7);fill.position.set(20,10,-10);scene.add(fill);
-  const models=buildCampusModels();const baseAngles=[.16,.12,-.78];
+  const models=buildCampusModels();
+  // UTown is turned 46 degrees in the overview, to the direction of its second
+  // reference photograph (from the east side of Town Green); zooming in turns
+  // it back to face the close-up's vantage.
+  // Close-ups open at the angles chosen by eye on the page: UTown at its
+  // photograph's vantage, the other two turned a little from theirs.
+  const baseAngles=[.8,.12,0],focusAngles=[0,-.66,-.32];
+  // On a wide canvas the whole arrangement opens turned 20 degrees.
+  const OPENING_TURN=.35;
+  // Close-up titles moved by eye on a wide canvas from where the layout puts
+  // them, in half-canvas widths (+ right) and half-canvas heights (+ up). The
+  // narrow layout keeps the computed position.
+  const titleNudges=[[0,-.28],[-.39,-.42],[-.25,0]];
   // A shared parent makes the overview a single rigid arrangement.
   const campus=new T.Group();scene.add(campus);
   models.forEach((m,i)=>{m.rotation.y=baseAngles[i];campus.add(m);});
+  // Mullions, rails and trims thinner than an overview pixel only shimmer from
+  // afar, so the models flag them and they appear as the camera closes in.
+  const fineParts=[];models.forEach(m=>m.traverse(o=>{if(o.userData.fine)fineParts.push(o);}));
   const fogAmount={value:1};
   // Height fog blends lower architecture into the cloud layer. It is independent
   // of camera depth so nearby buildings also dissolve gently at their feet.
@@ -81,29 +100,45 @@ export function createCampus(host, onFailure, onSelection) {
     const plane=new T.Mesh(new T.PlaneGeometry(1,1),material);plane.userData.aspect=label.width/label.height;plane.visible=false;plane.renderOrder=2;scene.add(plane);return plane;
   });
   let activeName=-1;
-  const titleOrigin=new T.Vector3(),cameraForward=new T.Vector3(),cameraUp=new T.Vector3(),titleCorner=new T.Vector3(),titleBounds=new T.Box3();
-  let viewPitch=.48,targetPitch=.48,lastFrameTime=0;
+  const titleOrigin=new T.Vector3(),titleCorner=new T.Vector3(),titleBounds=new T.Box3();
+  let viewPitch=.4,targetPitch=.4,lastFrameTime=0;
   let groupAngle=0,targetGroupAngle=0,cloudClear=0,targetCloudClear=0;
   let selected=-1,frame=0,visible=true,disposed=false,lost=false,width=0,height=0;
-  let span=25,targetSpan=25;const focus=new T.Vector3(0,2.7,0),targetFocus=focus.clone();
+  let span=25,targetSpan=25,fov=FLAT_FOV,targetFov=FLAT_FOV;const focus=new T.Vector3(0,2.7,0),targetFocus=focus.clone(),closeUp=new T.Vector3();
   const angles=[...baseAngles],targetAngles=[...baseAngles];
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   function arrange() {
     const mobile=width<650;
-    const positions=mobile?[[0,0,-15],[-6.2,0,6],[6.2,0,9]]:[[-11.8,0,3],[0,0,-9],[11.2,0,3]];
+    const positions=mobile?[[0,0,-19.5],[-6.2,0,6],[6.2,0,9]]:[[-14.5,0,1.1],[1.8,0,-9],[13.2,0,3]];
     models.forEach((m,i)=>{m.position.set(...positions[i]);cloudBanks[i].position.copy(m.position);});
     setFraming();
   }
+  // Keeps the focus on the selected landmark. UTown and the museum carry the
+  // vantage of a reference photograph, returned here so the framing can adopt
+  // that lens too.
+  function aim() {
+    campus.updateMatrixWorld(true);models[selected].getWorldPosition(targetFocus);
+    const view=models[selected].userData.photoView;
+    targetFocus.add(view?closeUp.fromArray(view.target):closeUp.set(0,4.4,.9));
+    return view;
+  }
   function setFraming() {
     const aspect=width/height;
-    targetPitch=selected===0?.2:(selected===1?.52:(selected<0?(width<650?.65:.48):.39));
+    targetPitch=selected<0?(width<650?.65:.4):.52;targetFov=FLAT_FOV;
     if(selected<0) {
-      targetFocus.set(0,width<650?1.8:3.7,width<650?-1:-1.5);
+      targetFocus.set(0,width<650?1.8:3.7,width<650?-1:1);
       targetSpan=width<650?Math.max(17.8,22.8*aspect):Math.max(26.4,9.4*aspect);
     } else {
-      campus.updateMatrixWorld(true);
-      models[selected].getWorldPosition(targetFocus);targetFocus.add(new T.Vector3(0,selected===0?1.45:(selected===1?2.8:3.8),selected===0?1.0:0));
-      targetSpan=Math.max(selected===0?8.7:(selected===1?11.8:6.4),(selected===0?3.4:(selected===1?8.5:6.3))*aspect);
+      const view=aim();
+      if(view) {
+        // Match the photograph's horizontal field wherever the canvas shape allows;
+        // where the lens stops short, step back until the subject's extents fit.
+        targetFov=T.MathUtils.clamp(2*Math.atan(Math.tan(view.fov/2)/aspect)*180/Math.PI,30,view.maxFov||56);
+        targetPitch=view.pitch;targetSpan=Math.max(view.distance*Math.tan(targetFov*Math.PI/360)*aspect,view.span||0,(view.rise||0)*aspect);
+      } else {
+        // CDE has no photograph: a lower, closer view than the default.
+        targetPitch=.4;targetSpan=Math.max(12.4,7.5*aspect);
+      }
     }
   }
   function requestDraw(){if(!frame&&!disposed&&!lost)frame=requestAnimationFrame(draw);}
@@ -115,37 +150,56 @@ export function createCampus(host, onFailure, onSelection) {
     const cloudStep=reduced.matches?1:1-Math.exp(-elapsed/260);
     cloudClear+=(targetCloudClear-cloudClear)*cloudStep;
     fogAmount.value=1-cloudClear;cloudMaterial.opacity=.7*(1-cloudClear)**2;
+    fineParts.forEach(part=>{part.visible=cloudClear>.4;});
     cloudBanks.forEach(bank=>bank.children.forEach(cloud=>{
       const rest=cloud.userData.restPosition;
       cloud.position.set(rest.x*(1+cloudClear*1.65),rest.y+cloudClear*.85,rest.z*(1+cloudClear*1.65));
       cloud.scale.copy(cloud.userData.restScale).multiplyScalar(1+cloudClear*.35);
     }));
-    if(selected>=0){campus.updateMatrixWorld(true);models[selected].getWorldPosition(targetFocus);targetFocus.add(new T.Vector3(0,selected===0?1.45:(selected===1?2.8:3.8),selected===0?1:0));}
-    focus.lerp(targetFocus,t);span+=(targetSpan-span)*t;
+    if(selected>=0)aim();
+    focus.lerp(targetFocus,t);span+=(targetSpan-span)*t;fov+=(targetFov-fov)*t;
     viewPitch+=(targetPitch-viewPitch)*t;
-    let moving=Math.abs(targetGroupAngle-groupAngle)>.001||Math.abs(targetCloudClear-cloudClear)>.001||Math.abs(targetPitch-viewPitch)>.001||focus.distanceTo(targetFocus)>.002||Math.abs(span-targetSpan)>.002;
+    let moving=Math.abs(targetGroupAngle-groupAngle)>.001||Math.abs(targetCloudClear-cloudClear)>.001||Math.abs(targetPitch-viewPitch)>.001||focus.distanceTo(targetFocus)>.002||Math.abs(span-targetSpan)>.002||Math.abs(fov-targetFov)>.01;
     models.forEach((m,i)=>{angles[i]+=(targetAngles[i]-angles[i])*t;m.rotation.y=angles[i];moving ||= Math.abs(targetAngles[i]-angles[i])>.001;});
-    const halfHeight=span/(width/height);
-    camera.left=-span;camera.right=span;camera.top=halfHeight;camera.bottom=-halfHeight;
-    camera.position.copy(focus).add(new T.Vector3(0,Math.sin(viewPitch)*57,Math.cos(viewPitch)*57));camera.lookAt(focus);camera.updateProjectionMatrix();
+    // span is the half-width seen at the focus, whatever the lens; distance follows.
+    const aspect=width/height,halfHeight=span/aspect,lens=Math.tan(fov*Math.PI/360),distance=halfHeight/lens;
+    camera.fov=fov;camera.aspect=aspect;camera.near=Math.max(.3,distance-90);camera.far=distance+150;
+    camera.position.copy(focus).add(new T.Vector3(0,Math.sin(viewPitch)*distance,Math.cos(viewPitch)*distance));camera.lookAt(focus);
+    camera.updateProjectionMatrix();camera.updateMatrixWorld();
     namePlanes.forEach((plane,index)=>{
       plane.visible=index===activeName&&cloudClear>.005;
       if(!plane.visible)return;
       titleBounds.setFromObject(models[index]);titleBounds.getCenter(titleOrigin);
-      camera.getWorldDirection(cameraForward);cameraUp.set(0,1,0).applyQuaternion(camera.quaternion);
+      if(index===1)titleOrigin.x+=3;
+      // Lay the label out in view space, in half-screen-heights above the centre.
       let top=-Infinity;
       for(const x of [titleBounds.min.x,titleBounds.max.x])for(const y of [titleBounds.min.y,titleBounds.max.y])for(const z of [titleBounds.min.z,titleBounds.max.z]){
-        top=Math.max(top,titleCorner.set(x,y,z).dot(cameraUp));
+        titleCorner.set(x,y,z).applyMatrix4(camera.matrixWorldInverse);
+        if(titleCorner.z<-.3)top=Math.max(top,titleCorner.y/(-titleCorner.z*lens));
       }
+      // Under a wide lens the nearest corners no longer describe the skyline, so
+      // blend toward the roof's centre and size the label to the sky above it.
+      const wide=T.MathUtils.clamp((fov-FLAT_FOV)/20,0,1);
+      titleCorner.set(titleOrigin.x,titleBounds.max.y,titleOrigin.z).applyMatrix4(camera.matrixWorldInverse);
+      top+=(titleCorner.y/(-titleCorner.z*lens)-top)*wide;
       // Keep most of each short label above the roofline, with only its lower
-      // edge entering the silhouette; world-space depth still supplies occlusion.
-      const titleHeight=6.7,titleWidth=Math.min(titleHeight*plane.userData.aspect*1.16,span*1.92);
-      const roofOverlap=index===0?1.7:(index===1?.55:1.4);
-      const titleLevel=Math.min(top+roofOverlap,focus.dot(cameraUp)+span/(width/height)-titleHeight*.3)-(index===1?.55:0);
-      if(index===1)titleOrigin.x+=3;
-      plane.position.copy(titleOrigin).addScaledVector(cameraUp,titleLevel-titleOrigin.dot(cameraUp)).addScaledVector(cameraForward,40);
+      // edge entering the silhouette.
+      const sky=6.7+((1-top)*halfHeight*1.75-6.7)*wide;
+      const titleHeight=Math.min(6.7,halfHeight*1.9,sky),titleWidth=Math.min(titleHeight*plane.userData.aspect*1.16,span*1.92);
+      const roofOverlap=(index===0?1.7:(index===1?.55:1.4))*titleHeight/6.7;
+      const [nudgeAcross,nudgeUp]=width<650?[0,0]:titleNudges[index];
+      const titleLevel=Math.min(top+roofOverlap/halfHeight,1-titleHeight*.3/halfHeight)-(index===1?.55/halfHeight:0)+nudgeUp;
+      // Stand it 40 units behind the model and scale it back up to the same
+      // apparent size, so world-space depth still supplies the occlusion.
+      titleOrigin.applyMatrix4(camera.matrixWorldInverse);
+      // The sideways nudge stops where the word would leave the canvas.
+      const halfWidth=lens*aspect,room=Math.max(0,1-titleWidth*(index===1?1.1:1)/(2*span)-.03);
+      const centre=titleOrigin.x/-titleOrigin.z*(1-wide)/halfWidth;
+      const shifted=T.MathUtils.clamp(centre+nudgeAcross,Math.min(centre,-room),Math.max(centre,room));
+      const depth=40-titleOrigin.z,across=shifted*halfWidth;
+      plane.position.set(across*depth,titleLevel*depth*lens,-depth).applyMatrix4(camera.matrixWorld);
       plane.quaternion.copy(camera.quaternion);
-      const nameScale=index===1?1.1:1;
+      const nameScale=(index===1?1.1:1)*depth/distance;
       plane.scale.set(titleWidth*nameScale,titleHeight*nameScale,1);
       plane.material.opacity=Math.max(0,(cloudClear-.3)/.7)*.8;
     });
@@ -169,7 +223,7 @@ export function createCampus(host, onFailure, onSelection) {
     targetGroupAngle=groupAngle;
     // Only the selected landmark remains visible while the camera approaches.
     models.forEach((model,i)=>{model.visible=index<0||i===index;});
-    targetAngles.forEach((a,i)=>targetAngles[i]=baseAngles[i]-(i===index?groupAngle:0));
+    targetAngles.forEach((a,i)=>targetAngles[i]=i===index?focusAngles[i]-groupAngle:baseAngles[i]);
     setFraming();onSelection?.(index);requestDraw();
   }
   const raycaster=new T.Raycaster(),mouse=new T.Vector2(),owners=new WeakMap(),pickMeshes=[];
@@ -228,7 +282,8 @@ export function createCampus(host, onFailure, onSelection) {
   const visibilityObserver=new IntersectionObserver(([e])=>{visible=e.isIntersecting;if(visible)requestDraw();});visibilityObserver.observe(host);
   document.addEventListener('visibilitychange',requestDraw);resize();
   // An immediate frame avoids animating in from an uninitialized aspect ratio.
-  span=targetSpan;focus.copy(targetFocus);
+  span=targetSpan;fov=targetFov;focus.copy(targetFocus);
+  if(width>=650)campus.rotation.y=groupAngle=targetGroupAngle=OPENING_TURN;
   return {select,rotate,dispose(){
     disposed=true;cancelAnimationFrame(frame);sizeObserver.disconnect();visibilityObserver.disconnect();document.removeEventListener('visibilitychange',requestDraw);
     listeners.forEach(([name,fn])=>canvas.removeEventListener(name,fn));
